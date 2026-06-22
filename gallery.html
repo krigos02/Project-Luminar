@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery — Luminary</title>
+<meta name="description" content="Photography portfolio categories and galleries.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ── GALLERY SPECIFIC STYLING ── */
+.page-header {
+  padding: calc(var(--nav-h) + 60px) 0 60px;
+  text-align: center;
+}
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 1.5rem;
+}
+.breadcrumb a {
+  color: var(--text3);
+  transition: color 0.25s;
+}
+.breadcrumb a:hover {
+  color: var(--gold);
+}
+.breadcrumb-sep {
+  color: var(--text3);
+  opacity: 0.4;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 1rem;
+  line-height: 1.05;
+}
+.page-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+.page-desc {
+  font-family: var(--font-serif);
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-weight: 300;
+  color: var(--text2);
+  max-width: 620px;
+  margin: 0 auto 2rem;
+  line-height: 1.65;
+  font-style: italic;
+}
+.page-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+.page-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+.page-meta-item svg {
+  width: 13px;
+  height: 13px;
+  stroke: var(--gold);
+  fill: none;
+  stroke-width: 1.5;
+}
+
+/* ── FILTERS / CONTROLS ── */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.filter-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.filter-tab {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  border: 1px solid var(--border);
+  color: var(--text3);
+  border-radius: 2px;
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.filter-tab:hover {
+  border-color: var(--border2);
+  color: var(--text2);
+}
+.filter-tab.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold3);
+}
+.view-controls {
+  display: flex;
+  gap: 6px;
+}
+.view-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.view-btn:hover, .view-btn.active {
+  border-color: var(--border2);
+  color: var(--text2);
+}
+.view-btn.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold3);
+}
+.view-btn svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+.count-label {
+  font-size: 12px;
+  color: var(--text3);
+  letter-spacing: 0.06em;
+}
+
+/* ── MASONRY GALLERY ── */
+.gallery-masonry {
+  columns: 3;
+  column-gap: 12px;
+  margin-bottom: 4rem;
+}
+.gallery-masonry.grid-2 { columns: 2; }
+.gallery-masonry.grid-4 { columns: 4; }
+.gallery-item {
+  break-inside: avoid;
+  margin-bottom: 12px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  display: block;
+}
+.gallery-img {
+  width: 100%;
+  display: block;
+  transition: transform 0.8s var(--ease-out);
+  pointer-events: none;
+}
+.gallery-item:hover .gallery-img {
+  transform: scale(1.04);
+}
+.gallery-item-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem 1rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all 0.35s var(--ease-out);
+}
+.gallery-item:hover .gallery-item-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+.gallery-item-title {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 3px;
+}
+.gallery-item-meta {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+.gallery-item-featured {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--gold);
+  color: #000;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  font-weight: 600;
+  border-radius: 2px;
+}
+
+/* Placeholder images with gradient backgrounds */
+.img-ph {
+  pointer-events: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.img-ph svg {
+  width: 28px;
+  height: 28px;
+  stroke: rgba(255,255,255,0.1);
+  fill: none;
+  stroke-width: 1;
+}
+
+/* ── LOAD MORE ── */
+.load-more-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 3rem 0;
+}
+.load-more-progress {
+  width: 200px;
+  height: 1px;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.load-more-progress-fill {
+  height: 100%;
+  background: var(--gold);
+  width: 0%;
+  transition: width 0.6s var(--ease-out);
+}
+.load-more-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+.load-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: all 0.25s;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+.load-more-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold3);
+}
+.load-more-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  transition: transform 0.3s;
+}
+.load-more-btn:hover svg {
+  transform: translateY(3px);
+}
+
+/* ── CATEGORY SWITCHER ── */
+.category-switcher {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 2rem 0;
+  margin-top: 4rem;
+}
+.category-switcher-inner {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  padding: 0;
+  scrollbar-width: none;
+}
+.category-switcher-inner::-webkit-scrollbar {
+  display: none;
+}
+.cat-switch-item {
+  flex-shrink: 0;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.25s;
+  border-right: 1px solid var(--border);
+  text-align: center;
+  min-width: 130px;
+}
+.cat-switch-item:last-child {
+  border-right: none;
+}
+.cat-switch-item:hover {
+  background: var(--surface);
+}
+.cat-switch-item.active {
+  background: var(--gold3);
+}
+.cat-switch-name {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.cat-switch-item.active .cat-switch-name {
+  color: var(--gold);
+}
+.cat-switch-count {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+/* ── LIGHTBOX (full featured) ── */
+#lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(4,4,6,0.98);
+  display: none;
+  flex-direction: column;
+  backdrop-filter: blur(6px);
+}
+#lightbox.open {
+  display: flex;
+}
+.lb-topbar {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+.lb-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+.lb-counter {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+.lb-topbar-title {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lb-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.lb-topbar-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.lb-topbar-btn:hover {
+  border-color: var(--border2);
+  color: var(--text);
+}
+.lb-topbar-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+.lb-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+.lb-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 1.5rem;
+  min-width: 0;
+}
+.lb-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.25s;
+  z-index: 2;
+}
+.lb-nav-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.lb-nav-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+#lb-prev { left: 1.5rem; }
+#lb-next { right: 1.5rem; }
+#lb-img {
+  max-width: 100%;
+  max-height: calc(100vh - 60px - 72px - 3rem);
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.lb-info-panel {
+  width: 320px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+.lb-info-content {
+  padding: 2rem 1.5rem;
+  flex: 1;
+}
+.lb-info-category {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+.lb-info-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--text);
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
+}
+.lb-info-caption {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--text2);
+  margin-bottom: 1.5rem;
+  line-height: 1.55;
+}
+.lb-info-story {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+.lb-info-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 1.5rem;
+}
+.lb-exif {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.lb-exif-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12px;
+}
+.lb-exif-label {
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+.lb-exif-val {
+  color: var(--text2);
+  font-family: monospace;
+  font-size: 11px;
+  text-align: right;
+}
+.lb-info-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+.lb-info-footer-btn {
+  flex: 1;
+  padding: 9px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  color: var(--text3);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: center;
+}
+.lb-info-footer-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold3);
+}
+
+/* ── THUMBNAIL STRIP ── */
+.lb-thumbstrip {
+  height: 72px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 1rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.lb-thumb {
+  width: 60px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  cursor: pointer;
+  overflow: hidden;
+  border: 2px solid transparent;
+  opacity: 0.5;
+  transition: all 0.25s;
+}
+.lb-thumb.active {
+  border-color: var(--gold);
+  opacity: 1;
+}
+.lb-thumb:hover {
+  opacity: 0.85;
+}
+.lb-thumb-ph {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media(max-width: 900px) {
+  .gallery-masonry { columns: 2; }
+  .lb-info-panel { display: none; }
+  .lb-topbar-title { display: none; }
+}
+@media(max-width: 600px) {
+  .gallery-masonry { columns: 1; }
+  .controls { flex-direction: column; align-items: flex-start; }
+  .view-controls { display: none; }
+}
+</style>
+</head>
+<body class="no-select">
+
+<!-- Loader -->
+<div id="loader" role="status" aria-live="polite">
+  <div class="loader-logo">Luminary</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- Cursor elements -->
+<div id="cursor" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<!-- NAVIGATION -->
+<header id="header" class="site-header" role="banner">
+  <div class="container">
+    <div class="header-left-actions">
+      <a href="portfolio.html" class="nav-back">← All Categories</a>
+    </div>
+    <div class="brand-header">
+      <a href="index.html" class="brand-logo">
+        <span class="brand-bold">KRISHNENDU</span> <span class="brand-light">GOSWAMI</span>
+      </a>
+    </div>
+    <nav class="site-nav" role="navigation" aria-label="Main navigation">
+      <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="blog.html">Deep Dive</a></li>
+        <li class="dropdown">
+          <a href="portfolio.html" class="dropdown-trigger active">Genre</a>
+          <ul class="dropdown-menu">
+            <li><a href="gallery.html?category=wildlife">Wildlife</a></li>
+            <li><a href="gallery.html?category=landscape">Landscape</a></li>
+            <li><a href="gallery.html?category=travel">Travel</a></li>
+            <li><a href="gallery.html?category=portrait">Portraits</a></li>
+            <li><a href="gallery.html?category=street">Streets</a></li>
+            <li><a href="gallery.html?category=aerial">Aerial</a></li>
+          </ul>
+        </li>
+        <li><a href="stories.html">Stories</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" role="menu" aria-label="Mobile navigation">
+  <a href="index.html" role="menuitem">Home</a>
+  <a href="about.html" role="menuitem">About</a>
+  <a href="blog.html" role="menuitem">Deep Dive</a>
+  <span style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-top: 0.5rem; display: block; text-align: left;">Genre</span>
+  <div class="mobile-dropdown-menu">
+    <a href="gallery.html?category=wildlife" role="menuitem">Wildlife</a>
+    <a href="gallery.html?category=landscape" role="menuitem">Landscape</a>
+    <a href="gallery.html?category=travel" role="menuitem">Travel</a>
+    <a href="gallery.html?category=portrait" role="menuitem">Portraits</a>
+    <a href="gallery.html?category=street" role="menuitem">Streets</a>
+    <a href="gallery.html?category=aerial" role="menuitem">Aerial</a>
+  </div>
+  <a href="stories.html" role="menuitem">Stories</a>
+  <a href="contact.html" role="menuitem">Contact</a>
+</div>
+
+<!-- PAGE HEADER (Dynamic) -->
+<header class="page-header">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep">—</span>
+      <a href="portfolio.html">Portfolio</a>
+      <span class="breadcrumb-sep">—</span>
+      <span id="breadcrumb-current">Wildlife</span>
+    </div>
+    <h1 class="page-title" id="page-title">Wild<em>life</em></h1>
+    <p class="page-desc" id="page-desc">Intimate encounters with creatures in their natural habitat.</p>
+    <div class="page-meta">
+      <div class="page-meta-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span id="meta-photos-count">42 Photographs</span>
+      </div>
+      <div class="page-meta-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 018 8c0 5.25-8 14-8 14S4 15.25 4 10a8 8 0 018-8z"/></svg>
+        <span id="meta-location">India, Nepal, Bhutan</span>
+      </div>
+      <div class="page-meta-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <span id="meta-years">2018 — 2024</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN GALLERY -->
+<main>
+  <div class="container">
+    <!-- Controls -->
+    <div class="controls reveal">
+      <div class="filter-tabs" id="filter-tabs" role="tablist" aria-label="Filter photographs">
+        <!-- Dynamically injected -->
+      </div>
+      <div style="display:flex;align-items:center;gap:1.5rem">
+        <span class="count-label" id="count-label">Showing 0 photographs</span>
+        <div class="view-controls" aria-label="View mode">
+          <button class="view-btn active" onclick="setView('masonry',this)" title="Masonry grid" aria-label="Masonry view">
+            <svg viewBox="0 0 18 18" aria-hidden="true"><rect x="1" y="1" width="7" height="10" rx="1"/><rect x="10" y="1" width="7" height="6" rx="1"/><rect x="1" y="13" width="7" height="4" rx="1"/><rect x="10" y="9" width="7" height="8" rx="1"/></svg>
+          </button>
+          <button class="view-btn" onclick="setView('grid-2',this)" title="2 columns" aria-label="2 column view">
+            <svg viewBox="0 0 18 18" aria-hidden="true"><rect x="1" y="1" width="7" height="16" rx="1"/><rect x="10" y="1" width="7" height="16" rx="1"/></svg>
+          </button>
+          <button class="view-btn" onclick="setView('grid-4',this)" title="4 columns" aria-label="4 column view">
+            <svg viewBox="0 0 18 18" aria-hidden="true"><rect x="1" y="1" width="3" height="16" rx="1"/><rect x="5.5" y="1" width="3" height="16" rx="1"/><rect x="10" y="1" width="3" height="16" rx="1"/><rect x="14.5" y="1" width="3" height="16" rx="1"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Masonry Gallery -->
+    <div class="gallery-masonry reveal" id="gallery" role="list">
+      <!-- Dynamically injected -->
+    </div>
+
+    <!-- Load More -->
+    <div class="load-more-wrap" id="load-more-wrap">
+      <div class="load-more-progress"><div class="load-more-progress-fill" id="load-progress"></div></div>
+      <div class="load-more-label" id="load-label">Showing 0 of 0 photographs</div>
+      <button class="load-more-btn" id="load-more-btn" onclick="loadMore()">
+        Load More
+        <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2v10M2 8l5 5 5-5"/></svg>
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- CATEGORY SWITCHER -->
+<div class="category-switcher">
+  <div class="container">
+    <div class="category-switcher-inner" id="category-switcher-list">
+      <!-- Dynamically populated -->
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="gallery-footer">
+  <div class="container">
+    <div class="gallery-footer-inner" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
+      <div class="footer-copy">© 2025 Krishnendu Goswami · All photographs protected · No reproduction without permission</div>
+      <nav class="footer-nav" style="display:flex;gap:1.5rem">
+        <a href="index.html">Home</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="contact.html">Contact</a>
+        <a href="contact.html">Prints</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<!-- LIGHTBOX (full featured with info panel) -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <div class="lb-topbar">
+    <div class="lb-topbar-left">
+      <span class="lb-counter" id="lb-counter" aria-live="polite">1 / 12</span>
+      <span class="lb-topbar-title" id="lb-topbar-title">Photo Title</span>
+    </div>
+    <div class="lb-topbar-right">
+      <button class="lb-topbar-btn" id="lb-info-toggle" onclick="toggleInfoPanel()" title="Toggle info panel" aria-label="Toggle info panel">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </button>
+      <button class="lb-topbar-btn" onclick="closeLb()" title="Close" aria-label="Close viewer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="lb-body">
+    <div class="lb-main">
+      <button class="lb-nav-btn" id="lb-prev" onclick="lbNav(-1)" aria-label="Previous photo">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <img id="lb-img" src="" alt="" draggable="false">
+      <div id="lb-img-ph" style="width:100%;max-width:800px;display:flex;align-items:center;justify-content:center">
+        <div id="lb-ph-inner" style="width:100%;max-width:800px;aspect-ratio:3/2;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem">
+          <div id="lb-ph-bg" style="width:100%;height:100%;min-height:350px;border-radius:2px;display:flex;align-items:center;justify-content:center">
+            <svg viewBox="0 0 48 48" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="1" aria-hidden="true"><rect x="6" y="14" width="36" height="24" rx="2"/><circle cx="24" cy="26" r="7"/><path d="M18 14V10M30 14V10"/></svg>
+          </div>
+        </div>
+      </div>
+      <button class="lb-nav-btn" id="lb-next" onclick="lbNav(1)" aria-label="Next photo">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <div class="lb-info-panel" id="lb-info-panel">
+      <div class="lb-info-content">
+        <div class="lb-info-category" id="lb-cat">Category</div>
+        <div class="lb-info-title" id="lb-title">Photo Title</div>
+        <div class="lb-info-caption" id="lb-caption">Photo Caption</div>
+        <div class="lb-info-story" id="lb-story">Photo Story</div>
+        <div class="lb-info-divider"></div>
+        <div class="lb-exif">
+          <div class="lb-exif-row"><span class="lb-exif-label">Camera</span><span class="lb-exif-val" id="lb-cam">-</span></div>
+          <div class="lb-exif-row"><span class="lb-exif-label">Lens</span><span class="lb-exif-val" id="lb-lens">-</span></div>
+          <div class="lb-exif-row"><span class="lb-exif-label">Exposure</span><span class="lb-exif-val" id="lb-exp">-</span></div>
+          <div class="lb-exif-row"><span class="lb-exif-label">Location</span><span class="lb-exif-val" id="lb-loc">-</span></div>
+          <div class="lb-exif-row"><span class="lb-exif-label">Date</span><span class="lb-exif-val" id="lb-date">-</span></div>
+        </div>
+      </div>
+      <div class="lb-info-footer">
+        <button class="lb-info-footer-btn" onclick="closeLb()">Close</button>
+        <a href="contact.html?enquiry=print" class="lb-info-footer-btn" style="display:block">Enquire Print</a>
+      </div>
+    </div>
+  </div>
+  <div class="lb-thumbstrip" id="lb-thumbstrip" aria-label="Photo thumbnails" role="list"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>
+/* ── STATE MANAGEMENT ── */
+let categoriesDb = window.siteData ? window.siteData.galleryCategories : {};
+let currentCategory = 'wildlife';
+let currentPhotos = [];
+let filteredPhotos = [];
+let lbIdx = 0;
+let infoPanelOpen = true;
+let loadedLimit = 8;
+let currentLimit = 8;
+
+/* ── DOM ELEMENTS ── */
+const lb = document.getElementById('lightbox');
+const lbImgEl = document.getElementById('lb-img');
+const lbPhBg = document.getElementById('lb-ph-bg');
+
+/* ── GET CATEGORY FROM URL ── */
+function parseUrlCategory() {
+  const params = new URLSearchParams(window.location.search);
+  const cat = params.get('category');
+  if (cat && categoriesDb[cat.toLowerCase()]) {
+    currentCategory = cat.toLowerCase();
+  } else {
+    currentCategory = 'wildlife';
+  }
+}
+
+/* ── INITIALIZE PAGE DATA ── */
+function initPage() {
+  categoriesDb = window.siteData ? window.siteData.galleryCategories : {};
+  parseUrlCategory();
+  
+  const data = categoriesDb[currentCategory];
+  if (!data) return;
+  
+  // 1. Update Head title
+  document.title = `${data.title}${data.em} — Portfolio · Luminary`;
+  
+  // 2. Update Header elements
+  document.getElementById('breadcrumb-current').textContent = data.title + data.em;
+  document.getElementById('page-title').innerHTML = `${data.title}<em>${data.em}</em>`;
+  document.getElementById('page-desc').textContent = data.desc;
+  
+  // 3. Update Stats
+  document.getElementById('meta-photos-count').textContent = data.photosCount;
+  document.getElementById('meta-location').textContent = data.location;
+  document.getElementById('meta-years').textContent = data.years;
+  
+  // 4. Update Switcher active state & render list
+  const switcherList = document.getElementById('category-switcher-list');
+  if (switcherList) {
+    switcherList.innerHTML = Object.keys(categoriesDb).map(key => {
+      const cat = categoriesDb[key];
+      const count = cat.photos ? cat.photos.length : 0;
+      const isActive = key === currentCategory ? ' active' : '';
+      return `
+        <div class="cat-switch-item${isActive}" id="switch-${key}" onclick="navigateToCategory('${key}')">
+          <div class="cat-switch-name">${cat.title}${cat.em}</div>
+          <div class="cat-switch-count">${count} photo${count !== 1 ? 's' : ''}</div>
+        </div>
+      `;
+    }).join('');
+  }
+  
+  // 5. Generate Filters
+  const filtersTab = document.getElementById('filter-tabs');
+  if (filtersTab && data.filters) {
+    filtersTab.innerHTML = data.filters.map((f, i) => `
+      <button class="filter-tab${i === 0 ? ' active' : ''}" role="tab" aria-selected="${i === 0 ? 'true' : 'false'}" onclick="filterGallery('${f}', this)">
+        ${f.charAt(0).toUpperCase() + f.slice(1)}
+      </button>
+    `).join('');
+  }
+  
+  // 6. Setup Photos
+  currentPhotos = data.photos || [];
+  filteredPhotos = [...currentPhotos];
+  currentLimit = Math.min(loadedLimit, filteredPhotos.length);
+  
+  // 7. Render
+  renderGallery();
+  updateLoadMore();
+}
+
+/* ── RENDER MASONRY GALLERY ── */
+function renderGallery() {
+  const galleryEl = document.getElementById('gallery');
+  
+  if (filteredPhotos.length === 0) {
+    galleryEl.innerHTML = `
+      <div class="coming-soon-artistic" style="column-span: all; -webkit-column-span: all; grid-column: 1/-1; text-align: center; padding: 7rem 2rem; border: 1px dashed var(--border); border-radius: 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, var(--gold3) 0%, rgba(0,0,0,0) 100%); margin: 2rem 0; width: 100%;">
+        <div style="font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem;">
+          C o m i n g &nbsp; S o o n
+        </div>
+        <p style="font-family: var(--font-serif); font-size: 1.25rem; font-style: italic; color: var(--text2); max-width: 480px; line-height: 1.7; margin: 0; font-weight: 300;">
+          "Every creature, leaf, and mountain has a season. This gallery is waiting for the perfect light to reveal its shape."
+        </p>
+        <div style="margin-top: 2rem; width: 50px; height: 1px; background: var(--gold); opacity: 0.3;"></div>
+      </div>
+    `;
+    return;
+  }
+  
+  const slice = filteredPhotos.slice(0, currentLimit);
+  
+  galleryEl.innerHTML = slice.map((p, idx) => {
+    const mediaTag = p.src ? `<img class="gallery-img" src="${p.src}" alt="${p.title}" style="height: ${getImageHeight(idx)}px; object-fit: cover;">` : `
+      <div class="img-ph" style="height: ${getImageHeight(idx)}px; background: ${p.bg}">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="20" r="12"/><path d="M8 44c0-8.84 7.16-16 16-16s16 7.16 16 16"/></svg>
+      </div>`;
+    return `
+      <div class="gallery-item" data-id="${idx}" onclick="openLb(${idx})" role="listitem">
+        ${mediaTag}
+        <div class="gallery-item-overlay">
+          <div class="gallery-item-title">${p.title}</div>
+          <div class="gallery-item-meta">${p.caption}</div>
+        </div>
+        ${p.featured ? '<div class="gallery-item-featured">Featured</div>' : ''}
+      </div>
+    `;
+  }).join('');
+  
+  document.getElementById('count-label').textContent = `Showing ${slice.length} of ${filteredPhotos.length} photograph${filteredPhotos.length !== 1 ? 's' : ''}`;
+}
+
+/* ── GET SIMULATED HEIGHT FOR MASONRY ── */
+function getImageHeight(idx) {
+  const heights = [280, 380, 200, 320, 420, 260, 300, 220, 350, 190];
+  return heights[idx % heights.length];
+}
+
+/* ── FILTER GALLERY ── */
+function filterGallery(tag, btn) {
+  document.querySelectorAll('.filter-tab').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
+  });
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
+  
+  if (tag === 'all') {
+    filteredPhotos = [...currentPhotos];
+  } else if (tag === 'featured') {
+    filteredPhotos = currentPhotos.filter(p => p.featured);
+  } else {
+    filteredPhotos = currentPhotos.filter(p => {
+      if (!p.tag) return false;
+      const tags = p.tag.split(',').map(t => t.trim().toLowerCase());
+      return tags.includes(tag.toLowerCase());
+    });
+  }
+  
+  currentLimit = Math.min(loadedLimit, filteredPhotos.length);
+  renderGallery();
+  updateLoadMore();
+}
+
+/* ── VIEWPORT LAYOUT SWITCHER ── */
+function setView(mode, btn) {
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const gallery = document.getElementById('gallery');
+  gallery.className = 'gallery-masonry reveal visible';
+  if (mode === 'grid-2') gallery.classList.add('grid-2');
+  if (mode === 'grid-4') gallery.classList.add('grid-4');
+}
+
+/* ── LOAD MORE CONTROL ── */
+function updateLoadMore() {
+  const loadWrap = document.getElementById('load-more-wrap');
+  const fill = document.getElementById('load-progress');
+  const label = document.getElementById('load-label');
+  
+  if (filteredPhotos.length <= loadedLimit || currentLimit >= filteredPhotos.length) {
+    loadWrap.style.display = 'none';
+  } else {
+    loadWrap.style.display = 'flex';
+    const percent = (currentLimit / filteredPhotos.length) * 100;
+    fill.style.width = `${percent}%`;
+    label.textContent = `Showing ${currentLimit} of ${filteredPhotos.length} photographs`;
+  }
+}
+
+function loadMore() {
+  currentLimit = Math.min(currentLimit + loadedLimit, filteredPhotos.length);
+  renderGallery();
+  updateLoadMore();
+}
+
+/* ── NAVIGATE BETWEEN CATEGORIES ── */
+function navigateToCategory(cat) {
+  // To preserve multi-page feel, update query parameter and reload
+  window.location.href = `gallery.html?category=${cat}`;
+}
+
+/* ── LIGHTBOX LOGIC ── */
+function buildThumbstrip() {
+  const strip = document.getElementById('lb-thumbstrip');
+  strip.innerHTML = filteredPhotos.map((p, i) => `
+    <div class="lb-thumb${i === lbIdx ? ' active' : ''}" onclick="lbGoTo(${i})" role="listitem" aria-label="${p.title}" style="background: ${p.bg}">
+      <div class="lb-thumb-ph"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
+    </div>`).join('');
+}
+
+function openLb(idx) {
+  lbIdx = idx;
+  updateLb();
+  buildThumbstrip();
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLb() {
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function lbGoTo(idx) {
+  lbIdx = idx;
+  updateLb();
+  document.querySelectorAll('.lb-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
+  const thumbs = document.querySelectorAll('.lb-thumb');
+  if (thumbs[idx]) thumbs[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+
+function lbNav(dir) {
+  lbGoTo((lbIdx + dir + filteredPhotos.length) % filteredPhotos.length);
+}
+
+function updateLb() {
+  const p = filteredPhotos[lbIdx];
+  if (!p) return;
+  
+  document.getElementById('lb-counter').textContent = `${lbIdx + 1} / ${filteredPhotos.length}`;
+  document.getElementById('lb-topbar-title').textContent = p.title;
+  
+  // Format Category Label: currentCategory (e.g. Wildlife) + Tag (e.g. Mammals)
+  const catLabel = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1) + ' · ' + p.tag.charAt(0).toUpperCase() + p.tag.slice(1);
+  document.getElementById('lb-cat').textContent = catLabel;
+  
+  document.getElementById('lb-title').textContent = p.title;
+  document.getElementById('lb-caption').textContent = p.caption;
+  document.getElementById('lb-story').textContent = p.story;
+  
+  document.getElementById('lb-cam').textContent = p.cam || '-';
+  document.getElementById('lb-lens').textContent = p.lens || '-';
+  document.getElementById('lb-exp').textContent = p.exp || '-';
+  document.getElementById('lb-loc').textContent = p.loc || '-';
+  document.getElementById('lb-date').textContent = p.date || '-';
+  
+  if (p.src) {
+    lbImgEl.src = p.src;
+    lbImgEl.alt = p.title;
+    lbImgEl.style.display = 'block';
+    document.getElementById('lb-img-ph').style.display = 'none';
+  } else {
+    lbImgEl.src = '';
+    lbImgEl.alt = '';
+    lbImgEl.style.display = 'none';
+    document.getElementById('lb-img-ph').style.display = 'flex';
+  }
+
+  lbPhBg.style.background = p.bg;
+  lbPhBg.style.width = '100%';
+  lbPhBg.style.height = '420px';
+}
+
+function toggleInfoPanel() {
+  const panel = document.getElementById('lb-info-panel');
+  infoPanelOpen = !infoPanelOpen;
+  panel.style.display = infoPanelOpen ? 'flex' : 'none';
+}
+
+/* Lightbox event handlers */
+lb.addEventListener('click', e => {
+  if (e.target.classList.contains('lb-main')) {
+    closeLb();
+  }
+});
+document.addEventListener('keydown', e => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'ArrowLeft') lbNav(-1);
+});
+
+/* Initialize */
+document.addEventListener('DOMContentLoaded', initPage);
+document.addEventListener('siteDataLoaded', initPage);
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+

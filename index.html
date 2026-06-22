@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luminary — Photography</title>
+<meta name="description" content="Photography portfolio — landscapes, wildlife, travel, portraits and stories told in light.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<!-- Page Loader -->
+<div id="loader" role="status" aria-live="polite">
+  <div class="loader-logo">Luminary</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- Custom Cursor (desktop only) -->
+<div id="cursor" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<!-- NAVIGATION -->
+<header id="header" class="site-header" role="banner">
+  <div class="container">
+    <div class="brand-header">
+      <a href="index.html" class="brand-logo">
+        <span class="brand-bold">KRISHNENDU</span> <span class="brand-light">GOSWAMI</span>
+      </a>
+    </div>
+    <nav class="site-nav" role="navigation" aria-label="Main navigation">
+      <ul class="nav-menu">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="blog.html">Deep Dive</a></li>
+        <li class="dropdown">
+          <a href="portfolio.html" class="dropdown-trigger">Genre</a>
+          <ul class="dropdown-menu">
+            <li><a href="gallery.html?category=wildlife">Wildlife</a></li>
+            <li><a href="gallery.html?category=landscape">Landscape</a></li>
+            <li><a href="gallery.html?category=travel">Travel</a></li>
+            <li><a href="gallery.html?category=portrait">Portraits</a></li>
+            <li><a href="gallery.html?category=street">Streets</a></li>
+            <li><a href="gallery.html?category=aerial">Aerial</a></li>
+          </ul>
+        </li>
+        <li><a href="stories.html">Stories</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" role="menu" aria-label="Mobile navigation">
+  <a href="index.html" role="menuitem">Home</a>
+  <a href="about.html" role="menuitem">About</a>
+  <a href="blog.html" role="menuitem">Deep Dive</a>
+  <span style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-top: 0.5rem; display: block; text-align: left;">Genre</span>
+  <div class="mobile-dropdown-menu">
+    <a href="gallery.html?category=wildlife" role="menuitem">Wildlife</a>
+    <a href="gallery.html?category=landscape" role="menuitem">Landscape</a>
+    <a href="gallery.html?category=travel" role="menuitem">Travel</a>
+    <a href="gallery.html?category=portrait" role="menuitem">Portraits</a>
+    <a href="gallery.html?category=street" role="menuitem">Streets</a>
+    <a href="gallery.html?category=aerial" role="menuitem">Aerial</a>
+  </div>
+  <a href="stories.html" role="menuitem">Stories</a>
+  <a href="contact.html" role="menuitem">Contact</a>
+</div>
+
+<!-- FEATURED PHOTOGRAPHS -->
+<section id="featured" aria-labelledby="featured-label">
+  <div class="container">
+    <!-- Category filter bar — centered text links -->
+    <div class="filter-bar reveal" role="tablist" aria-label="Filter by category">
+      <button class="filter-btn active" role="tab" aria-selected="true" onclick="filterPhotos('all', this)">All</button>
+      <button class="filter-btn" role="tab" onclick="filterPhotos('wildlife', this)">Wildlife</button>
+      <button class="filter-btn" role="tab" onclick="filterPhotos('landscape', this)">Landscape</button>
+      <button class="filter-btn" role="tab" onclick="filterPhotos('travel', this)">Travel</button>
+      <button class="filter-btn" role="tab" onclick="filterPhotos('portrait', this)">Portraits</button>
+      <button class="filter-btn" role="tab" onclick="filterPhotos('street', this)">Streets</button>
+      <button class="filter-btn" role="tab" onclick="filterPhotos('aerial', this)">Aerial</button>
+    </div>
+
+    <!-- Divider -->
+    <div class="reveal" style="width: 100%; height: 1px; background: var(--border); margin: 0;"></div>
+
+    <!-- Count + View controls row -->
+    <div class="controls reveal" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; margin-bottom: 1.5rem;">
+      <span class="count-label" id="count-label" style="font-family: var(--font-sans); font-size: 12px; color: var(--text3); letter-spacing: 0.06em;">Showing 0 photographs</span>
+      <div class="view-controls" aria-label="View mode">
+        <button class="view-btn active" onclick="setView('masonry',this)" title="Masonry grid" aria-label="Masonry view">
+          <svg viewBox="0 0 18 18" aria-hidden="true"><rect x="1" y="1" width="7" height="10" rx="1"/><rect x="10" y="1" width="7" height="6" rx="1"/><rect x="1" y="13" width="7" height="4" rx="1"/><rect x="10" y="9" width="7" height="8" rx="1"/></svg>
+        </button>
+        <button class="view-btn" onclick="setView('grid-2',this)" title="2 columns" aria-label="2 column view">
+          <svg viewBox="0 0 18 18" aria-hidden="true"><rect x="1" y="1" width="7" height="16" rx="1"/><rect x="10" y="1" width="7" height="16" rx="1"/></svg>
+        </button>
+        <button class="view-btn" onclick="setView('grid-4',this)" title="4 columns" aria-label="4 column view">
+          <svg viewBox="0 0 18 18" aria-hidden="true"><rect x="1" y="1" width="3" height="16" rx="1"/><rect x="5.5" y="1" width="3" height="16" rx="1"/><rect x="10" y="1" width="3" height="16" rx="1"/><rect x="14.5" y="1" width="3" height="16" rx="1"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Masonry grid -->
+  <div class="container">
+    <div class="masonry" id="masonry" aria-label="Photo gallery">
+      <div class="masonry-item" data-cat="aerial" data-id="0" onclick="openLb(0)" tabindex="0" role="button" aria-label="Mathura Aerial">
+        <img class="masonry-img" src="https://images.unsplash.com/photo-1590050752117-238cb061295a?auto=format&fit=crop&w=800&q=80" alt="Mathura Aerial" style="aspect-ratio: 4/3; object-fit: cover;">
+      </div>
+      <div class="masonry-item" data-cat="travel" data-id="1" onclick="openLb(1)" tabindex="0" role="button" aria-label="Holi Colors">
+        <img class="masonry-img" src="https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=800&q=80" alt="Holi Colors" style="aspect-ratio: 3/4; object-fit: cover;">
+      </div>
+      <div class="masonry-item" data-cat="portrait" data-id="2" onclick="openLb(2)" tabindex="0" role="button" aria-label="Child on Train">
+        <img class="masonry-img" src="https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=800&q=80" alt="Child on Train" style="aspect-ratio: 2/3; object-fit: cover;">
+      </div>
+      <div class="masonry-item" data-cat="travel" data-id="3" onclick="openLb(3)" tabindex="0" role="button" aria-label="Child at Play">
+        <img class="masonry-img" src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80" alt="Child at Play" style="aspect-ratio: 1/1; object-fit: cover;">
+      </div>
+      <div class="masonry-item" data-cat="portrait" data-id="4" onclick="openLb(4)" tabindex="0" role="button" aria-label="Mountain Child">
+        <img class="masonry-img" src="https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?auto=format&fit=crop&w=800&q=80" alt="Mountain Child" style="aspect-ratio: 4/3; object-fit: cover;">
+      </div>
+      <div class="masonry-item" data-cat="street" data-id="5" onclick="openLb(5)" tabindex="0" role="button" aria-label="Monsoon Rain, Mumbai">
+        <img class="masonry-img" src="https://images.unsplash.com/photo-1561361058-c24cecae35ca?auto=format&fit=crop&w=800&q=80" alt="Monsoon Rain, Mumbai" style="aspect-ratio: 2/3; object-fit: cover;">
+      </div>
+      <div class="masonry-item" data-cat="portrait" data-id="6" onclick="openLb(6)" tabindex="0" role="button" aria-label="Market Elder">
+        <img class="masonry-img" src="https://images.unsplash.com/photo-1566847438217-76e82d383f84?auto=format&fit=crop&w=800&q=80" alt="Market Elder" style="aspect-ratio: 2/3; object-fit: cover;">
+      </div>
+      <div class="masonry-item" data-cat="landscape" data-id="7" onclick="openLb(7)" tabindex="0" role="button" aria-label="Monk on the Hill">
+        <img class="masonry-img" src="https://images.unsplash.com/photo-1609137144813-f9c470123cc0?auto=format&fit=crop&w=800&q=80" alt="Monk on the Hill" style="aspect-ratio: 4/3; object-fit: cover;">
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- FOOTER -->
+<footer class="index-footer">
+  <div class="container index-footer-inner">
+    <p class="index-footer-copy">© 2025 Krishnendu Goswami · All rights reserved</p>
+    <div class="index-footer-social" aria-label="Social links">
+      <a href="#" class="social-link" aria-label="Instagram" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" fill="none" stroke-width="1.6"/><circle cx="12" cy="12" r="4" stroke="currentColor" fill="none" stroke-width="1.6"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <a href="#" class="social-link" aria-label="X (Twitter)" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="currentColor" stroke="none"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <div class="lb-bar">
+    <div class="lb-title-wrap">
+      <span class="lb-count" id="lb-count" aria-live="polite">1 / 18</span>
+      <span class="lb-title" id="lb-title-text"></span>
+    </div>
+    <div class="lb-btns">
+      <button class="lb-btn" onclick="lbNav(-1)" aria-label="Previous">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="lb-btn" onclick="lbNav(1)" aria-label="Next">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button class="lb-btn" onclick="closeLb()" aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="lb-stage">
+    <button class="lb-nav-btn" id="lb-prev" onclick="lbNav(-1)" aria-label="Previous photo">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="lb-ph" id="lb-ph">
+      <div class="lb-ph-inner" id="lb-ph-inner" style="aspect-ratio:3/2;"></div>
+    </div>
+    <img id="lb-img" src="" alt="" draggable="false">
+    <button class="lb-nav-btn" id="lb-next" onclick="lbNav(1)" aria-label="Next photo">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+  <div class="lb-footer">
+    <span class="lb-meta" id="lb-meta"></span>
+    <span class="lb-exif" id="lb-exif"></span>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>
+/* ─── HOME PAGE LIGHTBOX & FILTER LOGIC ─── */
+let photos = window.siteData ? window.siteData.homepagePhotos : [];
+
+function renderHomepageGallery() {
+  const masonry = document.getElementById('masonry');
+  if (masonry && window.siteData) {
+    photos = window.siteData.homepagePhotos || [];
+    
+    if (photos.length === 0) {
+      masonry.innerHTML = `
+        <div class="coming-soon-artistic" style="column-span: all; -webkit-column-span: all; grid-column: 1/-1; text-align: center; padding: 7rem 2rem; border: 1px dashed var(--border); border-radius: 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, var(--gold3) 0%, rgba(0,0,0,0) 100%); margin: 2rem 0; width: 100%;">
+          <div style="font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem;">
+            C o m i n g &nbsp; S o o n
+          </div>
+          <p style="font-family: var(--font-serif); font-size: 1.25rem; font-style: italic; color: var(--text2); max-width: 480px; line-height: 1.7; margin: 0; font-weight: 300;">
+            "A collection of light, shadow, and patience. The portfolio is currently being curated for the next exhibition."
+          </p>
+          <div style="margin-top: 2rem; width: 50px; height: 1px; background: var(--gold); opacity: 0.3;"></div>
+        </div>
+      `;
+      return;
+    }
+
+    masonry.innerHTML = photos.map((p, idx) => {
+      return `
+        <div class="masonry-item" data-cat="${p.cat}" data-id="${p.id || idx}" onclick="openLb(${p.id || idx})" tabindex="0" role="button" aria-label="${p.title}">
+          <img class="masonry-img" src="${p.src}" alt="${p.title}" style="width: 100%; height: auto; display: block;">
+        </div>
+      `;
+    }).join('');
+    
+    // Set count label
+    const countLabel = document.getElementById('count-label');
+    if (countLabel) {
+      countLabel.textContent = `Showing ${photos.length} photograph${photos.length !== 1 ? 's' : ''}`;
+    }
+
+    // Bind click/enter triggers to newly created gallery items
+    document.querySelectorAll('.masonry-item').forEach(item => {
+      item.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openLb(parseInt(item.dataset.id));
+        }
+      });
+    });
+  }
+}
+document.addEventListener('DOMContentLoaded', renderHomepageGallery);
+document.addEventListener('siteDataLoaded', renderHomepageGallery);
+
+let lbIdx = 0;
+const lbEl = document.getElementById('lb');
+const lbPhInner = document.getElementById('lb-ph-inner');
+const lbImg = document.getElementById('lb-img');
+
+function openLb(idx) {
+  lbIdx = idx;
+  updateLb();
+  lbEl.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  lbEl.focus();
+}
+
+function closeLb() {
+  lbEl.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function lbNav(dir) {
+  const visibleItems = [...document.querySelectorAll('.masonry-item')]
+    .filter(el => el.style.display !== 'none');
+  const ids = visibleItems.map(el => parseInt(el.dataset.id));
+  const currPos = ids.indexOf(lbIdx);
+  const nextPos = (currPos + dir + ids.length) % ids.length;
+  lbIdx = ids[nextPos];
+  updateLb();
+}
+
+function updateLb() {
+  const p = photos[lbIdx];
+  const visibleItems = [...document.querySelectorAll('.masonry-item')]
+    .filter(el => el.style.display !== 'none');
+  const ids = visibleItems.map(el => parseInt(el.dataset.id));
+  const pos = ids.indexOf(lbIdx);
+
+  document.getElementById('lb-count').textContent = `${pos + 1} / ${ids.length}`;
+  document.getElementById('lb-title-text').textContent = p.title;
+  document.getElementById('lb-meta').textContent = p.meta;
+  document.getElementById('lb-exif').textContent = p.exif;
+  lbPhInner.style.background = p.bg;
+
+  if (p.src) {
+    lbImg.src = p.src;
+    lbImg.alt = p.title;
+    lbImg.style.display = 'block';
+    const lbPh = document.getElementById('lb-ph');
+    if (lbPh) lbPh.style.display = 'none';
+  } else {
+    lbImg.src = '';
+    lbImg.alt = '';
+    lbImg.style.display = 'none';
+    const lbPh = document.getElementById('lb-ph');
+    if (lbPh) lbPh.style.display = 'flex';
+  }
+
+  const srcItem = document.querySelector(`.masonry-item[data-id="${lbIdx}"]`);
+  if (srcItem) {
+    const ph = srcItem.querySelector('.ph, .masonry-img');
+    if (ph) {
+      const ar = ph.style.aspectRatio || '3/2';
+      lbPhInner.style.aspectRatio = ar;
+    }
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (!lbEl.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'ArrowLeft') lbNav(-1);
+});
+lbEl.addEventListener('click', e => { if (e.target === lbEl) closeLb(); });
+
+function filterPhotos(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
+  });
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
+
+  let visibleCount = 0;
+  document.querySelectorAll('.masonry-item').forEach(item => {
+    const show = cat === 'all' || item.dataset.cat === cat;
+    item.style.display = show ? 'block' : 'none';
+    if (show) visibleCount++;
+  });
+
+  const countLabel = document.getElementById('count-label');
+  if (countLabel) {
+    countLabel.textContent = `Showing ${visibleCount} of ${photos.length} photograph${photos.length !== 1 ? 's' : ''}`;
+  }
+}
+
+function setView(mode, btn) {
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const masonry = document.getElementById('masonry');
+  masonry.className = 'masonry';
+  if (mode === 'grid-2') masonry.classList.add('grid-2');
+  if (mode === 'grid-4') masonry.classList.add('grid-4');
+}
+
+function submitForm(e) {
+  e.preventDefault();
+  const btn = document.getElementById('form-btn');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  setTimeout(() => {
+    document.getElementById('form-success').style.display = 'block';
+    btn.textContent = 'Send Message';
+    btn.disabled = false;
+    document.getElementById('contact-form').reset();
+    setTimeout(() => { document.getElementById('form-success').style.display = 'none'; }, 5000);
+  }, 1200);
+}
+</script>
+</body>
+</html>
+
+
+
+
+
+
+

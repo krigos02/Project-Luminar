@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Last Snow Leopard Corridors — Luminary</title>
+<meta name="description" content="A four-year journey documenting the fragile survival of snow leopards in Spiti and Ladakh.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ── PROJECT SPECIFIC STYLE ── */
+:root {
+  --content-w: 760px;
+}
+body {
+  line-height: 1.7;
+}
+a {
+  color: var(--gold);
+}
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--gold);
+  z-index: 901;
+  width: 0;
+  transition: width 0.1s linear;
+}
+
+/* HERO */
+.story-hero {
+  height: 100dvh;
+  min-height: 640px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+.story-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero-ph {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(160deg, #0a1a0a 0%, #0f2010 40%, #0a1505 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-ph svg {
+  width: 60px;
+  height: 60px;
+  stroke: rgba(201,169,110,0.1);
+  fill: none;
+  stroke-width: 0.8;
+}
+.story-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(5,8,5,0.95) 0%, rgba(5,8,5,0.4) 50%, rgba(5,8,5,0.2) 100%);
+}
+.story-hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 0 clamp(20px, 5vw, 80px) 5rem;
+}
+.story-hero-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.story-tag {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.story-tag::before {
+  content: '';
+  width: 30px;
+  height: 1px;
+  background: var(--gold);
+  display: block;
+}
+.story-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 6vw, 5.5rem);
+  color: #fff;
+  line-height: 1.05;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+.story-hero-title em {
+  font-style: italic;
+  color: var(--gold2);
+}
+.story-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.story-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+.story-meta-item svg {
+  width: 13px;
+  height: 13px;
+  stroke: var(--gold);
+  fill: none;
+  stroke-width: 1.5;
+}
+.story-scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  right: clamp(20px, 5vw, 80px);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.story-scroll-hint span {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  writing-mode: vertical-rl;
+}
+.scroll-line-v {
+  width: 1px;
+  height: 50px;
+  background: linear-gradient(to bottom, transparent, rgba(201,169,110,0.5));
+  animation: scrollPulse 2.5s ease infinite;
+}
+
+/* ARTICLE BODY */
+.article {
+  max-width: var(--content-w);
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 40px);
+}
+
+/* Intro stats bar */
+.story-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 5rem 0 4rem;
+  background: var(--bg2);
+}
+.story-stat {
+  padding: 1.5rem;
+  border-right: 1px solid var(--border);
+}
+.story-stat:last-child {
+  border-right: none;
+}
+.story-stat-num {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.story-stat-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+/* Typography */
+.story-lede {
+  font-family: var(--font-serif);
+  font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--text);
+  margin-bottom: 2.5rem;
+  font-style: italic;
+}
+.story-body p {
+  font-family: var(--font-serif);
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--text2);
+  line-height: 1.85;
+  margin-bottom: 1.75rem;
+}
+.story-body h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  color: var(--text);
+  margin: 3.5rem 0 1.25rem;
+  line-height: 1.15;
+  font-weight: 400;
+}
+.story-body h2 em {
+  color: var(--gold);
+  font-style: italic;
+}
+.story-body blockquote {
+  border-left: 2px solid var(--gold);
+  padding: 1rem 0 1rem 1.75rem;
+  margin: 2.5rem 0;
+  background: none;
+}
+.story-body blockquote p {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--text);
+  font-style: italic;
+  margin: 0;
+  line-height: 1.6;
+}
+.story-body blockquote cite {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-top: 0.75rem;
+  font-style: normal;
+}
+
+/* Full-bleed image */
+.story-img-full {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin: 4rem 0;
+}
+.story-img-ph {
+  height: clamp(300px, 55vw, 700px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.story-img-ph svg {
+  width: 48px;
+  height: 48px;
+  stroke: rgba(201,169,110,0.1);
+  fill: none;
+  stroke-width: 0.8;
+}
+.story-img-caption {
+  max-width: var(--content-w);
+  margin: 0 auto;
+  padding: 0.75rem clamp(20px, 5vw, 40px) 0;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.story-img-caption::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+/* Inline images */
+.story-img-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 3rem 0;
+}
+.story-img-pair-item {
+  overflow: hidden;
+  border-radius: 2px;
+}
+.story-img-single {
+  margin: 3rem 0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.story-img-ph-sm {
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.story-img-ph-sm svg {
+  width: 28px;
+  height: 28px;
+  stroke: rgba(201,169,110,0.15);
+  fill: none;
+  stroke-width: 1;
+}
+.img-caption-sm {
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.06em;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* Drop cap */
+.drop-cap::first-letter {
+  font-family: var(--font-display);
+  float: left;
+  font-size: 5rem;
+  line-height: 0.75;
+  margin-right: 0.1em;
+  margin-top: 0.1em;
+  color: var(--gold);
+}
+
+/* Chapter marker */
+.chapter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 4rem 0 2rem;
+}
+.chapter-num {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.chapter-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* INLINE GALLERY STRIP */
+.gallery-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding: 0 0 1rem;
+  margin: 3rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+.gallery-strip::-webkit-scrollbar {
+  height: 3px;
+}
+.gallery-strip::-webkit-scrollbar-thumb {
+  background: var(--gold3);
+  border-radius: 2px;
+}
+.strip-item {
+  flex-shrink: 0;
+  width: 260px;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 2px;
+  position: relative;
+}
+.strip-item:hover .strip-ph {
+  transform: scale(1.04);
+}
+.strip-ph {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.6s var(--ease-out);
+}
+.strip-ph svg {
+  width: 24px;
+  height: 24px;
+  stroke: rgba(201,169,110,0.12);
+  fill: none;
+  stroke-width: 1;
+}
+.strip-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.strip-item:hover .strip-overlay {
+  opacity: 1;
+}
+.strip-title {
+  font-size: 12px;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+
+/* NEXT PROJECT */
+.next-project {
+  border-top: 1px solid var(--border);
+  margin-top: 5rem;
+  padding-top: 3rem;
+  padding-bottom: 5rem;
+}
+.next-label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 1.5rem;
+}
+.next-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.next-card {
+  display: block;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 16/9;
+}
+.next-card-ph {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.7s var(--ease-out);
+}
+.next-card:hover .next-card-ph {
+  transform: scale(1.05);
+}
+.next-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 60%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.5rem;
+}
+.next-card-tag {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.next-card-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: #fff;
+  line-height: 1.15;
+}
+
+/* AUTHOR / SHARE */
+.story-footer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 3rem 0;
+  border-top: 1px solid var(--border);
+  margin-top: 4rem;
+}
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.author-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--gold);
+}
+.author-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+.author-role {
+  font-size: 12px;
+  color: var(--text3);
+}
+.share-label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.share-btns {
+  display: flex;
+  gap: 8px;
+}
+.share-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.share-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.share-btn svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
+
+/* FOOTER */
+.mini-footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 0;
+}
+.mini-footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 60px);
+}
+.mini-footer-copy {
+  font-size: 12px;
+  color: var(--text3);
+}
+.mini-footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+.mini-footer-links a {
+  font-size: 12px;
+  color: var(--text3);
+  transition: color 0.25s;
+}
+.mini-footer-links a:hover {
+  color: var(--text2);
+}
+
+@media(max-width: 768px) {
+  .story-img-pair { grid-template-columns: 1fr; }
+  .next-grid { grid-template-columns: 1fr; }
+  .story-stats { grid-template-columns: 1fr 1fr; }
+  .story-stat { border-right: none; border-bottom: 1px solid var(--border); }
+  .story-stat:nth-child(odd) { border-right: 1px solid var(--border); }
+}
+</style>
+</head>
+<body class="no-select">
+
+<!-- Reading progress bar -->
+<div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
+
+<!-- Loader -->
+<div id="loader" role="status" aria-live="polite">
+  <div class="loader-logo">Luminary</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- Cursor elements -->
+<div id="cursor" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<!-- NAV -->
+<header id="header" class="site-header" role="banner">
+  <div class="container">
+    <div class="header-left-actions">
+      <a href="stories.html" class="nav-back">← All Stories</a>
+    </div>
+    <div class="brand-header">
+      <a href="index.html" class="brand-logo">
+        <span class="brand-bold">KRISHNENDU</span> <span class="brand-light">GOSWAMI</span>
+      </a>
+    </div>
+    <div class="header-actions">
+      <!-- Theme toggle will be injected here -->
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="story-hero" aria-label="Project hero">
+  <div class="story-hero-bg">
+    <div class="hero-ph" aria-hidden="true">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 36c0-12 7-22 18-22s18 10 18 22"/><circle cx="24" cy="14" r="10"/><path d="M16 14a8 8 0 0116 0"/></svg>
+    </div>
+  </div>
+  <div class="story-hero-overlay" aria-hidden="true"></div>
+  <div class="story-hero-content">
+    <div class="story-hero-inner">
+      <div class="story-tag">Wildlife · Long-form Project</div>
+      <h1 class="story-hero-title">The Last Snow<br>Leopard <em>Corridors</em></h1>
+      <div class="story-hero-meta">
+        <div class="story-meta-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 018 8c0 5.25-8 14-8 14S4 15.25 4 10a8 8 0 018-8z"/></svg>
+          Spiti &amp; Ladakh, India
+        </div>
+        <div class="story-meta-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          2019 — 2023 · 4 Years
+        </div>
+        <div class="story-meta-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          48 Photographs
+        </div>
+        <div class="story-meta-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Photography &amp; Text by Krishnendu Goswami
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="story-scroll-hint" aria-hidden="true">
+    <span>Scroll</span>
+    <div class="scroll-line-v"></div>
+  </div>
+</section>
+
+<!-- ARTICLE -->
+<article>
+
+  <!-- Stats bar -->
+  <div class="article">
+    <div class="story-stats reveal">
+      <div class="story-stat"><div class="story-stat-num">4</div><div class="story-stat-label">Years of fieldwork</div></div>
+      <div class="story-stat"><div class="story-stat-num">18</div><div class="story-stat-label">Expeditions</div></div>
+      <div class="story-stat"><div class="story-stat-num">48</div><div class="story-stat-label">Photographs</div></div>
+      <div class="story-stat"><div class="story-stat-num">4,800m</div><div class="story-stat-label">Max altitude</div></div>
+      <div class="story-stat"><div class="story-stat-num">7</div><div class="story-stat-label">Individual leopards</div></div>
+    </div>
+
+    <div class="story-lede reveal">
+      There are perhaps 4,000 to 6,500 snow leopards left in the world. They occupy the silence between mountain ridges at altitudes where most things stop working — cameras, lungs, certainty. This project began as a single winter expedition and became a four-year reckoning with patience, altitude, and the ethics of watching something vanish.
+    </div>
+  </div>
+
+  <!-- Full bleed image 1 -->
+  <div class="story-img-full reveal">
+    <div class="story-img-ph" style="background:linear-gradient(160deg,#0a150a 0%,#0f2010 50%,#0a1205 100%)">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="20" r="12"/><path d="M8 44c0-8.84 7.16-16 16-16s16 7.16 16 16"/></svg>
+    </div>
+    <div class="story-img-caption">Snow leopard male at 4,600m, Kibber Wildlife Sanctuary, Himachal Pradesh. Canon EOS R5, 500mm f/4L IS · February 2022</div>
+  </div>
+
+  <div class="article">
+    <div class="story-body">
+
+      <div class="chapter reveal"><span class="chapter-num">Chapter One</span><div class="chapter-line"></div></div>
+
+      <h2 class="reveal">The Mountain <em>That Eats Light</em></h2>
+
+      <p class="drop-cap reveal">The Spiti Valley in February is a world that has decided to stop. The river is sealed under ice of improbable thickness. The villages — Pin, Kaza, Kibber — sit under snow so heavy the rooftops groan at night. The road from Manali has been closed since November. You arrive by choice or you do not arrive at all.</p>
+
+      <p class="reveal">I came the first time in February 2019 following a tip from a wildlife biologist based at the Snow Leopard Trust field station in Kibber. She had been tracking a female, GPS-collared the previous spring, and her movement data suggested a corridor through the upper boulder fields above the village that the cat used with almost calendar regularity.</p>
+
+      <blockquote class="reveal">
+        <p>"The camera is the least interesting part of this work. The interesting part is learning to read a mountain — understanding why a leopard uses a certain boulder, at what light, in what temperature, after what kind of snowfall."</p>
+        <cite>— Field notes, Kibber, February 2019</cite>
+      </blockquote>
+
+      <p class="reveal">I spent eight days that first winter not photographing a snow leopard. I photographed the absence of one — tracks in fresh snow, a carcass of a bharal dragged behind a boulder and cached under stones, the watching eyes of the herder who knew every movement on that hillside better than any GPS collar ever could.</p>
+
+      <!-- Pair of inline images -->
+      <div class="story-img-pair reveal">
+        <div class="story-img-pair-item">
+          <div class="story-img-ph-sm" style="background:linear-gradient(135deg,#0f1a0f,#182a18)">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 40c0-12 7-22 18-22s18 10 18 22"/></svg>
+          </div>
+          <p class="img-caption-sm">Snow leopard tracks in fresh snowfall, 4,400m, Kibber · 2019</p>
+        </div>
+        <div class="story-img-pair-item">
+          <div class="story-img-ph-sm" style="background:linear-gradient(135deg,#0a1010,#152020)">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="16"/></svg>
+          </div>
+          <p class="img-caption-sm">Bharal (blue sheep) herd above Kibber — primary prey species · 2019</p>
+        </div>
+      </div>
+
+      <div class="chapter reveal"><span class="chapter-num">Chapter Two</span><div class="chapter-line"></div></div>
+
+      <h2 class="reveal">Learning to <em>Wait</em></h2>
+
+      <p class="reveal">By the third expedition, in January 2021, I had learned that the snow leopard's world operates on rhythms I could not hurry. The bharal moved to lower slopes as temperatures dropped. The leopard followed. But the corridor — the narrow band of habitat between human settlements and the high snowfields above — was contracting.</p>
+
+      <p class="reveal">Climate science had already documented what the locals had known for years: the snowlines were rising. The high-altitude pastures were greening earlier, drawing livestock further into leopard territory. The buffer zone that had allowed both species to exist in the same valley was being quietly erased by degrees.</p>
+
+    </div>
+  </div>
+
+  <!-- Full bleed image 2 -->
+  <div class="story-img-full reveal">
+    <div class="story-img-ph" style="background:linear-gradient(135deg,#0a0f0a 0%,#151e15 50%,#0a1a0a 100%)">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="24" rx="18" ry="12"/></svg>
+    </div>
+    <div class="story-img-caption">High-altitude pasture boundary, upper Kibber Wildlife Sanctuary. The line between livestock territory and leopard habitat has shifted 200m upward in the past decade.</div>
+  </div>
+
+  <div class="article">
+    <div class="story-body">
+
+      <div class="chapter reveal"><span class="chapter-num">Chapter Three</span><div class="chapter-line"></div></div>
+
+      <h2 class="reveal">The Photograph That <em>Arrived</em></h2>
+
+      <p class="reveal">The encounter that produced the defining image of this project happened on the fourteenth morning of my fourth winter expedition. I was positioned before sunrise at a rocky outcrop at 4,620 metres — a spot the biologist had identified as a favourite resting site for a sub-adult male she had designated SL-07.</p>
+
+      <p class="reveal">He walked out of the boulder field at 06:47, when the light was still blue-grey and diffused by thin cloud. He was forty metres away. He looked directly at me for seven seconds — long enough for me to make three exposures — then moved past with the absolute indifference that is the defining quality of a large predator that has never learned to fear anything.</p>
+
+      <blockquote class="reveal">
+        <p>"In those seven seconds I was not a photographer. I was a part of the landscape, correctly positioned and sufficiently still. The camera was incidental."</p>
+        <cite>— Field notes, Kibber, February 2022</cite>
+      </blockquote>
+
+      <!-- Gallery strip -->
+      <div class="story-body">
+        <p class="reveal" style="font-size:13px;color:var(--text3);letter-spacing:0.06em;margin-bottom:1rem">GALLERY — Selected frames from the encounter, February 14, 2022</p>
+      </div>
+      <div class="gallery-strip" role="list">
+        <div class="strip-item" role="listitem" style="background:linear-gradient(135deg,#0f1a0f,#1a2e1a)">
+          <div class="strip-ph"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="20" r="12"/></svg></div>
+          <div class="strip-overlay"><div class="strip-title">06:44 — Before the encounter</div></div>
+        </div>
+        <div class="strip-item" role="listitem" style="background:linear-gradient(135deg,#121a10,#1e2e18)">
+          <div class="strip-ph"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 36c0-12 7-22 18-22s18 10 18 22"/></svg></div>
+          <div class="strip-overlay"><div class="strip-title">06:47 — First contact</div></div>
+        </div>
+        <div class="strip-item" role="listitem" style="background:linear-gradient(135deg,#0a150a,#152015)">
+          <div class="strip-ph"><svg viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="20" rx="16" ry="10"/></svg></div>
+          <div class="strip-overlay"><div class="strip-title">06:47 — Direct gaze</div></div>
+        </div>
+        <div class="strip-item" role="listitem" style="background:linear-gradient(135deg,#0f1f0f,#182818)">
+          <div class="strip-ph"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="18" r="14"/></svg></div>
+          <div class="strip-overlay"><div class="strip-title">06:48 — Departure</div></div>
+        </div>
+        <div class="strip-item" role="listitem" style="background:linear-gradient(135deg,#0a1a0a,#142214)">
+          <div class="strip-ph"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 40c0-10 8-20 18-20s18 10 18 20"/></svg></div>
+          <div class="strip-overlay"><div class="strip-title">06:50 — Final frame</div></div>
+        </div>
+      </div>
+
+      <div class="chapter reveal"><span class="chapter-num">Afterword</span><div class="chapter-line"></div></div>
+
+      <h2 class="reveal">What This <em>Project Asks</em></h2>
+
+      <p class="reveal">This is not a project about photography. It is a project about a corridor — a thin ribbon of altitude and climate and habit that connects the snow leopard's high-altitude hunting grounds to the lower pastures where its prey spends the winter. That corridor is narrowing.</p>
+
+      <p class="reveal">SL-07, the sub-adult male whose seven-second gaze produced the photograph that anchors this series, was last detected by his GPS collar in November 2023. The collar's battery had been scheduled to last another eight months. The signal stopped without explanation.</p>
+
+      <p class="reveal">The Snow Leopard Trust estimates the species' numbers will decline by at least 10% over the next 16 years if current warming trends continue. These images are not advocacy. They are a record. The difference, I have come to believe, matters less than we would like it to.</p>
+
+    </div>
+
+    <!-- Author / Share -->
+    <div class="story-footer-meta reveal">
+      <div class="author-info">
+        <div class="author-avatar">AT</div>
+        <div>
+          <div class="author-name">Krishnendu Goswami</div>
+          <div class="author-role">Wildlife Photographer · 4 Winters in Spiti</div>
+        </div>
+      </div>
+      <div>
+        <div class="share-label">Share</div>
+        <div class="share-btns">
+          <button class="share-btn" aria-label="Share on Twitter">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+          </button>
+          <button class="share-btn" aria-label="Share on Facebook">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </button>
+          <button class="share-btn" aria-label="Copy link" onclick="copyLink()">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end article -->
+
+  <!-- Next projects -->
+  <div class="article">
+    <div class="next-project reveal">
+      <div class="next-label">Continue Exploring</div>
+      <div class="next-grid">
+        <a href="project.html" class="next-card">
+          <div class="next-card-ph" style="background:linear-gradient(135deg,#1a0f0f,#2a1a1a)">
+            <svg viewBox="0 0 48 48" fill="none" stroke="rgba(201,169,110,0.1)" stroke-width="1" aria-hidden="true"><circle cx="24" cy="20" r="12"/><path d="M8 44c0-8.84 7.16-16 16-16s16 7.16 16 16"/></svg>
+          </div>
+          <div class="next-card-overlay">
+            <div class="next-card-tag">Travel · Rajasthan · 2022</div>
+            <div class="next-card-title">Colours Beneath the Desert Sky</div>
+          </div>
+        </a>
+        <a href="project.html" class="next-card">
+          <div class="next-card-ph" style="background:linear-gradient(135deg,#0f0f1a,#1a1a2a)">
+            <svg viewBox="0 0 48 48" fill="none" stroke="rgba(201,169,110,0.1)" stroke-width="1" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M24 6v4M24 38v4"/></svg>
+          </div>
+          <div class="next-card-overlay">
+            <div class="next-card-tag">Astrophotography · Pan-India · 2021</div>
+            <div class="next-card-title">Light Pollution: A Night Atlas</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</article>
+
+<!-- FOOTER -->
+<footer class="mini-footer">
+  <div class="mini-footer-inner">
+    <div class="mini-footer-copy">© 2025 Krishnendu Goswami · All photographs protected</div>
+    <nav class="mini-footer-links">
+      <a href="index.html">Home</a>
+      <a href="stories.html">All Stories</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>
+// Reading progress scroll listener
+const progress = document.getElementById('reading-progress');
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  if (docHeight > 0) {
+    progress.style.width = `${(scrollTop / docHeight) * 100}%`;
+  }
+}, { passive: true });
+
+// Copy link to clipboard helper
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const btn = document.querySelector('[aria-label="Copy link"]');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" fill="none"/></svg>';
+    setTimeout(() => btn.innerHTML = orig, 1500);
+  });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', loadStoryDetails);
+document.addEventListener('siteDataLoaded', loadStoryDetails);
+
+function loadStoryDetails() {
+  if (window.siteData && window.siteData.stories) {
+    const params = new URLSearchParams(window.location.search);
+    const storySlug = params.get('story');
+    if (storySlug) {
+      const story = window.siteData.stories.find(s => s.slug === storySlug);
+      if (story) {
+        document.title = `${story.title} — Stories · Luminary`;
+        
+        const tagEl = document.querySelector('.story-tag');
+        if (tagEl) tagEl.textContent = story.tag;
+        
+        const titleEl = document.querySelector('.story-hero-title');
+        if (titleEl) titleEl.textContent = story.title;
+        
+        const metaItems = document.querySelectorAll('.story-meta-item');
+        if (metaItems.length >= 2) {
+          metaItems[0].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> ${story.years} · ${story.duration}`;
+          metaItems[1].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a8 8 0 00-8 8c0 5.25 8 14 8 14s8-8.75 8-14a8 8 0 00-8-8z"/></svg> ${story.location}`;
+        }
+        
+        const heroBg = document.querySelector('.story-hero-bg');
+        if (heroBg) {
+          if (story.src) {
+            heroBg.innerHTML = `<img src="${story.src}" alt="${story.title}" style="width:100%;height:100%;object-fit:cover;">`;
+          } else {
+            heroBg.innerHTML = `<div class="hero-ph" style="background: ${story.bg || 'linear-gradient(160deg,#151515,#2a2a2a)'}"></div>`;
+          }
+        }
+      }
+    }
+  }
+}
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
