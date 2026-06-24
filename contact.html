@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contact Krishnendu Goswami — Luminary</title>
+<title>Contact Krishnendu Goswami — Luminar</title>
 <meta name="description" content="Get in touch with Krishnendu Goswami for prints, licensing, commissions, and workshop bookings.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -180,7 +180,7 @@ textarea.form-control {
 
 <!-- Loader -->
 <div id="loader" role="status" aria-live="polite">
-  <div class="loader-logo">Luminary</div>
+  <div class="loader-logo">Luminar</div>
   <div class="loader-bar"><div class="loader-fill"></div></div>
 </div>
 
@@ -193,7 +193,7 @@ textarea.form-control {
   <div class="container">
     <div class="brand-header">
       <a href="index.html" class="brand-logo">
-        <span class="brand-bold">KRISHNENDU</span> <span class="brand-light">GOSWAMI</span>
+        Krishnendu Goswami
       </a>
     </div>
     <nav class="site-nav" role="navigation" aria-label="Main navigation">
@@ -294,15 +294,9 @@ textarea.form-control {
       <!-- Form Col -->
       <div class="contact-form reveal-right">
         <form id="contact-form" onsubmit="submitForm(event)">
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="fname">First Name</label>
-              <input type="text" id="fname" class="form-control" placeholder="Your first name" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="lname">Last Name</label>
-              <input type="text" id="lname" class="form-control" placeholder="Your last name">
-            </div>
+          <div class="form-group">
+            <label class="form-label" for="fullname">Full Name</label>
+            <input type="text" id="fullname" class="form-control" placeholder="Your full name" required>
           </div>
           <div class="form-group">
             <label class="form-label" for="email">Email Address</label>
@@ -310,7 +304,7 @@ textarea.form-control {
           </div>
           <div class="form-group">
             <label class="form-label" for="subject">Subject</label>
-            <select id="subject" class="form-control" style="appearance:none;-webkit-appearance:none; border-radius: 2px;">
+            <select id="subject" class="form-control" required style="appearance:none;-webkit-appearance:none; border-radius: 2px;">
               <option value="">Select a topic</option>
               <option value="Book / Commission">Book a Session / Commission</option>
               <option value="Print">Print purchase</option>
@@ -320,8 +314,8 @@ textarea.form-control {
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" for="message">Message</label>
-            <textarea id="message" class="form-control" placeholder="Tell me about your project or question..." required></textarea>
+            <label class="form-label" for="message">Message (Optional)</label>
+            <textarea id="message" class="form-control" placeholder="Tell me about your project or question..."></textarea>
           </div>
           <button type="submit" class="form-submit" id="form-submit-btn">Send Message</button>
           <div id="form-success" style="display:none;margin-top:1rem;padding:12px;border:1px solid var(--gold);color:var(--gold);font-size:13px;text-align:center;border-radius:2px;letter-spacing:0.06em">Message sent — I'll be in touch shortly.</div>
@@ -338,7 +332,7 @@ textarea.form-control {
     <div class="footer-top">
       <div class="footer-brand">
         <a href="index.html" class="nav-logo">
-          Luminary
+          Luminar
         </a>
         <p>A visual archive of light, wilderness, and the human story — built over two decades of patient observation across India and beyond.</p>
       </div>
@@ -372,7 +366,9 @@ textarea.form-control {
       </div>
     </div>
     <div class="footer-bottom">
-      <div class="footer-copy">© 2025 Krishnendu Goswami · All Rights Reserved · All images protected</div>
+      <div class="footer-copy">© 2026 Krishnendu Goswami · All Rights Reserved · All images protected<br>
+        <span style="font-size: 0.85em; display: block; margin-top: 0.5rem; color: var(--gray);">Developed & Maintained by <a href="https://www.linkedin.com/in/soutrik-chowdhury?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline;">Soutrik Chowdhury</a> and Krishnendu Goswami</span>
+      </div>
       <div class="footer-links">
         <a href="#">Privacy</a>
         <a href="#">Terms</a>
@@ -409,38 +405,105 @@ async function submitForm(e) {
   const btn = document.getElementById('form-submit-btn');
   const successMsg = document.getElementById('form-success');
   
+  // Rate-limiting check (max 1 message per 30 seconds)
+  const LAST_SUBMIT_KEY = 'last_contact_submit_time';
+  const now = Date.now();
+  const lastSubmit = localStorage.getItem(LAST_SUBMIT_KEY);
+  if (lastSubmit && (now - parseInt(lastSubmit, 10) < 30000)) {
+    const waitSecs = Math.ceil((30000 - (now - parseInt(lastSubmit, 10))) / 1000);
+    alert(`Please wait ${waitSecs} seconds before submitting another message.`);
+    return;
+  }
+  
+  const nameVal = document.getElementById('fullname').value.trim();
+  const emailVal = document.getElementById('email').value.trim();
+  const subjectVal = document.getElementById('subject').value;
+  const messageVal = document.getElementById('message').value.trim();
+
+  if (!nameVal || !emailVal || !subjectVal) {
+    alert("Please fill in all required fields.");
+    return;
+  }
+
+  const originalBtnText = btn.textContent;
   btn.textContent = 'Sending...';
   btn.disabled = true;
 
   const msgData = {
-    first_name: document.getElementById('fname').value.trim(),
-    last_name: document.getElementById('lname').value.trim(),
-    email: document.getElementById('email').value.trim(),
-    subject: document.getElementById('subject').value,
-    message: document.getElementById('message').value.trim(),
+    name: nameVal,
+    email: emailVal,
+    subject: subjectVal,
+    message: messageVal,
     created_at: new Date().toISOString()
   };
   
   try {
-    const { error } = await supabaseClient
+    // 1. Save submission to Supabase contact_messages table
+    let insertedData = null;
+    let dbResult = await supabaseClient
       .from('contact_messages')
-      .insert([msgData]);
+      .insert([msgData])
+      .select();
       
-    if (error) throw error;
+    if (dbResult.error) {
+      const errMessage = dbResult.error.message || '';
+      // If schema cache lacks 'name', fall back and retry using legacy first_name/last_name columns
+      if (errMessage.includes("column") || errMessage.includes("schema cache") || dbResult.error.code === 'PGRST204') {
+        console.warn("Table contact_messages does not have 'name' column. Retrying with legacy first_name/last_name fields...");
+        const nameParts = nameVal.split(/\s+/);
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        
+        const legacyMsgData = {
+          first_name: firstName,
+          last_name: lastName,
+          email: emailVal,
+          subject: subjectVal,
+          message: messageVal,
+          created_at: msgData.created_at
+        };
+        
+        const retryResult = await supabaseClient
+          .from('contact_messages')
+          .insert([legacyMsgData])
+          .select();
+          
+        if (retryResult.error) throw retryResult.error;
+        insertedData = retryResult.data && retryResult.data[0] ? retryResult.data[0] : legacyMsgData;
+      } else {
+        throw dbResult.error;
+      }
+    } else {
+      insertedData = dbResult.data && dbResult.data[0] ? dbResult.data[0] : msgData;
+    }
+
+    // Rate-limit success timestamp
+    localStorage.setItem(LAST_SUBMIT_KEY, Date.now().toString());
+
+    // 2. Trigger Supabase Edge Function to send email
+    try {
+      await supabaseClient.functions.invoke('send-contact-email', {
+        body: { record: insertedData || msgData }
+      });
+    } catch (funcErr) {
+      console.warn("Database insertion succeeded, but Edge Function trigger failed:", funcErr);
+      // Suppress error so user gets positive confirmation (Req 7: messages must remain stored in Supabase even if email fails)
+    }
 
     successMsg.style.display = 'block';
+    successMsg.textContent = 'Message sent successfully — I\'ll be in touch shortly.';
     btn.textContent = 'Sent!';
     document.getElementById('contact-form').reset();
     
     setTimeout(() => {
-      btn.textContent = 'Send Message';
+      btn.textContent = originalBtnText;
       btn.disabled = false;
       successMsg.style.display = 'none';
     }, 5000);
   } catch (err) {
     console.error("Failed to submit contact enquiry:", err);
     alert("Could not deliver message: " + err.message);
-    btn.textContent = 'Send Message';
+    btn.textContent = originalBtnText;
     btn.disabled = false;
   }
 }

@@ -1,5 +1,5 @@
 /* ── THEME TOGGLE ── */
-const THEME_STORAGE_KEY = 'luminary-theme';
+const THEME_STORAGE_KEY = 'luminar-theme';
 
 const getStoredTheme = () => {
   try {
@@ -246,16 +246,29 @@ function updateDynamicLayout() {
     
     // Update brand logos
     document.querySelectorAll('.brand-logo').forEach(logo => {
-      const parts = profile.name.split(' ');
+      const name = profile.name || 'Krishnendu Goswami';
+      const parts = name.split(' ');
       const first = parts[0] || '';
       const rest = parts.slice(1).join(' ') || '';
       logo.innerHTML = `<span class="brand-bold">${first.toUpperCase()}</span> <span class="brand-light">${rest.toUpperCase()}</span>`;
     });
     
     // Update footer copyrights
-    document.querySelectorAll('.footer-copy, .index-footer-copy, .footer-bottom .footer-copy').forEach(copy => {
-      copy.innerHTML = `© 2025 ${profile.name} · All rights reserved · <a href="admin.html" class="footer-admin-link" style="opacity: 0.4; transition: opacity 0.2s; text-decoration: none; font-size: 11.5px; letter-spacing: 0.05em; display: inline-block; margin-left: 10px;">CMS Dashboard</a>`;
+    document.querySelectorAll('.footer-copy, .index-footer-copy, .footer-bottom .footer-copy, .mini-footer-copy').forEach(copy => {
+      copy.innerHTML = `© 2026 ${profile.name} · All rights reserved<br>
+        <span style="font-size: 0.85em; display: block; margin-top: 0.5rem; color: var(--gray);">Developed & Maintained by <a href="https://www.linkedin.com/in/soutrik-chowdhury?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener" class="footer-credit-link" style="color: inherit; border-bottom: 1px dotted var(--gray); padding-bottom: 1px; transition: color 0.25s;">Soutrik Chowdhury</a> and ${profile.name}</span>
+        <a href="admin.html" class="footer-admin-link" style="opacity: 0.4; transition: opacity 0.2s; text-decoration: none; font-size: 11.5px; letter-spacing: 0.05em; display: inline-block; margin-top: 5px;">CMS Dashboard</a>`;
     });
+
+    // Replace Luminary with Luminar in texts and loaders
+    document.querySelectorAll('.loader-logo, .nav-logo, .footer-brand .nav-logo, title, h2').forEach(el => {
+      if (el.textContent.includes('Luminary')) {
+        el.innerHTML = el.innerHTML.replace(/Luminary/g, 'Luminar');
+      }
+    });
+
+    // Setup Legal Modal Click Listeners dynamically
+    setupLegalModals();
 
     // Update social link URLs dynamically based on aria-label
     document.querySelectorAll('.social-link').forEach(link => {
@@ -315,5 +328,145 @@ function updateDynamicLayout() {
     }
   }
 }
+
+/* ── LEGAL MODALS CREATOR & BINDINGS ── */
+function setupLegalModals() {
+  // If modals don't exist yet, inject them into body
+  if (!document.getElementById('privacy-modal')) {
+    const modalHtml = `
+      <div id="privacy-modal" class="legal-modal" role="dialog" aria-modal="true" aria-labelledby="pm-title">
+        <div class="legal-modal-card">
+          <div class="legal-modal-header">
+            <h2 id="pm-title" class="legal-modal-title">Privacy Policy</h2>
+            <button class="legal-modal-close" onclick="closeLegalModal('privacy-modal')" aria-label="Close modal">
+              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="legal-modal-body">
+            <h3>1. Information Collection</h3>
+            <p>We respect your privacy. This portfolio is primarily a visual gallery. We only collect personal identifier details when you explicitly use the Contact form to send messages or enquire about prints/licensing. We do not sell or share your data.</p>
+            <h3>2. Cookies &amp; Data</h3>
+            <p>Our website utilizes minimal local storage solely to remember your custom display preference settings (such as dark or light theme) and to save your dashboard workspace state. No third-party marketing or tracking cookies are employed.</p>
+            <h3>3. Third-Party Services &amp; Security</h3>
+            <p>We leverage secure cloud infrastructure (Supabase) to safely store message logs. They act strictly as a data processor. Your data is encrypted and maintained with high security standards.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="terms-modal" class="legal-modal" role="dialog" aria-modal="true" aria-labelledby="tm-title">
+        <div class="legal-modal-card">
+          <div class="legal-modal-header">
+            <h2 id="tm-title" class="legal-modal-title">Terms of Use</h2>
+            <button class="legal-modal-close" onclick="closeLegalModal('terms-modal')" aria-label="Close modal">
+              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="legal-modal-body">
+            <h3>1. Acceptance of Terms</h3>
+            <p>By accessing and browsing this portfolio, you signify your agreement to comply with and be bound by these Terms of Use and all applicable laws and regulations.</p>
+            <h3>2. Permitted Use &amp; Restrictions</h3>
+            <p>You may view the high-resolution photographic archive solely for personal, non-commercial inspiration. Hotlinking images directly, scraping content, downloading images, or running automated extractors on this archive is strictly forbidden and actively monitored.</p>
+            <h3>3. Disclaimer</h3>
+            <p>All materials are presented on an "as is" baseline without express warranty. We reserve rights to modify categories, galleries, or layout presentation structures without advance notification.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="copyright-modal" class="legal-modal" role="dialog" aria-modal="true" aria-labelledby="cm-title">
+        <div class="legal-modal-card">
+          <div class="legal-modal-header">
+            <h2 id="cm-title" class="legal-modal-title">Copyright Notice</h2>
+            <button class="legal-modal-close" onclick="closeLegalModal('copyright-modal')" aria-label="Close modal">
+              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="legal-modal-body">
+            <h3>1. Ownership</h3>
+            <p>All photographic works, imagery, design layouts, logos, and written notes published on this site are the exclusive intellectual property of Krishnendu Goswami unless explicitly noted otherwise.</p>
+            <h3>2. Protection Laws</h3>
+            <p>This work is fully protected under Indian and international copyright treaties. Absolutely no image or portion of code may be downloaded, reproduced, copied, projected, or utilized in any manner without formal written authorization.</p>
+            <h3>3. Infringement Actions</h3>
+            <p>Unauthorized usage of any image, including unauthorized social media re-uploads or editorial publication, constitutes copyright infringement and will result in immediate legal claim actions.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="licensing-modal" class="legal-modal" role="dialog" aria-modal="true" aria-labelledby="lm-title">
+        <div class="legal-modal-card">
+          <div class="legal-modal-header">
+            <h2 id="lm-title" class="legal-modal-title">Licensing Guidelines</h2>
+            <button class="legal-modal-close" onclick="closeLegalModal('licensing-modal')" aria-label="Close modal">
+              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="legal-modal-body">
+            <h3>1. Commercial &amp; Editorial Licenses</h3>
+            <p>Our entire high-resolution catalog is available for commercial print, digital publishing, advertising campaigns, and natural history editorial assignments.</p>
+            <h3>2. Licensing Formats</h3>
+            <p>Licenses are custom-tailored on a Rights-Managed (RM) model, calculated based on target media, distribution region, runtime duration, and scale of visibility. Royalty-Free formats are not available.</p>
+            <h3>3. How to Enquire</h3>
+            <p>For all licensing requests, please utilize our <a href="contact.html?enquiry=licensing" style="color: var(--gold); text-decoration: underline;">Contact Form</a> indicating image title, target usage platform, publication scale, and scheduling details.</p>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Close modal when clicking backdrop
+    document.querySelectorAll('.legal-modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('open');
+        }
+      });
+    });
+  }
+
+  // Intercept all footer legal links to trigger modals instead of navigating
+  document.querySelectorAll('a').forEach(link => {
+    const txt = link.textContent.trim().toLowerCase();
+    if (txt === 'privacy policy' || txt === 'privacy') {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        openLegalModal('privacy-modal');
+      });
+    } else if (txt === 'terms of use' || txt === 'terms') {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        openLegalModal('terms-modal');
+      });
+    } else if (txt === 'copyright') {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        openLegalModal('copyright-modal');
+      });
+    } else if (txt === 'licensing') {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        openLegalModal('licensing-modal');
+      });
+    }
+  });
+}
+
+function openLegalModal(id) {
+  const m = document.getElementById(id);
+  if (m) {
+    m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeLegalModal(id) {
+  const m = document.getElementById(id);
+  if (m) {
+    m.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+window.openLegalModal = openLegalModal;
+window.closeLegalModal = closeLegalModal;
+
 document.addEventListener('DOMContentLoaded', updateDynamicLayout);
 document.addEventListener('siteDataLoaded', updateDynamicLayout);

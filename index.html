@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Luminary — Photography</title>
+<title>Luminar — Photography</title>
 <meta name="description" content="Photography portfolio — landscapes, wildlife, travel, portraits and stories told in light.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,7 @@
 
 <!-- Page Loader -->
 <div id="loader" role="status" aria-live="polite">
-  <div class="loader-logo">Luminary</div>
+  <div class="loader-logo">Luminar</div>
   <div class="loader-bar"><div class="loader-fill"></div></div>
 </div>
 
@@ -27,7 +27,7 @@
   <div class="container">
     <div class="brand-header">
       <a href="index.html" class="brand-logo">
-        <span class="brand-bold">KRISHNENDU</span> <span class="brand-light">GOSWAMI</span>
+        Krishnendu Goswami
       </a>
     </div>
     <nav class="site-nav" role="navigation" aria-label="Main navigation">
@@ -146,7 +146,9 @@
 <!-- FOOTER -->
 <footer class="index-footer">
   <div class="container index-footer-inner">
-    <p class="index-footer-copy">© 2025 Krishnendu Goswami · All rights reserved</p>
+    <p class="index-footer-copy" style="font-size: 0.85em; margin-top: 0.5rem; color: var(--gray);">© 2026 Krishnendu Goswami · All rights reserved<br>
+      <span style="font-size: 0.85em; display: block; margin-top: 0.5rem; color: var(--gray);">Developed & Maintained by <a href="https://www.linkedin.com/in/soutrik-chowdhury?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline;">Soutrik Chowdhury</a> and Krishnendu Goswami</span>
+    </p>
     <div class="index-footer-social" aria-label="Social links">
       <a href="#" class="social-link" aria-label="Instagram" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" fill="none" stroke-width="1.6"/><circle cx="12" cy="12" r="4" stroke="currentColor" fill="none" stroke-width="1.6"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/></svg>
@@ -159,24 +161,10 @@
 </footer>
 
 <!-- LIGHTBOX -->
-<div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
-  <div class="lb-bar">
-    <div class="lb-title-wrap">
-      <span class="lb-count" id="lb-count" aria-live="polite">1 / 18</span>
-      <span class="lb-title" id="lb-title-text"></span>
-    </div>
-    <div class="lb-btns">
-      <button class="lb-btn" onclick="lbNav(-1)" aria-label="Previous">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <button class="lb-btn" onclick="lbNav(1)" aria-label="Next">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button class="lb-btn" onclick="closeLb()" aria-label="Close">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-  </div>
+<div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer" tabindex="-1">
+  <button class="lb-close-btn-floating" onclick="closeLb()" aria-label="Close">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
   <div class="lb-stage">
     <button class="lb-nav-btn" id="lb-prev" onclick="lbNav(-1)" aria-label="Previous photo">
       <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
@@ -188,10 +176,14 @@
     <button class="lb-nav-btn" id="lb-next" onclick="lbNav(1)" aria-label="Next photo">
       <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
-  </div>
-  <div class="lb-footer">
-    <span class="lb-meta" id="lb-meta"></span>
-    <span class="lb-exif" id="lb-exif"></span>
+    
+    <!-- Floating details form -->
+    <div class="lb-details-floating">
+      <span class="lb-count" id="lb-count" aria-live="polite">1 / 18</span>
+      <h3 class="lb-title" id="lb-title-text"></h3>
+      <p class="lb-meta" id="lb-meta"></p>
+      <p class="lb-exif" id="lb-exif"></p>
+    </div>
   </div>
 </div>
 
@@ -224,7 +216,7 @@ function renderHomepageGallery() {
 
     masonry.innerHTML = photos.map((p, idx) => {
       return `
-        <div class="masonry-item" data-cat="${p.cat}" data-id="${p.id || idx}" onclick="openLb(${p.id || idx})" tabindex="0" role="button" aria-label="${p.title}">
+        <div class="masonry-item" data-cat="${p.cat}" data-id="${idx}" onclick="openLb(${idx})" tabindex="0" role="button" aria-label="${p.title}">
           <img class="masonry-img" src="${p.src}" alt="${p.title}" style="width: 100%; height: auto; display: block;">
         </div>
       `;

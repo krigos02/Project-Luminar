@@ -9,6 +9,7 @@
   --text: #0d0d0d;
   --text2: #5a5a5a;
   --text3: #9e9e9e;
+  --gray: #888888;
   --gold: #0d0d0d;
   --gold2: #5a5a5a;
   --gold3: rgba(13,13,13,0.06);
@@ -34,6 +35,7 @@
     --text: #0d0d0d;
     --text2: #5a5a5a;
     --text3: #9e9e9e;
+    --gray: #888888;
     --gold: #0d0d0d;
     --gold2: #5a5a5a;
     --gold3: rgba(13,13,13,0.06);
@@ -52,6 +54,7 @@
   --text: #f0ede8;
   --text2: #8a8a8a;
   --text3: #555555;
+  --gray: #888888;
   --gold: #c9a96e;
   --gold2: #e8c98a;
   --gold3: rgba(201,169,110,0.12);
@@ -69,6 +72,7 @@
   --text: #0d0d0d;
   --text2: #5a5a5a;
   --text3: #9e9e9e;
+  --gray: #888888;
   --gold: #0d0d0d;
   --gold2: #5a5a5a;
   --gold3: rgba(13,13,13,0.06);
@@ -327,6 +331,11 @@ button {
   color: var(--text);
   line-height: 1;
   display: inline-block;
+  opacity: 0.9;
+  transition: opacity 0.4s var(--ease-out);
+}
+.brand-logo:hover {
+  opacity: 1;
 }
 .brand-bold {
   font-weight: 700;
@@ -1192,6 +1201,109 @@ body.cursor-hover #cursor-ring {
   color: var(--text3);
 }
 
+/* Floating details form for index.html lightbox */
+.lb-details-floating {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem;
+  width: 320px;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 9050;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  pointer-events: auto;
+  text-align: left;
+}
+.lb-details-floating .lb-count {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+.lb-details-floating .lb-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--gold) !important;
+  font-style: italic;
+  margin: 0;
+}
+.lb-details-floating .lb-meta {
+  font-family: var(--font-serif);
+  font-size: 12.5px;
+  color: var(--text2);
+  font-style: normal;
+  margin: 0;
+}
+.lb-details-floating .lb-exif {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--text3);
+  margin: 0;
+}
+.lb-close-btn-floating {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  background: var(--bg);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 9100;
+  transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+}
+.lb-close-btn-floating:hover {
+  color: var(--text);
+  border-color: var(--text2);
+  background: var(--bg2);
+}
+.lb-close-btn-floating svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+@media (max-width: 768px) {
+  .lb-details-floating {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    width: 100%;
+    margin-top: 1.5rem;
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    padding: 0;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  #lb .lb-stage {
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 5rem 1.5rem 2rem;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  #lb #lb-img {
+    max-height: 55vh;
+  }
+}
+
 /* ─────────────── SECTION LAYOUTS & GRIDS (index 2.html) ─────────────── */
 #about-section {
   padding: 6rem 0 5rem;
@@ -1442,4 +1554,106 @@ body.cursor-hover #cursor-ring {
   -webkit-column-span: all;
   grid-column: 1 / -1;
   width: 100%;
+}
+
+/* ── LEGAL MODAL OVERLAYS ── */
+.legal-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-out);
+  padding: 2rem;
+}
+.legal-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.legal-modal-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  max-width: 600px;
+  width: 100%;
+  border-radius: 2px;
+  max-height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+  transform: translateY(15px);
+  transition: transform 0.4s var(--ease-out);
+}
+.legal-modal.open .legal-modal-card {
+  transform: translateY(0);
+}
+.legal-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.legal-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--text);
+  font-weight: 400;
+}
+.legal-modal-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text2);
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.legal-modal-close:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+.legal-modal-close svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+.legal-modal-body {
+  padding: 2rem;
+  overflow-y: auto;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--text2);
+  line-height: 1.8;
+}
+.legal-modal-body h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--text);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+}
+.legal-modal-body h3:first-child {
+  margin-top: 0;
+}
+.legal-modal-body p {
+  margin-bottom: 1.2rem;
+}
+.legal-modal-body ul {
+  padding-left: 1.5rem;
+  margin-bottom: 1.2rem;
+}
+.legal-modal-body li {
+  margin-bottom: 0.5rem;
 }

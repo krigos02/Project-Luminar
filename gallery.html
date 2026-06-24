@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gallery — Luminary</title>
+<title>Gallery — Luminar</title>
 <meta name="description" content="Photography portfolio categories and galleries.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -497,7 +497,7 @@
 .lb-info-title {
   font-family: var(--font-display);
   font-size: 1.6rem;
-  color: var(--text);
+  color: var(--gold);
   line-height: 1.15;
   margin-bottom: 0.75rem;
 }
@@ -623,7 +623,7 @@
 
 <!-- Loader -->
 <div id="loader" role="status" aria-live="polite">
-  <div class="loader-logo">Luminary</div>
+  <div class="loader-logo">Luminar</div>
   <div class="loader-bar"><div class="loader-fill"></div></div>
 </div>
 
@@ -639,7 +639,7 @@
     </div>
     <div class="brand-header">
       <a href="index.html" class="brand-logo">
-        <span class="brand-bold">KRISHNENDU</span> <span class="brand-light">GOSWAMI</span>
+        Krishnendu Goswami
       </a>
     </div>
     <nav class="site-nav" role="navigation" aria-label="Main navigation">
@@ -705,11 +705,11 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         <span id="meta-photos-count">42 Photographs</span>
       </div>
-      <div class="page-meta-item">
+      <div class="page-meta-item" id="meta-location-wrapper">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 018 8c0 5.25-8 14-8 14S4 15.25 4 10a8 8 0 018-8z"/></svg>
         <span id="meta-location">India, Nepal, Bhutan</span>
       </div>
-      <div class="page-meta-item">
+      <div class="page-meta-item" id="meta-years-wrapper">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         <span id="meta-years">2018 — 2024</span>
       </div>
@@ -771,7 +771,9 @@
 <footer class="gallery-footer">
   <div class="container">
     <div class="gallery-footer-inner" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
-      <div class="footer-copy">© 2025 Krishnendu Goswami · All photographs protected · No reproduction without permission</div>
+      <div class="footer-copy">© 2026 Krishnendu Goswami · All photographs protected · No reproduction without permission<br>
+        <span style="font-size: 0.85em; display: block; margin-top: 0.5rem; color: var(--gray);">Developed & Maintained by <a href="https://www.linkedin.com/in/soutrik-chowdhury?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline;">Soutrik Chowdhury</a> and Krishnendu Goswami</span>
+      </div>
       <nav class="footer-nav" style="display:flex;gap:1.5rem">
         <a href="index.html">Home</a>
         <a href="portfolio.html">Portfolio</a>
@@ -819,7 +821,7 @@
       <div class="lb-info-content">
         <div class="lb-info-category" id="lb-cat">Category</div>
         <div class="lb-info-title" id="lb-title">Photo Title</div>
-        <div class="lb-info-caption" id="lb-caption">Photo Caption</div>
+        <div class="lb-info-caption" id="lb-caption">Photo Subtitle</div>
         <div class="lb-info-story" id="lb-story">Photo Story</div>
         <div class="lb-info-divider"></div>
         <div class="lb-exif">
@@ -858,6 +860,22 @@ const lb = document.getElementById('lightbox');
 const lbImgEl = document.getElementById('lb-img');
 const lbPhBg = document.getElementById('lb-ph-bg');
 
+/* ── FORMAT DATE FOR DISPLAY ── */
+function formatPhotoDate(dateStr) {
+  if (!dateStr) return '-';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const parts = dateStr.split('-');
+    const year = parts[0];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthIdx = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    if (monthIdx >= 0 && monthIdx < 12) {
+      return `${months[monthIdx]} ${day}, ${year}`;
+    }
+  }
+  return dateStr;
+}
+
 /* ── GET CATEGORY FROM URL ── */
 function parseUrlCategory() {
   const params = new URLSearchParams(window.location.search);
@@ -887,8 +905,26 @@ function initPage() {
   
   // 3. Update Stats
   document.getElementById('meta-photos-count').textContent = data.photosCount;
-  document.getElementById('meta-location').textContent = data.location;
-  document.getElementById('meta-years').textContent = data.years;
+  
+  const locWrapper = document.getElementById('meta-location-wrapper');
+  if (locWrapper) {
+    if (data.location) {
+      document.getElementById('meta-location').textContent = data.location;
+      locWrapper.style.display = '';
+    } else {
+      locWrapper.style.display = 'none';
+    }
+  }
+  
+  const yearsWrapper = document.getElementById('meta-years-wrapper');
+  if (yearsWrapper) {
+    if (data.years) {
+      document.getElementById('meta-years').textContent = data.years;
+      yearsWrapper.style.display = '';
+    } else {
+      yearsWrapper.style.display = 'none';
+    }
+  }
   
   // 4. Update Switcher active state & render list
   const switcherList = document.getElementById('category-switcher-list');
@@ -948,7 +984,7 @@ function renderGallery() {
   const slice = filteredPhotos.slice(0, currentLimit);
   
   galleryEl.innerHTML = slice.map((p, idx) => {
-    const mediaTag = p.src ? `<img class="gallery-img" src="${p.src}" alt="${p.title}" style="height: ${getImageHeight(idx)}px; object-fit: cover;">` : `
+    const mediaTag = p.src ? `<img class="gallery-img" src="${p.src}" alt="${p.tag || p.title}" style="height: ${getImageHeight(idx)}px; object-fit: cover;">` : `
       <div class="img-ph" style="height: ${getImageHeight(idx)}px; background: ${p.bg}">
         <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="20" r="12"/><path d="M8 44c0-8.84 7.16-16 16-16s16 7.16 16 16"/></svg>
       </div>`;
@@ -1078,8 +1114,8 @@ function updateLb() {
   document.getElementById('lb-counter').textContent = `${lbIdx + 1} / ${filteredPhotos.length}`;
   document.getElementById('lb-topbar-title').textContent = p.title;
   
-  // Format Category Label: currentCategory (e.g. Wildlife) + Tag (e.g. Mammals)
-  const catLabel = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1) + ' · ' + p.tag.charAt(0).toUpperCase() + p.tag.slice(1);
+  // Format Category Label: currentCategory only
+  const catLabel = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
   document.getElementById('lb-cat').textContent = catLabel;
   
   document.getElementById('lb-title').textContent = p.title;
@@ -1088,13 +1124,17 @@ function updateLb() {
   
   document.getElementById('lb-cam').textContent = p.cam || '-';
   document.getElementById('lb-lens').textContent = p.lens || '-';
-  document.getElementById('lb-exp').textContent = p.exp || '-';
+  let expVal = p.exp || '-';
+  if ((!p.exp || p.exp === '-') && (p.shutter || p.focal || p.aperture || p.iso)) {
+    expVal = [p.shutter, p.focal, p.aperture, p.iso].filter(Boolean).join(' · ');
+  }
+  document.getElementById('lb-exp').textContent = expVal;
   document.getElementById('lb-loc').textContent = p.loc || '-';
-  document.getElementById('lb-date').textContent = p.date || '-';
+  document.getElementById('lb-date').textContent = formatPhotoDate(p.date);
   
   if (p.src) {
     lbImgEl.src = p.src;
-    lbImgEl.alt = p.title;
+    lbImgEl.alt = p.tag || p.title;
     lbImgEl.style.display = 'block';
     document.getElementById('lb-img-ph').style.display = 'none';
   } else {

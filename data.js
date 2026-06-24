@@ -4,7 +4,7 @@
 const DEFAULT_SITE_DATA = {
   profile: {
     name: "Krishnendu Goswami",
-    title: "Luminary — Photography",
+    title: "Luminar — Photography",
     bioTitle: "Vision shaped by",
     bioTitleEm: "a thousand sunrises",
     bioExcerpt: "Krishnendu Goswami is an internationally exhibited photographer whose work navigates the quiet intersection of the natural world and human presence.",
@@ -13,7 +13,7 @@ const DEFAULT_SITE_DATA = {
       "Every expedition is a partnership with time and light. By spending weeks in remote areas—from the high altitudes of the Zanskar range to the dense jungles of the Western Ghats—they seek to capture not just a scene, but the silent atmosphere and emotional weight of a place. Their approach is marked by absolute respect for habitats, always prioritizing conservation ethics over capturing a shot."
     ],
     philosophy: "I don't chase photographs. I wait for the world to reveal itself — one breath at a time. The camera is simply an extension of that patience.",
-    yearsExperience: 22,
+    dob: "2002-12-22",
     stats: [
       { value: "120+", label: "Published Works" },
       { value: "38", label: "International Awards" },
@@ -270,10 +270,11 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 let siteData = DEFAULT_SITE_DATA;
 window.siteData = siteData;
 
-const DB_KEY = 'luminary_site_data';
+const DB_KEY = 'luminar_site_data';
 
 // ── ASYNC DB SYNCHRONIZATION ── //
 async function initDatabase() {
+  window.initDatabase = initDatabase;
   try {
     // Attempt to load from Supabase portfolio_data (ID = 1)
     const { data, error } = await supabaseClient

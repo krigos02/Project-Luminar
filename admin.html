@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CMS Dashboard — Luminary</title>
+<title>CMS Dashboard — Luminar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
@@ -65,6 +65,12 @@
     font-size: 12px;
     color: #e1306c;
     margin-top: 1rem;
+  }
+  #mfa-qr-container img {
+    display: block;
+    margin: 0 auto;
+    max-width: 200px;
+    height: auto;
   }
 
   /* Dashboard Layout */
@@ -202,6 +208,11 @@
   .form-row-3 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+  .form-row-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 1rem;
   }
   
@@ -410,18 +421,74 @@
     margin-bottom: 2rem;
     display: none;
   }
+  
+  @media (max-width: 768px) {
+    .form-row-2, .form-row-3, .form-row-4 {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    .admin-container {
+      padding: 1rem;
+      max-width: 100%;
+    }
+    .admin-card {
+      padding: 1.5rem;
+    }
+  }
 </style>
 </head>
 <body>
 
 <!-- Login Gate -->
 <div id="login-gate" class="admin-gate">
-  <div class="gate-card">
-    <h2>LUMINARY CMS</h2>
+  <!-- Step 1: Email and Password Form -->
+  <div id="login-step-1" class="gate-card">
+    <h2>LUMINAR CMS</h2>
     <p>Client-side Portfolio Content Management System</p>
-    <input type="password" id="passcode-input" class="admin-input" placeholder="Passcode (default: admin123)" autofocus>
-    <button onclick="checkPasscode()" class="btn-primary" style="width:100%; justify-content:center;">Access Dashboard</button>
-    <div id="login-error" class="login-error">Invalid passcode. Please try again.</div>
+    
+    <div style="text-align: left; width: 100%;">
+      <label class="form-label" style="font-size:10px; margin-bottom:4px; display:block;">Email Address</label>
+      <input type="email" id="login-email" class="admin-input" placeholder="admin@example.com" required style="text-align:left;" autofocus>
+      
+      <label class="form-label" style="font-size:10px; margin-bottom:4px; display:block;">Password</label>
+      <input type="password" id="login-password" class="admin-input" placeholder="••••••••" required style="text-align:left;">
+    </div>
+    
+    <button onclick="handleLoginStep1()" class="btn-primary" style="width:100%; justify-content:center;">Continue</button>
+    <div id="login-error" class="login-error">Invalid credentials. Please try again.</div>
+  </div>
+
+  <!-- Step 2: Hidden 6-digit verification code form -->
+  <div id="login-step-2" class="gate-card" style="display: none;">
+    <h2>VERIFY IDENTITY</h2>
+    <p>Enter the 6-digit code from Google Authenticator</p>
+    
+    <div style="text-align: left; width: 100%;">
+      <label class="form-label" style="font-size:10px; margin-bottom:4px; display:block; text-align:center;">Verification Code</label>
+      <input type="text" id="mfa-code" class="admin-input" placeholder="000 000" maxlength="6" style="font-size: 20px; letter-spacing: 6px; text-align: center;">
+    </div>
+    
+    <button onclick="handleLoginStep2()" class="btn-primary" style="width:100%; justify-content:center;">Verify &amp; Access</button>
+    <button onclick="backToStep1()" class="btn-outline" style="width:100%; margin-top: 10px; justify-content:center; padding: 10px;">Back to Login</button>
+    <div id="mfa-error" class="login-error">Invalid code. Please try again.</div>
+  </div>
+
+  <!-- Enrollment Step: First-time TOTP Setup -->
+  <div id="mfa-enroll-step" class="gate-card" style="display: none; max-width: 450px;">
+    <h2>SETUP AUTHENTICATOR</h2>
+    <p style="margin-bottom: 1.5rem;">Scan the QR code below using Google Authenticator and enter the verification code to activate MFA.</p>
+    
+    <div id="mfa-qr-container" style="background: white; padding: 15px; display: inline-block; border-radius: 4px; margin-bottom: 1.5rem; text-align: center; width: 100%;">
+      <!-- SVG QR Code will be injected here -->
+    </div>
+    
+    <div style="text-align: left; width: 100%;">
+      <label class="form-label" style="font-size:10px; margin-bottom:4px; display:block; text-align:center;">6-Digit Verification Code</label>
+      <input type="text" id="enroll-code" class="admin-input" placeholder="000 000" maxlength="6" style="font-size: 20px; letter-spacing: 6px; text-align: center;">
+    </div>
+    
+    <button onclick="handleMfaEnrollVerify()" class="btn-primary" style="width:100%; justify-content:center;">Activate &amp; Login</button>
+    <div id="enroll-error" class="login-error">Verification failed. Please try again.</div>
   </div>
 </div>
 
@@ -431,7 +498,7 @@
   <!-- Navigation bar -->
   <nav class="admin-nav">
     <div class="container admin-nav-inner">
-      <div class="admin-logo">LUMINARY <span>CMS</span></div>
+      <div class="admin-logo">LUMINAR <span>CMS</span></div>
       <div class="admin-actions">
         <a href="index.html" class="nav-back">View Site</a>
         <button onclick="logout()" class="btn-outline" style="padding: 8px 18px; font-size: 11px;">Lock</button>
@@ -496,11 +563,17 @@
             <label>Philosophy Quote</label>
             <input type="text" id="prof-philosophy" class="admin-form-control" required>
           </div>
-          <div class="form-row-3">
+          <div class="form-row-2">
             <div class="admin-form-group">
-              <label>Years of Experience</label>
-              <input type="number" id="prof-years" class="admin-form-control" required>
+              <label>Date of Birth</label>
+              <input type="date" id="prof-dob" class="admin-form-control" required>
             </div>
+            <div class="admin-form-group">
+              <label>Age (Calculated)</label>
+              <input type="text" id="prof-age-display" class="admin-form-control" disabled style="opacity: 0.75; background: var(--bg2);">
+            </div>
+          </div>
+          <div class="form-row-2" style="margin-top: 1rem;">
             <div class="admin-form-group">
               <label>Base Location</label>
               <input type="text" id="prof-location" class="admin-form-control" required>
@@ -636,19 +709,9 @@
         <label>Description (Bio/Tagline for the category)</label>
         <input type="text" id="cat-desc" class="admin-form-control" required>
       </div>
-      <div class="form-row-3">
-        <div class="admin-form-group">
-          <label>Location Info</label>
-          <input type="text" id="cat-location" class="admin-form-control" required>
-        </div>
-        <div class="admin-form-group">
-          <label>Years Info</label>
-          <input type="text" id="cat-years" class="admin-form-control" required>
-        </div>
-        <div class="admin-form-group">
-          <label>Subfilters (comma separated, e.g. "all,mammals,birds")</label>
-          <input type="text" id="cat-filters" class="admin-form-control" required>
-        </div>
+      <div class="admin-form-group">
+        <label>Subfilters (comma separated, e.g. "all,mammals,birds")</label>
+        <input type="text" id="cat-filters" class="admin-form-control" required>
       </div>
       <div class="modal-actions">
         <button type="button" onclick="closeModal('category-modal')" class="btn-outline">Cancel</button>
@@ -680,8 +743,8 @@
         <input type="text" id="photo-title" class="admin-form-control" required>
       </div>
       <div class="admin-form-group">
-        <label>Caption (e.g. "Kibber, Himachal Pradesh · 2022")</label>
-        <input type="text" id="photo-caption" class="admin-form-control" required>
+        <label>Subtitle (e.g. "Kibber, Himachal Pradesh · 2022")</label>
+        <input type="text" id="photo-caption" class="admin-form-control">
       </div>
       
       <!-- Image Upload/URL Choice -->
@@ -694,18 +757,43 @@
         <div id="source-mode-upload" class="uploader-wrap">
           <div class="uploader-text">Drag &amp; drop or <span>Browse</span> local image file</div>
           <input type="file" id="photo-file" accept="image/*" onchange="previewImageFile(this)">
-          <img id="photo-upload-preview" class="preview-thumbnail">
         </div>
-        <div id="source-mode-url" class="admin-form-group" style="display:none;">
+        
+        <div id="source-mode-url" class="admin-form-group" style="display:none; margin-bottom: 10px;">
           <input type="text" id="photo-src" class="admin-form-control" placeholder="https://images.unsplash.com/photo-...">
+          <small style="display:block;margin-top:6px;font-size:11px;color:var(--text3);line-height:1.4;">Google Drive links are converted automatically. Make sure the file sharing access is set to <strong>"Anyone with the link can view"</strong>.</small>
+        </div>
+        
+        <!-- Live Image Preview (Shared) -->
+        <img id="photo-upload-preview" class="preview-thumbnail" style="display:none; margin-top: 10px; max-height: 200px; object-fit: contain; border: 1px solid var(--border); padding: 4px; border-radius: 2px;">
+        
+        <!-- WebP Conversion Options -->
+        <div id="webp-options-container" style="display:none; margin-top: 15px; padding: 15px; border-radius: 4px; background: var(--bg2); border: 1px solid var(--border); box-sizing: border-box;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <input type="checkbox" id="convert-webp-toggle" checked style="width: 16px; height: 16px; cursor: pointer; margin: 0;">
+            <label for="convert-webp-toggle" style="cursor: pointer; font-size: 13.5px; font-weight: 500; margin: 0; color: var(--text);">Convert to WebP format before uploading</label>
+          </div>
+          
+          <div id="webp-slider-group" style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <label style="font-size: 12.5px; color: var(--text2); margin: 0;">WebP Export Quality</label>
+              <span id="webp-quality-val" style="font-size: 12.5px; font-weight: 600; color: var(--gold);">85%</span>
+            </div>
+            <input type="range" id="webp-quality" min="1" max="100" value="85" style="width: 100%; cursor: pointer; margin: 0; accent-color: var(--gold);">
+          </div>
+          
+          <div id="webp-size-info" style="font-size: 12px; color: var(--text3); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px;">
+            Original Format Size: <strong id="orig-size-display" style="color: var(--text);">-</strong><br>
+            Optimized WebP Size: <strong id="webp-size-display" style="color: var(--text);">-</strong> <span id="webp-savings-pct" style="color: #2e7d32; font-weight: 600; margin-left: 5px;"></span>
+          </div>
         </div>
       </div>
       
       <div class="admin-form-group">
         <label>Behind-the-Lens Story</label>
-        <textarea id="photo-story" class="admin-form-control" required></textarea>
+        <textarea id="photo-story" class="admin-form-control"></textarea>
       </div>
-      <div class="form-row-3">
+      <div class="form-row-2">
         <div class="admin-form-group">
           <label>Camera Model</label>
           <input type="text" id="photo-cam" class="admin-form-control" placeholder="Sony A7R V">
@@ -714,9 +802,23 @@
           <label>Lens Used</label>
           <input type="text" id="photo-lens" class="admin-form-control" placeholder="70-200mm f/2.8">
         </div>
+      </div>
+      <div class="form-row-4">
         <div class="admin-form-group">
-          <label>Exposure details</label>
-          <input type="text" id="photo-exp" class="admin-form-control" placeholder="1/125s · f/8 · ISO 100">
+          <label>Shutter Speed</label>
+          <input type="text" id="photo-shutter" class="admin-form-control" placeholder="1/125s">
+        </div>
+        <div class="admin-form-group">
+          <label>Focal Length</label>
+          <input type="text" id="photo-focal" class="admin-form-control" placeholder="50mm">
+        </div>
+        <div class="admin-form-group">
+          <label>Aperture</label>
+          <input type="text" id="photo-aperture" class="admin-form-control" placeholder="f/2.8">
+        </div>
+        <div class="admin-form-group">
+          <label>ISO</label>
+          <input type="text" id="photo-iso" class="admin-form-control" placeholder="ISO 100">
         </div>
       </div>
       <div class="form-row-3">
@@ -726,7 +828,7 @@
         </div>
         <div class="admin-form-group">
           <label>Date Captured</label>
-          <input type="text" id="photo-date" class="admin-form-control" placeholder="Sep 12, 2023">
+          <input type="date" id="photo-date" class="admin-form-control" required>
         </div>
         <div class="admin-form-group">
           <label>Background Gradient/Color</label>
@@ -863,33 +965,288 @@
 <script src="data.js"></script>
 <script src="shared.js"></script>
 <script>
-  /* ── PASSCODE VALIDATION ── */
-  const CORRECT_PASSCODE = "admin123";
+  /* ── GOOGLE AUTHENTICATOR / MFA / TOTP LOGIN ── */
+  function safePushState(url) {
+    if (window.location.protocol === 'file:') {
+      console.warn("Local file:// protocol detected. Skipping history.pushState to prevent browser security exception.");
+      return;
+    }
+    try {
+      history.pushState({}, '', url);
+    } catch (e) {
+      console.warn("Failed to push history state:", e);
+    }
+  }
+
+  let currentFactorId = "";
+  let currentChallengeId = "";
   let imageSourceMode = "upload";
   let storyImageSourceMode = "upload";
   let currentUploadedPhotoBase64 = "";
   let currentUploadedStoryBase64 = "";
+  
+  // WebP compression state variables
+  let originalFileBlob = null;
+  let originalImage = null;
+  let optimizedWebPBlob = null;
 
-  function checkPasscode() {
-    const code = document.getElementById('passcode-input').value;
-    const error = document.getElementById('login-error');
-    if (code === CORRECT_PASSCODE) {
-      document.getElementById('login-gate').style.display = 'none';
-      error.style.display = 'none';
-      initDashboard();
-    } else {
-      error.style.display = 'block';
+  // Handle step 1: Email and Password verification
+  async function handleLoginStep1() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errorEl = document.getElementById('login-error');
+    errorEl.style.display = 'none';
+
+    if (!email || !password) {
+      errorEl.textContent = "Please fill in all fields.";
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    try {
+      const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (authError) throw authError;
+
+      // Check for active verified MFA factors
+      const { data: factorsData, error: factorsError } = await supabaseClient.auth.mfa.listFactors();
+      if (factorsError) throw factorsError;
+
+      const totpFactors = factorsData.totp || [];
+      const verifiedFactors = totpFactors.filter(f => f.status === 'verified');
+
+      if (verifiedFactors.length > 0) {
+        // Active factor detected, trigger challenge for step 2
+        const factor = verifiedFactors[0];
+        currentFactorId = factor.id;
+
+        const { data: challengeData, error: challengeError } = await supabaseClient.auth.mfa.challenge({
+          factorId: factor.id
+        });
+        if (challengeError) throw challengeError;
+
+        currentChallengeId = challengeData.id;
+
+        // Smooth transition to Step 2
+        document.getElementById('login-step-1').style.display = 'none';
+        document.getElementById('login-step-2').style.display = 'block';
+        document.getElementById('mfa-code').focus();
+      } else {
+        // No verified MFA factor active, prompt enrollment
+        await showMfaEnrollment();
+      }
+    } catch (err) {
+      console.error("Login step 1 failed:", err);
+      errorEl.textContent = err.message || "Invalid credentials. Please try again.";
+      errorEl.style.display = 'block';
     }
   }
 
-  document.getElementById('passcode-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') checkPasscode();
-  });
+  // Handle step 2: 6-digit TOTP Verification
+  async function handleLoginStep2() {
+    const code = document.getElementById('mfa-code').value.trim();
+    const errorEl = document.getElementById('mfa-error');
+    errorEl.style.display = 'none';
 
-  function logout() {
-    document.getElementById('passcode-input').value = "";
+    if (!code || code.length !== 6) {
+      errorEl.textContent = "Please enter a valid 6-digit code.";
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    try {
+      const { data: verifyData, error: verifyError } = await supabaseClient.auth.mfa.verify({
+        challengeId: currentChallengeId,
+        factorId: currentFactorId,
+        code
+      });
+
+      if (verifyError) throw verifyError;
+
+      // Redirect to dashboard page and initialize dashboard
+      document.getElementById('login-gate').style.display = 'none';
+      safePushState('/cms/dashboard');
+      initDashboard();
+    } catch (err) {
+      console.error("MFA verification failed:", err);
+      errorEl.textContent = err.message || "Invalid code. Please try again.";
+      errorEl.style.display = 'block';
+    }
+  }
+
+  // Show Enrollment / First-time MFA setup
+  async function showMfaEnrollment() {
+    const enrollErrorEl = document.getElementById('enroll-error');
+    enrollErrorEl.style.display = 'none';
+
+    try {
+      // 1. Check for and clean up any existing unverified factors to prevent "factor already exists" errors
+      const { data: factorsData, error: factorsError } = await supabaseClient.auth.mfa.listFactors();
+      if (!factorsError && factorsData) {
+        const totpFactors = factorsData.totp || [];
+        const unverifiedFactors = totpFactors.filter(f => f.status === 'unverified');
+        for (const factor of unverifiedFactors) {
+          try {
+            await supabaseClient.auth.mfa.unenroll({ factorId: factor.id });
+          } catch (unenrollErr) {
+            console.warn("Could not unenroll unverified factor:", factor.id, unenrollErr);
+          }
+        }
+      }
+
+      // 2. Enroll the new factor
+      const { data: enrollData, error: enrollError } = await supabaseClient.auth.mfa.enroll({
+        factorType: 'totp',
+        issuer: 'Luminar Portfolio',
+        friendlyName: 'Luminar CMS'
+      });
+
+      if (enrollError) throw enrollError;
+
+      currentFactorId = enrollData.id;
+
+      // Extract the QR code SVG data URL and load it in an img element
+      const qrSvgString = enrollData.totp.qr_code;
+      document.getElementById('mfa-qr-container').innerHTML = `<img src="${qrSvgString}" alt="Authenticator QR Code" style="display: block; margin: 0 auto; max-width: 220px; height: auto;">`;
+
+      // Transition to enrollment view
+      document.getElementById('login-step-1').style.display = 'none';
+      document.getElementById('mfa-enroll-step').style.display = 'block';
+      document.getElementById('enroll-code').focus();
+    } catch (err) {
+      console.error("MFA enrollment failed:", err);
+      alert("Failed to initialize Authenticator setup: " + err.message);
+    }
+  }
+
+  // Verify and lock/activate the Authenticator
+  async function handleMfaEnrollVerify() {
+    const code = document.getElementById('enroll-code').value.trim();
+    const errorEl = document.getElementById('enroll-error');
+    errorEl.style.display = 'none';
+
+    if (!code || code.length !== 6) {
+      errorEl.textContent = "Please enter a valid 6-digit code.";
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    try {
+      // 1. Challenge the newly enrolled unverified factor
+      const { data: challengeData, error: challengeError } = await supabaseClient.auth.mfa.challenge({
+        factorId: currentFactorId
+      });
+      if (challengeError) throw challengeError;
+
+      // 2. Verify the challenge to officially activate it
+      const { data: verifyData, error: verifyError } = await supabaseClient.auth.mfa.verify({
+        challengeId: challengeData.id,
+        factorId: currentFactorId,
+        code
+      });
+
+      if (verifyError) throw verifyError;
+
+      // Success!
+      document.getElementById('login-gate').style.display = 'none';
+      safePushState('/cms/dashboard');
+      initDashboard();
+    } catch (err) {
+      console.error("MFA enrollment verification failed:", err);
+      errorEl.textContent = err.message || "Verification failed. Please try again.";
+      errorEl.style.display = 'block';
+    }
+  }
+
+  function backToStep1() {
+    document.getElementById('mfa-code').value = "";
+    document.getElementById('login-step-2').style.display = 'none';
+    document.getElementById('login-step-1').style.display = 'block';
+  }
+
+  async function logout() {
+    try {
+      await supabaseClient.auth.signOut();
+    } catch (err) {
+      console.error("Sign out failed:", err);
+    }
+    document.getElementById('login-email').value = "";
+    document.getElementById('login-password').value = "";
+    document.getElementById('mfa-code').value = "";
+    document.getElementById('enroll-code').value = "";
+    document.getElementById('login-step-2').style.display = 'none';
+    document.getElementById('mfa-enroll-step').style.display = 'none';
+    document.getElementById('login-step-1').style.display = 'block';
     document.getElementById('login-gate').style.display = 'flex';
   }
+
+  // Session Check on Load
+  async function checkAuthSession() {
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        const { data: factorsData, error: factorsError } = await supabaseClient.auth.mfa.listFactors();
+        if (factorsError) throw factorsError;
+
+        const totpFactors = factorsData.totp || [];
+        const verifiedFactors = totpFactors.filter(f => f.status === 'verified');
+
+        if (verifiedFactors.length > 0) {
+          const { data: assuranceData } = await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
+          if (assuranceData && assuranceData.currentLevel === 'aal2') {
+            // Logged in with MFA, auto-redirect/access
+            document.getElementById('login-gate').style.display = 'none';
+            if (window.location.pathname !== '/cms/dashboard') {
+              safePushState('/cms/dashboard');
+            }
+            initDashboard();
+          } else {
+            // Password checked but needs MFA step
+            const factor = verifiedFactors[0];
+            currentFactorId = factor.id;
+            const { data: challengeData, error: challengeError } = await supabaseClient.auth.mfa.challenge({
+              factorId: factor.id
+            });
+            if (!challengeError) {
+              currentChallengeId = challengeData.id;
+              document.getElementById('login-step-1').style.display = 'none';
+              document.getElementById('login-step-2').style.display = 'block';
+              document.getElementById('mfa-code').focus();
+            }
+          }
+        } else {
+          // Logged in but no MFA enrolled, show enrollment
+          await showMfaEnrollment();
+        }
+      } else {
+        // If they navigate directly to /cms/dashboard without session, ensure they see login
+        if (window.location.pathname === '/cms/dashboard') {
+          safePushState('/admin.html');
+        }
+      }
+    } catch (err) {
+      console.error("Session verification failed:", err);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Add key listeners for forms
+    document.getElementById('login-password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleLoginStep1();
+    });
+    document.getElementById('mfa-code').addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleLoginStep2();
+    });
+    document.getElementById('enroll-code').addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleMfaEnrollVerify();
+    });
+
+    // Run auth session check
+    checkAuthSession();
+  });
 
   /* ── PANEL SWITCHING ── */
   function switchPanel(panelId, btn) {
@@ -901,7 +1258,10 @@
   }
 
   /* ── INITIALIZE DASHBOARD ── */
-  function initDashboard() {
+  async function initDashboard() {
+    if (window.initDatabase) {
+      await window.initDatabase();
+    }
     loadProfileForm();
     loadCategoriesCms();
     setupGalleryDropdowns();
@@ -928,7 +1288,26 @@
     document.getElementById('prof-excerpt').value = profile.bioExcerpt;
     document.getElementById('prof-paragraphs').value = profile.bioParagraphs.join('\n\n');
     document.getElementById('prof-philosophy').value = profile.philosophy;
-    document.getElementById('prof-years').value = profile.yearsExperience;
+    
+    // Dynamically update profile DOB and auto-calculate Age
+    const dobVal = profile.dob || '2002-12-22';
+    document.getElementById('prof-dob').value = dobVal;
+    
+    function updateAgeDisplay() {
+      const dob = new Date(document.getElementById('prof-dob').value);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const monthDiff = today.getMonth() - dob.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      document.getElementById('prof-age-display').value = isNaN(age) ? '' : `${age} years old`;
+    }
+    
+    document.getElementById('prof-dob').removeEventListener('input', updateAgeDisplay);
+    document.getElementById('prof-dob').addEventListener('input', updateAgeDisplay);
+    updateAgeDisplay();
+    
     document.getElementById('prof-location').value = profile.location;
     document.getElementById('prof-email').value = profile.email;
     document.getElementById('prof-instagram').value = profile.instagram;
@@ -980,7 +1359,17 @@
       bioExcerpt: document.getElementById('prof-excerpt').value,
       bioParagraphs: document.getElementById('prof-paragraphs').value.split('\n\n').filter(p => p.trim() !== ''),
       philosophy: document.getElementById('prof-philosophy').value,
-      yearsExperience: parseInt(document.getElementById('prof-years').value),
+      dob: document.getElementById('prof-dob').value,
+      yearsExperience: (function() {
+        const dob = new Date(document.getElementById('prof-dob').value);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const monthDiff = today.getMonth() - dob.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+          age--;
+        }
+        return isNaN(age) ? 23 : age;
+      })(),
       location: document.getElementById('prof-location').value,
       email: document.getElementById('prof-email').value,
       instagram: document.getElementById('prof-instagram').value,
@@ -1054,8 +1443,6 @@
       document.getElementById('cat-title').value = cat.title;
       document.getElementById('cat-em').value = cat.em;
       document.getElementById('cat-desc').value = cat.desc;
-      document.getElementById('cat-location').value = cat.location || '';
-      document.getElementById('cat-years').value = cat.years || '';
       document.getElementById('cat-filters').value = cat.filters ? cat.filters.join(',') : 'all';
     } else {
       document.getElementById('cat-modal-title').textContent = "Create New Portfolio Section";
@@ -1075,8 +1462,8 @@
       title: document.getElementById('cat-title').value,
       em: document.getElementById('cat-em').value,
       desc: document.getElementById('cat-desc').value,
-      location: document.getElementById('cat-location').value,
-      years: document.getElementById('cat-years').value,
+      location: '',
+      years: '',
       filters: document.getElementById('cat-filters').value.split(',').map(f => f.trim().toLowerCase()),
       photos: []
     };
@@ -1178,12 +1565,228 @@
   }
 
   function previewImageFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    originalFileBlob = file;
+    document.getElementById('webp-options-container').style.display = 'block';
+    
     const preview = document.getElementById('photo-upload-preview');
     handleImageUpload(input, base64 => {
       currentUploadedPhotoBase64 = base64;
-      preview.src = base64;
-      preview.style.display = 'block';
+      
+      const img = new Image();
+      img.onload = function() {
+        originalImage = img;
+        handleWebPToggle();
+      };
+      img.src = base64;
     });
+  }
+
+  function convertImageToWebP() {
+    if (!originalImage) return;
+    
+    const qualityVal = parseInt(document.getElementById('webp-quality').value, 10);
+    document.getElementById('webp-quality-val').textContent = qualityVal + '%';
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = originalImage.naturalWidth;
+    canvas.height = originalImage.naturalHeight;
+    
+    const ctx = canvas.getContext('2d');
+    try {
+      ctx.drawImage(originalImage, 0, 0);
+      
+      const quality = qualityVal / 100;
+      
+      canvas.toBlob(blob => {
+        if (!blob) {
+          fallbackNoCompression();
+          return;
+        }
+        optimizedWebPBlob = blob;
+        
+        // Update sizes display
+        const origSize = originalFileBlob ? (originalFileBlob.size / 1024).toFixed(1) : 0;
+        const webpSize = (blob.size / 1024).toFixed(1);
+        
+        let origSizeStr = originalFileBlob ? (origSize >= 1024 ? (origSize / 1024).toFixed(2) + ' MB' : origSize + ' KB') : 'Unknown';
+        let webpSizeStr = webpSize >= 1024 ? (webpSize / 1024).toFixed(2) + ' MB' : webpSize + ' KB';
+        
+        document.getElementById('orig-size-display').textContent = origSizeStr;
+        document.getElementById('webp-size-display').textContent = webpSizeStr;
+        
+        if (originalFileBlob) {
+          const savings = ((originalFileBlob.size - blob.size) / originalFileBlob.size * 100).toFixed(0);
+          if (savings > 0) {
+            document.getElementById('webp-savings-pct').textContent = `(Saved ${savings}%)`;
+          } else {
+            document.getElementById('webp-savings-pct').textContent = `(${Math.abs(savings)}% larger)`;
+          }
+        } else {
+          document.getElementById('webp-savings-pct').textContent = '';
+        }
+        
+        // Update live preview to show compressed WebP image
+        const preview = document.getElementById('photo-upload-preview');
+        const oldUrl = preview.src;
+        preview.src = URL.createObjectURL(blob);
+        preview.style.display = 'block';
+        
+        if (oldUrl && oldUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(oldUrl);
+        }
+      }, 'image/webp', quality);
+    } catch (e) {
+      console.warn("WebP compression failed due to CORS security constraint:", e);
+      fallbackNoCompression();
+    }
+  }
+
+  function fallbackNoCompression() {
+    optimizedWebPBlob = null;
+    document.getElementById('webp-size-display').textContent = 'Blocked (CORS)';
+    document.getElementById('webp-savings-pct').textContent = '';
+    const preview = document.getElementById('photo-upload-preview');
+    preview.src = originalImage.src;
+    preview.style.display = 'block';
+  }
+
+  function handleWebPToggle() {
+    const isChecked = document.getElementById('convert-webp-toggle').checked;
+    document.getElementById('webp-slider-group').style.display = isChecked ? 'block' : 'none';
+    
+    if (isChecked) {
+      if (originalImage) {
+        convertImageToWebP();
+      }
+    } else {
+      if (originalFileBlob) {
+        const origSize = (originalFileBlob.size / 1024).toFixed(1);
+        let origSizeStr = origSize >= 1024 ? (origSize / 1024).toFixed(2) + ' MB' : origSize + ' KB';
+        
+        document.getElementById('orig-size-display').textContent = origSizeStr;
+        document.getElementById('webp-size-display').textContent = 'Disabled';
+        document.getElementById('webp-savings-pct').textContent = '';
+        
+        const preview = document.getElementById('photo-upload-preview');
+        const oldUrl = preview.src;
+        preview.src = currentUploadedPhotoBase64;
+        preview.style.display = 'block';
+        
+        if (oldUrl && oldUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(oldUrl);
+        }
+      }
+    }
+  }
+
+  // Bind WebP control listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    const webpQual = document.getElementById('webp-quality');
+    const webpToggle = document.getElementById('convert-webp-toggle');
+    if (webpQual) {
+      webpQual.addEventListener('input', convertImageToWebP);
+    }
+    if (webpToggle) {
+      webpToggle.addEventListener('change', handleWebPToggle);
+    }
+    const photoSrcInput = document.getElementById('photo-src');
+    if (photoSrcInput) {
+      photoSrcInput.addEventListener('input', handleUrlInput);
+      photoSrcInput.addEventListener('change', handleUrlInput);
+    }
+  });
+
+  // Converts Google Drive links to direct download image links
+  function getDirectImageUrl(url) {
+    if (!url) return '';
+    if (url.includes('drive.google.com')) {
+      let fileId = '';
+      const dMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (dMatch && dMatch[1]) {
+        fileId = dMatch[1];
+      } else {
+        const idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (idMatch && idMatch[1]) {
+          fileId = idMatch[1];
+        }
+      }
+      if (fileId) {
+        return `https://lh3.googleusercontent.com/d/${fileId}`;
+      }
+    }
+    return url;
+  }
+
+  async function handleUrlInput() {
+    const input = document.getElementById('photo-src');
+    if (!input) return;
+    let url = getDirectImageUrl(input.value.trim());
+    input.value = url; // Update with direct URL
+    
+    if (!url) {
+      if (document.getElementById('webp-options-container')) {
+        document.getElementById('webp-options-container').style.display = 'none';
+      }
+      originalImage = null;
+      originalFileBlob = null;
+      optimizedWebPBlob = null;
+      document.getElementById('photo-upload-preview').style.display = 'none';
+      return;
+    }
+
+    // Show preview and WebP options
+    if (document.getElementById('webp-options-container')) {
+      document.getElementById('webp-options-container').style.display = 'block';
+    }
+    const preview = document.getElementById('photo-upload-preview');
+    preview.src = url;
+    preview.style.display = 'block';
+
+    // Get file size from URL (CORS permitting)
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      originalFileBlob = blob;
+      const origSize = (blob.size / 1024).toFixed(1);
+      let origSizeStr = origSize >= 1024 ? (origSize / 1024).toFixed(2) + ' MB' : origSize + ' KB';
+      document.getElementById('orig-size-display').textContent = origSizeStr;
+      
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = function() {
+        originalImage = img;
+        handleWebPToggle();
+      };
+      img.src = url;
+    } catch (err) {
+      console.warn("Could not fetch image blob directly due to CORS, loading directly into image object:", err);
+      // Fallback
+      originalFileBlob = null;
+      const img = new Image();
+      img.onload = function() {
+        originalImage = img;
+        document.getElementById('orig-size-display').textContent = 'Unknown (External URL)';
+        handleWebPToggle();
+      };
+      img.src = url;
+    }
+  }
+
+  // Date parsing utility for calendar value initialization
+  function parseToISODate(dateStr) {
+    if (!dateStr) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+    const d = new Date(dateStr);
+    if (!isNaN(d.getTime())) {
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+    return '';
   }
 
   function openPhotoModal(mode = 'add', id = -1) {
@@ -1191,9 +1794,21 @@
     document.getElementById('form-photo').reset();
     document.getElementById('photo-mode').value = mode;
     
-    // reset uploads
+    // reset uploads & WebP options
     currentUploadedPhotoBase64 = "";
     document.getElementById('photo-upload-preview').style.display = 'none';
+    
+    if (document.getElementById('webp-options-container')) {
+      document.getElementById('webp-options-container').style.display = 'none';
+      document.getElementById('convert-webp-toggle').checked = true;
+      document.getElementById('webp-quality').value = 85;
+      document.getElementById('webp-quality-val').textContent = '85%';
+    }
+    
+    originalFileBlob = null;
+    originalImage = null;
+    optimizedWebPBlob = null;
+    
     setImageSourceMode('upload');
     
     const catKey = document.getElementById('gallery-filter-cat').value;
@@ -1209,13 +1824,55 @@
       if (p) {
         document.getElementById('photo-tag').value = p.tag;
         document.getElementById('photo-title').value = p.title;
-        document.getElementById('photo-caption').value = p.caption;
-        document.getElementById('photo-story').value = p.story;
+        document.getElementById('photo-caption').value = p.caption || '';
+        document.getElementById('photo-story').value = p.story || '';
         document.getElementById('photo-cam').value = p.cam || '';
         document.getElementById('photo-lens').value = p.lens || '';
-        document.getElementById('photo-exp').value = p.exp || '';
+        
+        // Load split EXIF fields
+        const shutter = p.shutter || '';
+        const focal = p.focal || '';
+        const aperture = p.aperture || '';
+        const iso = p.iso || '';
+        
+        document.getElementById('photo-shutter').value = shutter;
+        document.getElementById('photo-focal').value = focal;
+        document.getElementById('photo-aperture').value = aperture;
+        document.getElementById('photo-iso').value = iso;
+        
+        // Parse legacy exp string if separate fields are not present
+        if (!shutter && !focal && !aperture && !iso && p.exp) {
+          const parts = p.exp.split('·').map(s => s.trim());
+          if (parts.length === 4) {
+            document.getElementById('photo-shutter').value = parts[0];
+            document.getElementById('photo-focal').value = parts[1];
+            document.getElementById('photo-aperture').value = parts[2];
+            document.getElementById('photo-iso').value = parts[3];
+          } else if (parts.length === 3) {
+            document.getElementById('photo-shutter').value = parts[0];
+            document.getElementById('photo-aperture').value = parts[1];
+            document.getElementById('photo-iso').value = parts[2];
+          } else if (parts.length === 2) {
+            document.getElementById('photo-shutter').value = parts[0];
+            document.getElementById('photo-aperture').value = parts[1];
+          } else if (parts.length === 1 && parts[0]) {
+            const p0 = parts[0];
+            if (p0.includes('/') || p0.endsWith('s')) {
+              document.getElementById('photo-shutter').value = p0;
+            } else if (p0.includes('mm')) {
+              document.getElementById('photo-focal').value = p0;
+            } else if (p0.startsWith('f/')) {
+              document.getElementById('photo-aperture').value = p0;
+            } else if (p0.toUpperCase().startsWith('ISO')) {
+              document.getElementById('photo-iso').value = p0;
+            } else {
+              document.getElementById('photo-shutter').value = p0;
+            }
+          }
+        }
+        
         document.getElementById('photo-loc').value = p.loc || '';
-        document.getElementById('photo-date').value = p.date || '';
+        document.getElementById('photo-date').value = parseToISODate(p.date || '');
         document.getElementById('photo-bg').value = p.bg || '';
         document.getElementById('photo-featured').checked = !!p.featured;
         
@@ -1229,6 +1886,7 @@
           } else {
             setImageSourceMode('url');
             document.getElementById('photo-src').value = p.src;
+            handleUrlInput();
           }
         }
       }
@@ -1236,17 +1894,25 @@
       document.getElementById('photo-modal-title').textContent = "Add New Photograph";
       document.getElementById('photo-id').value = "-1";
       document.getElementById('photo-bg').value = "linear-gradient(145deg,#151515,#2a2a2a)";
+      document.getElementById('photo-upload-preview').style.display = 'none';
+      if (document.getElementById('webp-options-container')) {
+        document.getElementById('webp-options-container').style.display = 'none';
+      }
     }
     
     modal.classList.add('open');
   }
 
-  // Helper to upload base64 image data to Cloudinary unsigned
-  async function uploadToCloudinary(base64Data) {
-    if (!base64Data) return "";
+  // Helper to upload base64 image data or Blob to Cloudinary unsigned
+  async function uploadToCloudinary(fileData) {
+    if (!fileData) return "";
     try {
       const formData = new FormData();
-      formData.append("file", base64Data);
+      if (fileData instanceof Blob) {
+        formData.append("file", fileData, "image.webp");
+      } else {
+        formData.append("file", fileData);
+      }
       formData.append("upload_preset", "ml_default");
 
       const response = await fetch("https://api.cloudinary.com/v1_1/dwyfxq8yf/image/upload", {
@@ -1281,9 +1947,21 @@
       const photoId = parseInt(document.getElementById('photo-id').value);
       const catKey = document.getElementById('photo-category').value;
       
-      let photoUrl = document.getElementById('photo-src').value;
+      let photoUrl = getDirectImageUrl(document.getElementById('photo-src').value.trim());
       if (imageSourceMode === 'upload') {
-        if (currentUploadedPhotoBase64 && currentUploadedPhotoBase64.startsWith('data:image')) {
+        const convertWebP = document.getElementById('convert-webp-toggle').checked;
+        if (convertWebP && optimizedWebPBlob) {
+          const uploadedUrl = await uploadToCloudinary(optimizedWebPBlob);
+          if (!uploadedUrl) {
+            alert("Cloudinary upload failed. Check browser console logs for network details.");
+            if (saveBtn) {
+              saveBtn.textContent = origBtnText;
+              saveBtn.disabled = false;
+            }
+            return;
+          }
+          photoUrl = uploadedUrl;
+        } else if (currentUploadedPhotoBase64 && currentUploadedPhotoBase64.startsWith('data:image')) {
           const uploadedUrl = await uploadToCloudinary(currentUploadedPhotoBase64);
           if (!uploadedUrl) {
             alert("Cloudinary upload failed. Check browser console logs for network details.");
@@ -1311,7 +1989,16 @@
         story: document.getElementById('photo-story').value,
         cam: document.getElementById('photo-cam').value,
         lens: document.getElementById('photo-lens').value,
-        exp: document.getElementById('photo-exp').value,
+        shutter: document.getElementById('photo-shutter').value.trim(),
+        focal: document.getElementById('photo-focal').value.trim(),
+        aperture: document.getElementById('photo-aperture').value.trim(),
+        iso: document.getElementById('photo-iso').value.trim(),
+        exp: [
+          document.getElementById('photo-shutter').value.trim(),
+          document.getElementById('photo-focal').value.trim(),
+          document.getElementById('photo-aperture').value.trim(),
+          document.getElementById('photo-iso').value.trim()
+        ].filter(Boolean).join(' · '),
         loc: document.getElementById('photo-loc').value,
         date: document.getElementById('photo-date').value,
         bg: document.getElementById('photo-bg').value,
@@ -1622,7 +2309,7 @@
     const mode = document.getElementById('story-mode').value;
     const storyId = parseInt(document.getElementById('story-id').value);
     
-    let storyUrl = document.getElementById('story-src').value;
+    let storyUrl = getDirectImageUrl(document.getElementById('story-src').value.trim());
     if (storyImageSourceMode === 'upload' && currentUploadedStoryBase64) {
       if (currentUploadedStoryBase64.startsWith('data:image')) {
         const uploadedUrl = await uploadToCloudinary(currentUploadedStoryBase64);
@@ -1716,7 +2403,7 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
               <div>
                 <h3 style="font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px;">
-                  ${msg.first_name || ''} ${msg.last_name || ''}
+                  ${msg.name || ((msg.first_name || '') + ' ' + (msg.last_name || '')).trim() || 'Anonymous'}
                 </h3>
                 <div style="font-size: 12px; color: var(--gold);">
                   <a href="mailto:${msg.email}" style="color: var(--gold); text-decoration: none;">${msg.email}</a>
@@ -1777,7 +2464,7 @@
   }
 
   function exportConfig() {
-    const code = `// Dynamic Content Management System (CMS) Database\n// Consolidates all website data, making it dynamic and editable.\n\nconst DEFAULT_SITE_DATA = ${JSON.stringify(window.siteData, null, 2)};\n\n// Global Store Management\nlet siteData = DEFAULT_SITE_DATA;\n\nconst DB_KEY = 'luminary_site_data';\n\ntry {\n  const rawData = localStorage.getItem(DB_KEY);\n  if (rawData) {\n    siteData = JSON.parse(rawData);\n    if (!siteData.profile) siteData.profile = DEFAULT_SITE_DATA.profile;\n    if (!siteData.homepagePhotos) siteData.homepagePhotos = DEFAULT_SITE_DATA.homepagePhotos;\n    if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;\n    if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;\n    if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;\n  } else {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n  }\n} catch (e) {\n  console.warn("LocalStorage failed to initialize.", e);\n}\n\nwindow.siteData = siteData;\n\nwindow.saveSiteData = function(newData) {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(newData));\n    window.siteData = newData;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n\nwindow.resetSiteData = function() {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n    window.siteData = DEFAULT_SITE_DATA;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n`;
+    const code = `// Dynamic Content Management System (CMS) Database\n// Consolidates all website data, making it dynamic and editable.\n\nconst DEFAULT_SITE_DATA = ${JSON.stringify(window.siteData, null, 2)};\n\n// Global Store Management\nlet siteData = DEFAULT_SITE_DATA;\n\nconst DB_KEY = 'luminar_site_data';\n\ntry {\n  const rawData = localStorage.getItem(DB_KEY);\n  if (rawData) {\n    siteData = JSON.parse(rawData);\n    if (!siteData.profile) siteData.profile = DEFAULT_SITE_DATA.profile;\n    if (!siteData.homepagePhotos) siteData.homepagePhotos = DEFAULT_SITE_DATA.homepagePhotos;\n    if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;\n    if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;\n    if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;\n  } else {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n  }\n} catch (e) {\n  console.warn("LocalStorage failed to initialize.", e);\n}\n\nwindow.siteData = siteData;\n\nwindow.saveSiteData = function(newData) {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(newData));\n    window.siteData = newData;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n\nwindow.resetSiteData = function() {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n    window.siteData = DEFAULT_SITE_DATA;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n`;
     
     const blob = new Blob([code], { type: 'text/javascript' });
     const url = URL.createObjectURL(blob);
