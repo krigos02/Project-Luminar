@@ -1914,8 +1914,9 @@
         formData.append("file", fileData);
       }
       formData.append("upload_preset", "ml_default");
+      formData.append("api_key", "988472957866469");
 
-      const response = await fetch("https://api.cloudinary.com/v1_1/dwyfxq8yf/image/upload", {
+      const response = await fetch("https://api.cloudinary.com/v1_1/yrwqu5an/image/upload", {
         method: "POST",
         body: formData
       });
