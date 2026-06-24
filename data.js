@@ -32,80 +32,7 @@ const DEFAULT_SITE_DATA = {
     instagram: "#",
     twitter: "#"
   },
-  homepagePhotos: [
-    {
-      id: 0,
-      title: "Mathura Aerial",
-      cat: "aerial",
-      meta: "Mathura, Uttar Pradesh · 2023",
-      exif: "DJI Mavic 3 · 24mm f/2.8 · 1/800s · ISO 100",
-      src: "https://images.unsplash.com/photo-1590050752117-238cb061295a?auto=format&fit=crop&w=800&q=80",
-      bg: "linear-gradient(135deg,#0a101d,#16243b)"
-    },
-    {
-      id: 1,
-      title: "Holi Colors",
-      cat: "travel",
-      meta: "Barsana, Uttar Pradesh · March 2023",
-      exif: "Canon EOS R5 · 24-70mm f/2.8L · f/4 · 1/500s · ISO 400",
-      src: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=800&q=80",
-      bg: "linear-gradient(135deg,#24180d,#1a110a)"
-    },
-    {
-      id: 2,
-      title: "Child on Train",
-      cat: "portrait",
-      meta: "Hubli, Karnataka · October 2022",
-      exif: "Canon EOS R5 · 50mm f/1.2L · f/1.6 · 1/250s · ISO 800",
-      src: "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=800&q=80",
-      bg: "linear-gradient(135deg,#1d0d0a,#2d1510)"
-    },
-    {
-      id: 3,
-      title: "Child at Play",
-      cat: "travel",
-      meta: "Jaisalmer, Rajasthan · December 2022",
-      exif: "Canon EOS R5 · 35mm f/1.4L · f/2.8 · 1/1000s · ISO 100",
-      src: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80",
-      bg: "linear-gradient(135deg,#2a2217,#1f1810)"
-    },
-    {
-      id: 4,
-      title: "Mountain Child",
-      cat: "portrait",
-      meta: "Leh, Ladakh · September 2023",
-      exif: "Canon EOS R5 · 85mm f/1.4L · f/2 · 1/400s · ISO 200",
-      src: "https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?auto=format&fit=crop&w=800&q=80",
-      bg: "linear-gradient(135deg,#0c1d16,#142c22)"
-    },
-    {
-      id: 5,
-      title: "Monsoon Rain, Mumbai",
-      cat: "street",
-      meta: "Gateway of India, Mumbai · August 2023",
-      exif: "Canon EOS R5 · 24-70mm f/2.8L · f/2.8 · 1/160s · ISO 1600",
-      src: "https://images.unsplash.com/photo-1561361058-c24cecae35ca?auto=format&fit=crop&w=800&q=80",
-      bg: "linear-gradient(135deg,#13161c,#1c212a)"
-    },
-    {
-      id: 6,
-      title: "Market Elder",
-      cat: "portrait",
-      meta: "Devaraja Market, Mysore · January 2023",
-      exif: "Canon EOS R5 · 85mm f/1.4L · f/1.8 · 1/200s · ISO 640",
-      src: "https://images.unsplash.com/photo-1566847438217-76e82d383f84?auto=format&fit=crop&w=800&q=80",
-      bg: "linear-gradient(135deg,#240d0f,#1c0a0c)"
-    },
-    {
-      id: 7,
-      title: "Monk on the Hill",
-      cat: "landscape",
-      meta: "Tawang, Arunachal Pradesh · November 2022",
-      exif: "Canon EOS R5 · 70-200mm f/2.8L · f/5.6 · 1/500s · ISO 100",
-      src: "https://images.unsplash.com/photo-1609137144813-f9c470123cc0?auto=format&fit=crop&w=800&q=80",
-      bg: "linear-gradient(135deg,#15220c,#1f3212)"
-    }
-  ],
+  homepagePhotos: [],
   galleryCategories: {
     wildlife: {
       title: "Wild",
@@ -306,9 +233,32 @@ async function initDatabase() {
     }
   }
 
+  // Clean up default seeded unsplash images from loaded siteData
+  let needsSave = false;
+  if (siteData.homepagePhotos) {
+    const originalLength = siteData.homepagePhotos.length;
+    siteData.homepagePhotos = siteData.homepagePhotos.filter(p => p && p.src && !p.src.includes('unsplash.com'));
+    if (siteData.homepagePhotos.length !== originalLength) {
+      needsSave = true;
+    }
+  }
+
+  if (siteData.galleryCategories) {
+    for (const catKey in siteData.galleryCategories) {
+      const cat = siteData.galleryCategories[catKey];
+      if (cat && cat.photos) {
+        const originalLength = cat.photos.length;
+        cat.photos = cat.photos.filter(p => p && p.src && !p.src.includes('unsplash.com'));
+        if (cat.photos.length !== originalLength) {
+          needsSave = true;
+        }
+      }
+    }
+  }
+
   // Ensure crucial nodes exist
   if (!siteData.profile) siteData.profile = DEFAULT_SITE_DATA.profile;
-  if (!siteData.homepagePhotos) siteData.homepagePhotos = DEFAULT_SITE_DATA.homepagePhotos;
+  if (!siteData.homepagePhotos) siteData.homepagePhotos = [];
   if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;
   if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;
   if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;
@@ -318,6 +268,14 @@ async function initDatabase() {
 
   // Dispatch global custom event for UI updates
   document.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: siteData }));
+
+  // Save the cleaned database back to Supabase and LocalStorage if changes were made
+  if (needsSave) {
+    console.log("Seeded mock images detected in database. Cleaning up...");
+    setTimeout(() => {
+      window.saveSiteData(siteData);
+    }, 1000);
+  }
 }
 
 // Kick off immediately
