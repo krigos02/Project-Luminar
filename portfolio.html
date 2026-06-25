@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -46,98 +46,408 @@
   color: var(--text3);
   opacity: 0.4;
 }
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-  gap: 16px;
-  margin-bottom: 5rem;
-}
-.cat-card {
+/* ── 3D CATEGORIES CAROUSEL ── */
+.slider-3d-container {
   position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin: 2rem auto 5rem;
+  height: 520px;
+  perspective: 1000px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  border-radius: 2px;
-  cursor: pointer;
-  aspect-ratio: 4/3;
-  display: block;
-  border: 1px solid var(--border);
+  user-select: none;
 }
-.cat-card-img {
+
+.slider-ambient-glow {
+  position: absolute;
+  width: 550px;
+  height: 550px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 169, 110, 0.25) 0%, rgba(0,0,0,0) 70%);
+  filter: blur(90px);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.85;
+  transition: background 1s ease-out, transform 1s ease-out;
+  transform: translate3d(0, 0, -250px);
+}
+
+[data-theme="light"] .slider-ambient-glow {
+  background: radial-gradient(circle, rgba(13, 13, 13, 0.06) 0%, rgba(0,0,0,0) 70%);
+  filter: blur(100px);
+  opacity: 0.6;
+}
+
+.slider-3d-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Base Card Style (3D Container) */
+.slider-3d-slide {
+  position: absolute;
+  width: 340px;
+  height: 450px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  overflow: visible;
+  transition: transform 550ms cubic-bezier(.34, 1.36, .64, 1),
+              filter 550ms cubic-bezier(.34, 1.36, .64, 1),
+              opacity 550ms cubic-bezier(.34, 1.36, .64, 1),
+              box-shadow 550ms cubic-bezier(.34, 1.36, .64, 1);
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+/* 3D Box (Room) Faces */
+.box-face {
+  position: absolute;
+  box-sizing: border-box;
+  backface-visibility: hidden;
+}
+
+/* Back Wall */
+.box-face.back {
+  inset: 0;
+  transform: translateZ(-160px);
+  background: #000000;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.box-face.back img, .box-face.back .cat-ph {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.9s var(--ease-out);
-  pointer-events: none;
+  opacity: 0.85;
+  transition: transform 0.8s var(--ease-out);
 }
-.cat-card:hover .cat-card-img {
-  transform: scale(1.08);
+.slider-3d-slide:hover .box-face.back img {
+  transform: scale(1.06);
 }
-.cat-overlay {
+
+/* Side folding walls */
+.box-face.left {
+  width: 160px;
+  height: 100%;
+  left: 0;
+  top: 0;
+  transform-origin: left center;
+  transform: rotateY(90deg);
+  background: linear-gradient(to right, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.95) 100%), var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.box-face.right {
+  width: 160px;
+  height: 100%;
+  right: 0;
+  top: 0;
+  transform-origin: right center;
+  transform: rotateY(-90deg);
+  background: linear-gradient(to left, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.95) 100%), var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.box-face.top {
+  width: 100%;
+  height: 160px;
+  left: 0;
+  top: 0;
+  transform-origin: center top;
+  transform: rotateX(-90deg);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.95) 100%), var(--bg2);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+}
+.box-face.bottom {
+  width: 100%;
+  height: 160px;
+  left: 0;
+  bottom: 0;
+  transform-origin: center bottom;
+  transform: rotateX(90deg);
+  background: linear-gradient(to top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.95) 100%), var(--bg2);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Light Mode Gradients */
+[data-theme="light"] .box-face.left { background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(240,240,240,0.95) 100%), var(--bg2); }
+[data-theme="light"] .box-face.right { background: linear-gradient(to left, rgba(255,255,255,0.1) 0%, rgba(240,240,240,0.95) 100%), var(--bg2); }
+[data-theme="light"] .box-face.top { background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(240,240,240,0.95) 100%), var(--bg2); }
+[data-theme="light"] .box-face.bottom { background: linear-gradient(to top, rgba(255,255,255,0.1) 0%, rgba(240,240,240,0.95) 100%), var(--bg2); }
+
+/* Glowing neon active frame */
+.slider-3d-slide.active::after {
+  content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
-  transition: opacity 0.4s;
+  inset: -2px;
+  border: 1px solid #c9a96e;
+  border-color: var(--gold);
+  border-radius: 4px;
+  pointer-events: none;
+  box-shadow: 0 0 15px rgba(201,169,110,0.45), inset 0 0 10px rgba(201,169,110,0.25);
+  z-index: 4;
+  opacity: 0.85;
+  transition: opacity 0.3s;
 }
-.cat-card:hover .cat-overlay {
-  opacity: 0.9;
+
+[data-theme="light"] .slider-3d-slide.active::after {
+  border-color: #0d0d0d;
+  box-shadow: 0 0 15px rgba(13,13,13,0.25), inset 0 0 10px rgba(13,13,13,0.15);
 }
-.cat-info {
+
+.slider-3d-content {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   padding: 2.2rem 2rem;
-  transform: translateY(24px);
-  transition: transform 0.4s var(--ease-out);
+  z-index: 2;
+  color: #ffffff;
 }
-.cat-card:hover .cat-info {
-  transform: translateY(0);
-}
-.cat-num {
+
+.slider-3d-num {
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+  color: #c9a96e; /* gold fallback */
   color: var(--gold);
   margin-bottom: 8px;
 }
-.cat-name {
+
+.slider-3d-name {
   font-family: var(--font-display);
   font-size: 2rem;
-  color: #fff;
   margin-bottom: 0.75rem;
   line-height: 1.1;
+  color: #ffffff;
 }
-.cat-desc {
+
+.slider-3d-desc {
   font-size: 13.5px;
   color: rgba(255,255,255,0.7);
   line-height: 1.6;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.4s 0.05s var(--ease-out);
   max-width: 320px;
+  font-family: var(--font-sans);
+  margin-bottom: 1.25rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.5s 0.1s var(--ease-out);
 }
-.cat-card:hover .cat-desc {
+
+.slider-3d-slide.active:hover .slider-3d-desc {
   opacity: 1;
   transform: translateY(0);
 }
-.cat-count {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
+
+.slider-3d-count {
   font-size: 11px;
   letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.85);
   font-weight: 500;
-  border: 1px solid rgba(255,255,255,0.15);
-  padding: 4px 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 5px 10px;
   border-radius: 2px;
+  display: inline-block;
+  text-decoration: none;
+  transition: all 0.3s;
 }
-.cat-ph {
-  background: var(--surface);
-  width: 100%;
-  height: 100%;
+
+.slider-3d-slide.active .slider-3d-count:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
 }
-@media (max-width: 600px) {
-  .categories-grid { grid-template-columns: 1fr; }
+
+/* 3D states */
+.slider-3d-slide.active {
+  transform: translate3d(0, 0, 80px) rotateY(0deg) scale(1);
+  filter: blur(0px) brightness(1);
+  opacity: 1;
+  z-index: 5;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.2), 0 0 0 1px var(--border2);
+  animation: floatCard 4s ease-in-out infinite alternate;
+}
+
+[data-theme="dark"] .slider-3d-slide.active {
+  box-shadow: 0 35px 70px rgba(0,0,0,0.65), 0 0 0 1px var(--gold);
+}
+
+@keyframes floatCard {
+  0% { transform: translate3d(0, 0, 80px) rotateY(0deg) translateY(0px) scale(1); }
+  100% { transform: translate3d(0, 0, 80px) rotateY(0deg) translateY(-10px) scale(1); }
+}
+
+.slider-3d-slide.left {
+  transform: translate3d(-78%, 0, -50px) rotateY(18deg) scale(0.72);
+  filter: blur(8px) brightness(0.8);
+  opacity: 0.55;
+  z-index: 3;
+}
+
+.slider-3d-slide.right {
+  transform: translate3d(78%, 0, -50px) rotateY(-18deg) scale(0.72);
+  filter: blur(8px) brightness(0.8);
+  opacity: 0.55;
+  z-index: 3;
+}
+
+.slider-3d-slide.far-left {
+  transform: translate3d(-135%, 0, -100px) rotateY(28deg) scale(0.59);
+  filter: blur(14px) brightness(0.6);
+  opacity: 0.30;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.slider-3d-slide.far-right {
+  transform: translate3d(135%, 0, -100px) rotateY(-28deg) scale(0.59);
+  filter: blur(14px) brightness(0.6);
+  opacity: 0.30;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.slider-3d-slide.hidden {
+  transform: translate3d(0, 0, -350px) scale(0.4);
+  filter: blur(20px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Controls */
+.slider-3d-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.3s;
+}
+
+.slider-3d-btn:hover {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
+.slider-3d-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.slider-3d-btn.prev { left: 16px; }
+.slider-3d-btn.next { right: 16px; }
+
+.slider-3d-dots {
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.slider-3d-dot {
+  width: 28px;
+  height: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.slider-3d-dot.active {
+  background: var(--text);
+  border-color: var(--text);
+}
+
+/* Category Filter Chips Style */
+.filter-chip {
+  background: transparent;
+  color: var(--text2);
+  border: none;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 550ms cubic-bezier(.34, 1.36, .64, 1);
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+.filter-chip:hover {
+  color: var(--text);
+  background: var(--bg3);
+}
+.filter-chip.active {
+  background: var(--text);
+  color: var(--bg);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+[data-theme="dark"] .filter-chip.active {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+
+/* Responsive Viewports */
+@media (max-width: 768px) {
+  .slider-3d-container {
+    height: 460px;
+  }
+  .slider-3d-slide {
+    width: 270px;
+    height: 380px;
+  }
+  .slider-3d-slide.left {
+    transform: translate3d(-170px, 0, -100px) rotateY(20deg) scale(0.8);
+    filter: blur(3px);
+    opacity: 0.6;
+  }
+  .slider-3d-slide.right {
+    transform: translate3d(170px, 0, -100px) rotateY(-20deg) scale(0.8);
+    filter: blur(3px);
+    opacity: 0.6;
+  }
+  .slider-3d-slide.active {
+    transform: translate3d(0, 0, 80px) rotateY(0deg);
+  }
+  @keyframes floatCard {
+    0% { transform: translate3d(0, 0, 80px) rotateY(0deg) translateY(0px); }
+    100% { transform: translate3d(0, 0, 80px) rotateY(0deg) translateY(-6px); }
+  }
+  .slider-3d-btn {
+    width: 38px;
+    height: 38px;
+  }
+  .slider-3d-btn.prev { left: 8px; }
+  .slider-3d-btn.next { right: 8px; }
 }
 </style>
 </head>
@@ -220,86 +530,43 @@
   </div>
 </main>
 
-<!-- CATEGORIES GRID -->
-<section>
+<!-- CATEGORY FILTER CHIPS -->
+<div class="container" style="text-align: center; margin-bottom: 2rem;">
+  <div class="category-filter-chips" style="display: inline-flex; gap: 8px; flex-wrap: wrap; justify-content: center; background: var(--bg2); padding: 6px; border-radius: 30px; border: 1px solid var(--border);">
+    <!-- Dynamically Injected Filter Chips -->
+  </div>
+</div>
+
+
+<!-- CATEGORIES 3D CAROUSEL -->
+<section style="overflow: hidden; padding: 1rem 0 3rem;">
   <div class="container">
-    <div class="categories-grid">
-      
-      <!-- Category 1 -->
-      <a href="gallery.html?category=wildlife" class="cat-card reveal">
-        <div class="cat-ph" style="background:linear-gradient(135deg,#132213,#0b140b)"></div>
-        <div class="cat-overlay"></div>
-        <div class="cat-info">
-          <div class="cat-num">01</div>
-          <div class="cat-name">Wildlife</div>
-          <div class="cat-desc">Intimate encounters with creatures in their natural habitat — patience rendered visible.</div>
-        </div>
-        <div class="cat-count">42 photos</div>
-      </a>
-
-      <!-- Category 2 -->
-      <a href="gallery.html?category=landscape" class="cat-card reveal" style="transition-delay:0.1s">
-        <div class="cat-ph" style="background:linear-gradient(135deg,#131322,#0b0b14)"></div>
-        <div class="cat-overlay"></div>
-        <div class="cat-info">
-          <div class="cat-num">02</div>
-          <div class="cat-name">Landscape</div>
-          <div class="cat-desc">The earth at its most eloquent — mountains, valleys, and the horizons between them.</div>
-        </div>
-        <div class="cat-count">58 photos</div>
-      </a>
-
-      <!-- Category 3 -->
-      <a href="gallery.html?category=travel" class="cat-card reveal" style="transition-delay:0.2s">
-        <div class="cat-ph" style="background:linear-gradient(135deg,#221313,#140b0b)"></div>
-        <div class="cat-overlay"></div>
-        <div class="cat-info">
-          <div class="cat-num">03</div>
-          <div class="cat-name">Travel</div>
-          <div class="cat-desc">Journeys documented with curiosity — cultures, borders, and the roads that connect them.</div>
-        </div>
-        <div class="cat-count">35 photos</div>
-      </a>
-
-      <!-- Category 4 -->
-      <a href="gallery.html?category=street" class="cat-card reveal" style="transition-delay:0.15s">
-        <div class="cat-ph" style="background:linear-gradient(135deg,#132222,#0b1414)"></div>
-        <div class="cat-overlay"></div>
-        <div class="cat-info">
-          <div class="cat-num">04</div>
-          <div class="cat-name">Street</div>
-          <div class="cat-desc">Urban life caught unguarded — the micro-dramas of cities in a single frame.</div>
-        </div>
-        <div class="cat-count">29 photos</div>
-      </a>
-
-      <!-- Category 5 -->
-      <a href="gallery.html?category=portrait" class="cat-card reveal" style="transition-delay:0.25s">
-        <div class="cat-ph" style="background:linear-gradient(135deg,#222213,#14140b)"></div>
-        <div class="cat-overlay"></div>
-        <div class="cat-info">
-          <div class="cat-num">05</div>
-          <div class="cat-name">Portrait</div>
-          <div class="cat-desc">Faces that hold entire histories — quiet collaborations between photographer and subject.</div>
-        </div>
-        <div class="cat-count">22 photos</div>
-      </a>
-
-      <!-- Category 6 -->
-      <a href="gallery.html?category=commercial" class="cat-card reveal" style="transition-delay:0.35s">
-        <div class="cat-ph" style="background:linear-gradient(135deg,#1d1d1d,#111111)"></div>
-        <div class="cat-overlay"></div>
-        <div class="cat-info">
-          <div class="cat-num">06</div>
-          <div class="cat-name">Commercial</div>
-          <div class="cat-desc">Brand narratives and editorial assignments — where artistry meets marketing intent.</div>
-        </div>
-        <div class="cat-count">18 photos</div>
-      </a>
-
+    <div class="slider-3d-container">
+      <div class="slider-ambient-glow" id="slider-ambient-glow"></div>
+      <div class="slider-3d-wrapper" id="slider-3d-wrapper">
+        <!-- Dynamically injected -->
+      </div>
+      <!-- Navigation Controls -->
+      <button class="slider-3d-btn prev" id="slider-3d-prev" aria-label="Previous category">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="slider-3d-btn next" id="slider-3d-next" aria-label="Next category">
+        <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <!-- Indicator dots & Down arrow & drag helper text -->
+    <div class="slider-3d-bottom-info" style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 1.5rem; position: relative; z-index: 10;">
+      <div class="slider-3d-dots" id="slider-3d-dots"></div>
+      <button class="slider-down-btn" onclick="window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })" style="width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; outline: none; margin-top: 4px;">
+        <svg viewBox="0 0 24 24" style="width: 16px; height: 16px;"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div style="font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.08em; text-transform: lowercase; color: var(--text3); display: flex; align-items: center; gap: 6px; pointer-events: none;">
+        <span>⇆</span> drag or use arrows to explore
+      </div>
     </div>
   </div>
 </section>
+
 
 <!-- FOOTER -->
 <footer role="contentinfo">
@@ -360,45 +627,297 @@
 document.addEventListener('DOMContentLoaded', renderCategories);
 document.addEventListener('siteDataLoaded', renderCategories);
 
+let currentIndex = 0;
+let slidesData = [];
+let isDragging = false;
+let startX = 0;
+let activeFilter = 'all';
+
+const filterGroups = {
+  all: ['wildlife', 'landscape', 'travel', 'street', 'portrait', 'commercial'],
+  outdoors: ['wildlife', 'landscape', 'travel'],
+  humanity: ['portrait', 'street'],
+  creative: ['commercial']
+};
+
+function renderFilterChips() {
+  const chipsContainer = document.querySelector('.category-filter-chips');
+  if (!chipsContainer) return;
+  
+  const chips = [
+    { id: 'all', label: 'All Genres' },
+    { id: 'outdoors', label: 'Outdoors' },
+    { id: 'humanity', label: 'Humanity' },
+    { id: 'creative', label: 'Creative' }
+  ];
+  
+  chipsContainer.innerHTML = chips.map(c => `
+    <button class="filter-chip${c.id === activeFilter ? ' active' : ''}" onclick="applyFilter('${c.id}')">
+      ${c.label}
+    </button>
+  `).join('');
+}
+
+function applyFilter(filterId) {
+  activeFilter = filterId;
+  currentIndex = 0;
+  renderCategories();
+}
+
 function renderCategories() {
   if (window.siteData && window.siteData.galleryCategories) {
-    const grid = document.querySelector('.categories-grid');
-    if (grid) {
-      const cats = Object.keys(window.siteData.galleryCategories);
-      grid.innerHTML = cats.map((key, idx) => {
-        const cat = window.siteData.galleryCategories[key];
-        const num = String(idx + 1).padStart(2, '0');
-        const displayName = cat.title + cat.em;
-        const countVal = cat.photos ? cat.photos.length : 0;
-        
-        // Find background image or color fallback
-        let bgStyle = 'linear-gradient(135deg,#151515,#2a2a2a)';
-        let imgTag = '';
-        if (cat.photos && cat.photos.length > 0) {
-          const firstPhoto = cat.photos[0];
-          if (firstPhoto.src) {
-            imgTag = `<img class="cat-card-img" src="${firstPhoto.src}" alt="${displayName}">`;
-          } else if (firstPhoto.bg) {
-            bgStyle = firstPhoto.bg;
-          }
-        }
-        
-        return `
-          <a href="gallery.html?category=${key}" class="cat-card reveal visible" style="transition-delay:${idx * 0.1}s">
-            ${imgTag ? imgTag : `<div class="cat-ph" style="background: ${bgStyle}"></div>`}
-            <div class="cat-overlay"></div>
-            <div class="cat-info">
-              <div class="cat-num">${num}</div>
-              <div class="cat-name">${displayName}</div>
-              <div class="cat-desc">${cat.desc}</div>
-            </div>
-            <div class="cat-count">${countVal} photo${countVal !== 1 ? 's' : ''}</div>
-          </a>
-        `;
-      }).join('');
+    renderFilterChips();
+
+    const wrapper = document.getElementById('slider-3d-wrapper');
+    const dotsContainer = document.getElementById('slider-3d-dots');
+    if (!wrapper) return;
+
+    const cats = Object.keys(window.siteData.galleryCategories);
+    const allowedKeys = filterGroups[activeFilter] || filterGroups['all'];
+    const filteredCats = cats.filter(key => allowedKeys.includes(key));
+
+    slidesData = filteredCats.map((key, idx) => {
+      const cat = window.siteData.galleryCategories[key];
+      return { key, cat, idx };
+    });
+
+    if (currentIndex >= slidesData.length) {
+      currentIndex = 0;
     }
+
+    wrapper.innerHTML = slidesData.map(({ key, cat, idx }) => {
+      const num = String(idx + 1).padStart(2, '0');
+      const displayName = cat.title + cat.em;
+      const countVal = cat.photos ? cat.photos.length : 0;
+      
+      let imgTag = '';
+      if (cat.photos && cat.photos.length > 0 && cat.photos[0].src) {
+        imgTag = `<img src="${cat.photos[0].src}" alt="${displayName}">`;
+      } else {
+        const bg = (cat.photos && cat.photos[0] && cat.photos[0].bg) || 'linear-gradient(135deg,#151515,#2a2a2a)';
+        imgTag = `<div class="cat-ph" style="background: ${bg}"></div>`;
+      }
+
+      return `
+        <div class="slider-3d-slide" data-index="${idx}" onclick="handleSlideClick(${idx})">
+          <div class="box-face back">
+            ${imgTag}
+            <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);"></div>
+          </div>
+          <div class="box-face left"></div>
+          <div class="box-face right"></div>
+          <div class="box-face top"></div>
+          <div class="box-face bottom"></div>
+          <div class="slider-3d-footer" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem 1.8rem; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%); transform: translateZ(-20px); pointer-events: none; z-index: 3;">
+            <div class="slider-3d-name" style="font-family: var(--font-sans); font-size: 1.35rem; font-weight: 600; color: #ffffff; margin-bottom: 6px; letter-spacing: -0.01em; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">${displayName}</div>
+            <div class="slider-3d-subtitle" style="font-family: var(--font-sans); font-size: 0.9rem; color: rgba(255,255,255,0.75); font-weight: 400; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">Genre · ${cat.location || 'Global'}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    if (dotsContainer) {
+      dotsContainer.innerHTML = slidesData.map((_, idx) => `
+        <div class="slider-3d-dot${idx === currentIndex ? ' active' : ''}" onclick="goToSlide(${idx})"></div>
+      `).join('');
+    }
+
+    updateSlidesPosition();
+    setupSliderInteraction();
   }
 }
+
+function handleSlideClick(index) {
+  if (index === currentIndex) {
+    const key = slidesData[index].key;
+    window.location.href = `gallery.html?category=${key}`;
+  } else {
+    goToSlide(index);
+  }
+}
+
+const ambientColors = {
+  wildlife: 'rgba(201, 169, 110, 0.28)',
+  landscape: 'rgba(80, 140, 240, 0.25)',
+  travel: 'rgba(230, 120, 70, 0.25)',
+  street: 'rgba(200, 200, 200, 0.2)',
+  portrait: 'rgba(230, 90, 130, 0.25)',
+  commercial: 'rgba(100, 185, 185, 0.2)'
+};
+
+function goToSlide(index) {
+  if (index < 0 || index >= slidesData.length) return;
+  currentIndex = index;
+  updateSlidesPosition();
+}
+
+function updateSlidesPosition() {
+  const slides = document.querySelectorAll('.slider-3d-slide');
+  const dots = document.querySelectorAll('.slider-3d-dot');
+  
+  slides.forEach((slide, idx) => {
+    slide.className = 'slider-3d-slide';
+    // Clear custom tilt transform properties
+    slide.style.transform = '';
+    slide.style.transition = '';
+    
+    const diff = idx - currentIndex;
+    
+    if (diff === 0) {
+      slide.classList.add('active');
+    } else if (diff === -1) {
+      slide.classList.add('left');
+    } else if (diff === 1) {
+      slide.classList.add('right');
+    } else if (diff < -1) {
+      slide.classList.add(diff === -2 ? 'far-left' : 'hidden');
+    } else if (diff > 1) {
+      slide.classList.add(diff === 2 ? 'far-right' : 'hidden');
+    }
+  });
+
+  dots.forEach((dot, idx) => {
+    dot.classList.toggle('active', idx === currentIndex);
+  });
+
+  // Update dynamic ambient glow backlight
+  const glowEl = document.getElementById('slider-ambient-glow');
+  if (glowEl && slidesData[currentIndex]) {
+    const key = slidesData[currentIndex].key;
+    const color = ambientColors[key] || 'rgba(201, 169, 110, 0.28)';
+    glowEl.style.background = `radial-gradient(circle, ${color} 0%, rgba(0,0,0,0) 70%)`;
+  }
+}
+
+function setupSliderInteraction() {
+  const container = document.querySelector('.slider-3d-container');
+  if (!container || container.dataset.listenersBound) return;
+  container.dataset.listenersBound = "true";
+
+  const prevBtn = document.getElementById('slider-3d-prev');
+  const nextBtn = document.getElementById('slider-3d-next');
+  
+  if (prevBtn) {
+    prevBtn.onclick = (e) => {
+      e.stopPropagation();
+      goToSlide(currentIndex - 1);
+    };
+  }
+  if (nextBtn) {
+    nextBtn.onclick = (e) => {
+      e.stopPropagation();
+      goToSlide(currentIndex + 1);
+    };
+  }
+
+  // Interactive 3D tilt tracking for the active card
+  container.addEventListener('mousemove', (e) => {
+    if (isDragging) return;
+    const activeSlide = document.querySelector('.slider-3d-slide.active');
+    if (!activeSlide) return;
+
+    const rect = activeSlide.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
+
+    // Check if mouse is hovering over or near the active slide
+    const distance = Math.hypot(e.clientX - (rect.left + rect.width / 2), e.clientY - (rect.top + rect.height / 2));
+    if (distance < 450) {
+      // Pause CSS bobbing animation and rotate card relative to cursor
+      activeSlide.style.animation = 'none';
+      const tiltX = -y * 22; // max tilt degrees on X-axis
+      const tiltY = x * 22;  // max tilt degrees on Y-axis
+      activeSlide.style.transform = `translate3d(0, -8px, 140px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.03)`;
+      activeSlide.style.boxShadow = `0 35px 75px rgba(0,0,0,0.35), 0 0 12px ${ambientColors[slidesData[currentIndex].key] || 'rgba(255,255,255,0.1)'}`;
+      activeSlide.style.transition = 'transform 0.15s ease-out, box-shadow 0.3s ease-out';
+    } else {
+      // Restore CSS bobbing animation when pointer moves away
+      activeSlide.style.animation = '';
+      activeSlide.style.transform = '';
+      activeSlide.style.boxShadow = '';
+      activeSlide.style.transition = '';
+    }
+  });
+
+  container.addEventListener('mouseleave', () => {
+    const activeSlide = document.querySelector('.slider-3d-slide.active');
+    if (activeSlide) {
+      activeSlide.style.animation = '';
+      activeSlide.style.transform = '';
+      activeSlide.style.boxShadow = '';
+      activeSlide.style.transition = '';
+    }
+  });
+
+  // Cursor drag gesture
+  container.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.clientX;
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const currentX = e.clientX;
+    const walk = currentX - startX;
+    
+    if (Math.abs(walk) > 100) {
+      if (walk > 0) {
+        goToSlide(currentIndex - 1);
+      } else {
+        goToSlide(currentIndex + 1);
+      }
+      isDragging = false; 
+    }
+  });
+
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+
+  // Touch swiping
+  container.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+  }, { passive: true });
+
+  container.addEventListener('touchmove', (e) => {
+    const currentX = e.touches[0].clientX;
+    const walk = currentX - startX;
+    if (Math.abs(walk) > 60) {
+      if (walk > 0) {
+        goToSlide(currentIndex - 1);
+      } else {
+        goToSlide(currentIndex + 1);
+      }
+      startX = currentX;
+    }
+  }, { passive: true });
+
+  // Mouse wheel
+  container.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaX) > 30) {
+      e.preventDefault();
+      if (e.deltaX > 0) {
+        goToSlide(currentIndex + 1);
+      } else {
+        goToSlide(currentIndex - 1);
+      }
+    }
+  }, { passive: false });
+
+  // Keyboard navigation
+  if (!window.sliderKeyboardListenerBound) {
+    window.sliderKeyboardListenerBound = true;
+    window.addEventListener('keydown', (e) => {
+      if (!document.querySelector('.slider-3d-slide')) return;
+      if (e.key === 'ArrowLeft') {
+        goToSlide(currentIndex - 1);
+      } else if (e.key === 'ArrowRight') {
+        goToSlide(currentIndex + 1);
+      }
+    });
+  }
+}
+
 </script>
 </body>
 </html>

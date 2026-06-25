@@ -32,6 +32,7 @@ const DEFAULT_SITE_DATA = {
     instagram: "#",
     twitter: "#"
   },
+  homepageFilterTabs: ['wildlife', 'landscape', 'travel', 'portrait', 'street', 'aerial'],
   homepagePhotos: [],
   galleryCategories: {
     wildlife: {
@@ -259,6 +260,7 @@ async function initDatabase() {
   // Ensure crucial nodes exist
   if (!siteData.profile) siteData.profile = DEFAULT_SITE_DATA.profile;
   if (!siteData.homepagePhotos) siteData.homepagePhotos = [];
+  if (!siteData.homepageFilterTabs) siteData.homepageFilterTabs = DEFAULT_SITE_DATA.homepageFilterTabs;
   if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;
   if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;
   if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;
