@@ -975,7 +975,6 @@ body.cursor-hover #cursor-ring {
   background: var(--bg3) !important;
 }
 
-/* ─────────────── CATEGORY FILTER BAR ─────────────── */
 .filter-bar {
   display: flex;
   align-items: center;
@@ -988,6 +987,14 @@ body.cursor-hover #cursor-ring {
   padding: 1rem 0;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
+
+@media (max-width: 768px) {
+  .filter-bar {
+    justify-content: flex-start;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
 .filter-btn {
   font-family: var(--font-sans);
   font-size: 11px;
