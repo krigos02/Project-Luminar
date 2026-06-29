@@ -522,6 +522,7 @@
       <div class="admin-logo">LUMINAR <span>CMS</span></div>
       <div class="admin-actions">
         <a href="index.html" class="nav-back">View Site</a>
+        <button onclick="resetMFA()" class="btn-outline" style="padding: 8px 18px; font-size: 11px; margin-right: 8px; border-color: rgba(220, 50, 50, 0.4); color: #ff6b6b;">Reset 2FA</button>
         <button onclick="logout()" class="btn-outline" style="padding: 8px 18px; font-size: 11px;">Lock</button>
       </div>
     </div>
@@ -646,6 +647,17 @@
             <button type="button" class="btn-primary" onclick="addHomepageTag()" style="padding: 12px 24px; font-size: 11px; white-space: nowrap;">+ Add Tab</button>
           </div>
         </div>
+
+        <div style="border-top: 1px solid var(--border); margin-top: 3rem; padding-top: 2rem;">
+          <div class="panel-header" style="padding: 0; margin-bottom: 1rem; border-bottom: none;">
+            <div>
+              <h2 class="panel-title" style="margin-bottom: 0.5rem;">Portfolio Filter Tabs (portfolio.html Groups)</h2>
+              <p style="font-size: 12px; color: var(--text3); margin-bottom: 0;">Manage the category grouping tabs shown on the portfolio page. You can add, edit, and configure which categories are grouped in each tab.</p>
+            </div>
+            <button type="button" class="btn-primary" onclick="openPortfolioTabModal('add')" style="padding: 10px 24px; font-size: 11px; white-space: nowrap;">+ New Group Tab</button>
+          </div>
+          <div id="portfolio-tabs-list" class="cms-grid"></div>
+        </div>
       </section>
 
       <!-- PANEL: GALLERY -->
@@ -746,6 +758,35 @@
       </div>
       <div class="modal-actions">
         <button type="button" onclick="closeModal('category-modal')" class="btn-outline">Cancel</button>
+        <button type="submit" class="btn-primary">Apply Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: PORTFOLIO GROUP TAB EDITOR -->
+<div id="portfolio-tab-modal" class="admin-modal">
+  <div class="modal-content">
+    <h3 class="panel-title" id="ptab-modal-title" style="margin-bottom:1.5rem">Edit Portfolio Group Tab</h3>
+    <form id="form-portfolio-tab" onsubmit="savePortfolioTab(event)">
+      <input type="hidden" id="ptab-mode">
+      <input type="hidden" id="ptab-orig-id">
+      <div class="admin-form-group">
+        <label>Tab ID / Slug (unique, lowercase, e.g. "outdoors")</label>
+        <input type="text" id="ptab-id" class="admin-form-control" pattern="[a-z0-9\-]+" required>
+      </div>
+      <div class="admin-form-group">
+        <label>Tab Label (Display name, e.g. "Outdoors")</label>
+        <input type="text" id="ptab-label" class="admin-form-control" required>
+      </div>
+      <div class="admin-form-group">
+        <label>Included Categories</label>
+        <div id="ptab-categories-checklist" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; border: 1px solid var(--border); padding: 12px; border-radius: 4px; background: var(--bg3); max-height: 200px; overflow-y: auto;">
+          <!-- Dynamically populated checklist -->
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" onclick="closeModal('portfolio-tab-modal')" class="btn-outline">Cancel</button>
         <button type="submit" class="btn-primary">Apply Changes</button>
       </div>
     </form>
@@ -1236,6 +1277,69 @@
     document.getElementById('login-gate').style.display = 'flex';
   }
 
+  window.resetMFA = async function() {
+    const adminEmail = (window.siteData && window.siteData.profile && window.siteData.profile.email) || "krishnendutitangoswami@gmail.com";
+    
+    if (!confirm(`To authorize resetting 2-Factor Authentication, a verification code will be sent to your registered email: ${adminEmail}. Send verification code?`)) {
+      return;
+    }
+    
+    // Generate a random 6-digit code
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    try {
+      // Trigger the existing Edge Function to send this code securely via Resend
+      const emailPayload = {
+        name: "Security Portal",
+        email: adminEmail,
+        subject: "Verification Code for 2FA Reset",
+        message: `A request was made to reset your 2-Factor Authentication. Please use the verification code below to authorize this request:\n\nVerification Code: ${verificationCode}\n\nIf you did not request this, please change your security settings or password immediately.`,
+        created_at: new Date().toISOString()
+      };
+      
+      const { error } = await supabaseClient.functions.invoke('send-contact-email', {
+        body: emailPayload
+      });
+      
+      if (error) throw error;
+      
+    } catch (err) {
+      console.error("Failed to send 2FA reset email code:", err);
+      alert(`Error sending verification email: ${err.message}\n\nPlease check your Supabase Edge Function secrets (TO_EMAIL) and Resend configuration.`);
+      return;
+    }
+    
+    const userInput = prompt("Please enter the 6-digit verification code sent to your email to complete the 2FA reset:");
+    if (!userInput) {
+      alert("Reset aborted.");
+      return;
+    }
+    
+    if (userInput.trim() !== verificationCode) {
+      alert("Invalid verification code. Reset aborted.");
+      return;
+    }
+    
+    await performUnenroll();
+  };
+
+  async function performUnenroll() {
+    try {
+      const res = await supabaseClient.auth.mfa.listFactors();
+      if (res && res.data && res.data.all) {
+        const factors = res.data.all;
+        for (const factor of factors) {
+          await supabaseClient.auth.mfa.unenroll({ factorId: factor.id });
+        }
+      }
+      alert("MFA successfully unlinked. Logging out so you can scan the new QR code on your next login.");
+      logout();
+    } catch (err) {
+      console.error("Reset MFA failed:", err);
+      alert("Unenrollment failed: " + err.message);
+    }
+  }
+
   // Session Check on Load
   async function checkAuthSession() {
     try {
@@ -1330,6 +1434,7 @@
     loadProfileForm();
     loadCategoriesCms();
     renderHomepageTags();
+    renderPortfolioTabs();
     setupGalleryDropdowns();
     loadGalleryCms();
     loadBlogCms();
@@ -1673,6 +1778,150 @@
       const success = await window.saveSiteData(window.siteData);
       if (success) {
         renderHomepageTags();
+        showSuccess();
+      } else {
+        alert("Failed to save changes.");
+      }
+    }
+  };
+
+
+  window.renderPortfolioTabs = function() {
+    const container = document.getElementById('portfolio-tabs-list');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    // Ensure data exists
+    if (!window.siteData.portfolioFilterTabs) {
+      window.siteData.portfolioFilterTabs = [
+        { id: 'all', label: 'All Genres', categories: ['wildlife', 'landscape', 'travel', 'street', 'portrait', 'commercial'] },
+        { id: 'outdoors', label: 'Outdoors', categories: ['wildlife', 'landscape', 'travel'] },
+        { id: 'humanity', label: 'Humanity', categories: ['portrait', 'street'] },
+        { id: 'creative', label: 'Creative', categories: ['commercial'] }
+      ];
+    }
+    
+    const tabs = window.siteData.portfolioFilterTabs;
+    tabs.forEach((tab, index) => {
+      const card = document.createElement('div');
+      card.className = 'cms-card';
+      
+      const catsList = (tab.categories || []).join(', ') || '(none)';
+      
+      card.innerHTML = `
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; background: rgba(212, 175, 55, 0.15); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.25); padding: 2px 6px; border-radius: 2px; font-family: monospace; font-weight: 600;">#${index + 1}</span>
+              <div class="cms-card-title" style="margin: 0;">${tab.label}</div>
+            </div>
+          </div>
+          <div class="cms-card-meta">Tab ID: ${tab.id}</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.4;">
+            <strong>Grouped Categories:</strong><br>${catsList}
+          </div>
+        </div>
+        <div class="cms-card-actions" style="display:flex; gap:6px; margin-top: auto;">
+          <button class="cms-card-btn" onclick="openPortfolioTabModal('edit', '${tab.id}')">Edit</button>
+          <button class="cms-card-btn btn-danger" onclick="deletePortfolioTab('${tab.id}')">Delete</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  };
+
+  window.openPortfolioTabModal = function(mode = 'add', id = '') {
+    const modal = document.getElementById('portfolio-tab-modal');
+    document.getElementById('form-portfolio-tab').reset();
+    document.getElementById('ptab-mode').value = mode;
+    
+    // Clear and build the checklist of categories
+    const checklist = document.getElementById('ptab-categories-checklist');
+    checklist.innerHTML = '';
+    const cats = window.siteData.galleryCategories || {};
+    
+    // Find active tab object if editing
+    let activeTab = null;
+    if (mode === 'edit' && id) {
+      document.getElementById('ptab-modal-title').textContent = "Edit Portfolio Group Tab";
+      document.getElementById('ptab-orig-id').value = id;
+      document.getElementById('ptab-id').value = id;
+      document.getElementById('ptab-id').disabled = true; // unique ID key locked
+      activeTab = window.siteData.portfolioFilterTabs.find(t => t.id === id);
+      if (activeTab) {
+        document.getElementById('ptab-label').value = activeTab.label;
+      }
+    } else {
+      document.getElementById('ptab-modal-title').textContent = "New Portfolio Group Tab";
+      document.getElementById('ptab-orig-id').value = '';
+      document.getElementById('ptab-id').value = '';
+      document.getElementById('ptab-id').disabled = false;
+    }
+    
+    Object.keys(cats).forEach(catKey => {
+      const isChecked = activeTab && activeTab.categories && activeTab.categories.includes(catKey);
+      const div = document.createElement('div');
+      div.style.display = 'flex';
+      div.style.alignItems = 'center';
+      div.style.gap = '8px';
+      div.innerHTML = `
+        <input type="checkbox" id="chk-ptab-cat-${catKey}" value="${catKey}" ${isChecked ? 'checked' : ''} style="cursor: pointer; width: 15px; height: 15px;">
+        <label for="chk-ptab-cat-${catKey}" style="cursor: pointer; font-size: 12px; margin-bottom: 0;">${cats[catKey].title}${cats[catKey].em || ''} (${catKey})</label>
+      `;
+      checklist.appendChild(div);
+    });
+    
+    modal.classList.add('active');
+  };
+
+  window.savePortfolioTab = async function(event) {
+    event.preventDefault();
+    const mode = document.getElementById('ptab-mode').value;
+    const origId = document.getElementById('ptab-orig-id').value;
+    const tabId = document.getElementById('ptab-id').value.trim().toLowerCase();
+    const label = document.getElementById('ptab-label').value.trim();
+    
+    // Get checked categories
+    const checked = [];
+    const checkboxes = document.querySelectorAll('#ptab-categories-checklist input[type="checkbox"]');
+    checkboxes.forEach(chk => {
+      if (chk.checked) checked.push(chk.value);
+    });
+    
+    if (!window.siteData.portfolioFilterTabs) {
+      window.siteData.portfolioFilterTabs = [];
+    }
+    
+    if (mode === 'add') {
+      const exists = window.siteData.portfolioFilterTabs.some(t => t.id === tabId);
+      if (exists) {
+        alert("A tab with this ID already exists.");
+        return;
+      }
+      window.siteData.portfolioFilterTabs.push({ id: tabId, label, categories: checked });
+    } else {
+      const idx = window.siteData.portfolioFilterTabs.findIndex(t => t.id === origId);
+      if (idx !== -1) {
+        window.siteData.portfolioFilterTabs[idx] = { id: origId, label, categories: checked };
+      }
+    }
+    
+    const success = await window.saveSiteData(window.siteData);
+    if (success) {
+      closeModal('portfolio-tab-modal');
+      renderPortfolioTabs();
+      showSuccess();
+    } else {
+      alert("Failed to save changes.");
+    }
+  };
+
+  window.deletePortfolioTab = async function(id) {
+    if (confirm(`Are you sure you want to delete the portfolio filter tab "${id}"?`)) {
+      window.siteData.portfolioFilterTabs = window.siteData.portfolioFilterTabs.filter(t => t.id !== id);
+      const success = await window.saveSiteData(window.siteData);
+      if (success) {
+        renderPortfolioTabs();
         showSuccess();
       } else {
         alert("Failed to save changes.");
@@ -2783,7 +3032,7 @@
   }
 
   function exportConfig() {
-    const code = `// Dynamic Content Management System (CMS) Database\n// Consolidates all website data, making it dynamic and editable.\n\nconst DEFAULT_SITE_DATA = ${JSON.stringify(window.siteData, null, 2)};\n\n// Global Store Management\nlet siteData = DEFAULT_SITE_DATA;\n\nconst DB_KEY = 'luminar_site_data';\n\ntry {\n  const rawData = localStorage.getItem(DB_KEY);\n  if (rawData) {\n    siteData = JSON.parse(rawData);\n    if (!siteData.profile) siteData.profile = DEFAULT_SITE_DATA.profile;\n    if (!siteData.homepagePhotos) siteData.homepagePhotos = DEFAULT_SITE_DATA.homepagePhotos;\n    if (!siteData.homepageFilterTabs) siteData.homepageFilterTabs = DEFAULT_SITE_DATA.homepageFilterTabs;\n    if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;\n    if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;\n    if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;\n  } else {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n  }\n} catch (e) {\n  console.warn("LocalStorage failed to initialize.", e);\n}\n\nwindow.siteData = siteData;\n\nwindow.saveSiteData = function(newData) {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(newData));\n    window.siteData = newData;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n\nwindow.resetSiteData = function() {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n    window.siteData = DEFAULT_SITE_DATA;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n`;
+    const code = `// Dynamic Content Management System (CMS) Database\n// Consolidates all website data, making it dynamic and editable.\n\nconst DEFAULT_SITE_DATA = ${JSON.stringify(window.siteData, null, 2)};\n\n// Global Store Management\nlet siteData = DEFAULT_SITE_DATA;\n\nconst DB_KEY = 'luminar_site_data';\n\ntry {\n  const rawData = localStorage.getItem(DB_KEY);\n  if (rawData) {\n    siteData = JSON.parse(rawData);\n    if (!siteData.profile) siteData.profile = DEFAULT_SITE_DATA.profile;\n    if (!siteData.homepagePhotos) siteData.homepagePhotos = DEFAULT_SITE_DATA.homepagePhotos;\n    if (!siteData.homepageFilterTabs) siteData.homepageFilterTabs = DEFAULT_SITE_DATA.homepageFilterTabs;\n    if (!siteData.portfolioFilterTabs) siteData.portfolioFilterTabs = DEFAULT_SITE_DATA.portfolioFilterTabs;\n    if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;\n    if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;\n    if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;\n  } else {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n  }\n} catch (e) {\n  console.warn("LocalStorage failed to initialize.", e);\n}\n\nwindow.siteData = siteData;\n\nwindow.saveSiteData = function(newData) {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(newData));\n    window.siteData = newData;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n\nwindow.resetSiteData = function() {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n    window.siteData = DEFAULT_SITE_DATA;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n`;
     
     const blob = new Blob([code], { type: 'text/javascript' });
     const url = URL.createObjectURL(blob);

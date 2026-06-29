@@ -28,11 +28,17 @@ const DEFAULT_SITE_DATA = {
       { year: "2020", name: "Sony World Photography Awards — Shortlisted", org: "World Photography Organisation", badge: "" }
     ],
     location: "Baidyabati, West Bengal, India",
-    email: "hello@krishnendugoswami.com",
+    email: "krishnendutitangoswami@gmail.com",
     instagram: "#",
     twitter: "#"
   },
   homepageFilterTabs: ['wildlife', 'landscape', 'travel', 'portrait', 'street', 'aerial'],
+  portfolioFilterTabs: [
+    { id: 'all', label: 'All Genres', categories: ['wildlife', 'landscape', 'travel', 'street', 'portrait', 'commercial'] },
+    { id: 'outdoors', label: 'Outdoors', categories: ['wildlife', 'landscape', 'travel'] },
+    { id: 'humanity', label: 'Humanity', categories: ['portrait', 'street'] },
+    { id: 'creative', label: 'Creative', categories: ['commercial'] }
+  ],
   homepagePhotos: [],
   galleryCategories: {
     wildlife: {
@@ -261,6 +267,7 @@ async function initDatabase() {
   if (!siteData.profile) siteData.profile = DEFAULT_SITE_DATA.profile;
   if (!siteData.homepagePhotos) siteData.homepagePhotos = [];
   if (!siteData.homepageFilterTabs) siteData.homepageFilterTabs = DEFAULT_SITE_DATA.homepageFilterTabs;
+  if (!siteData.portfolioFilterTabs) siteData.portfolioFilterTabs = DEFAULT_SITE_DATA.portfolioFilterTabs;
   if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;
   if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;
   if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;

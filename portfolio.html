@@ -633,23 +633,22 @@ let isDragging = false;
 let startX = 0;
 let activeFilter = 'all';
 
-const filterGroups = {
-  all: ['wildlife', 'landscape', 'travel', 'street', 'portrait', 'commercial'],
-  outdoors: ['wildlife', 'landscape', 'travel'],
-  humanity: ['portrait', 'street'],
-  creative: ['commercial']
-};
+const defaultFilterTabs = [
+  { id: 'all', label: 'All Genres', categories: ['wildlife', 'landscape', 'travel', 'street', 'portrait', 'commercial'] },
+  { id: 'outdoors', label: 'Outdoors', categories: ['wildlife', 'landscape', 'travel'] },
+  { id: 'humanity', label: 'Humanity', categories: ['portrait', 'street'] },
+  { id: 'creative', label: 'Creative', categories: ['commercial'] }
+];
+
+function getPortfolioFilterTabs() {
+  return (window.siteData && window.siteData.portfolioFilterTabs) || defaultFilterTabs;
+}
 
 function renderFilterChips() {
   const chipsContainer = document.querySelector('.category-filter-chips');
   if (!chipsContainer) return;
   
-  const chips = [
-    { id: 'all', label: 'All Genres' },
-    { id: 'outdoors', label: 'Outdoors' },
-    { id: 'humanity', label: 'Humanity' },
-    { id: 'creative', label: 'Creative' }
-  ];
+  const chips = getPortfolioFilterTabs();
   
   chipsContainer.innerHTML = chips.map(c => `
     <button class="filter-chip${c.id === activeFilter ? ' active' : ''}" onclick="applyFilter('${c.id}')">
@@ -673,7 +672,9 @@ function renderCategories() {
     if (!wrapper) return;
 
     const cats = Object.keys(window.siteData.galleryCategories);
-    const allowedKeys = filterGroups[activeFilter] || filterGroups['all'];
+    const filterTabs = getPortfolioFilterTabs();
+    const activeTabObj = filterTabs.find(t => t.id === activeFilter) || filterTabs.find(t => t.id === 'all') || filterTabs[0];
+    const allowedKeys = activeTabObj ? activeTabObj.categories : cats;
     const filteredCats = cats.filter(key => allowedKeys.includes(key));
 
     slidesData = filteredCats.map((key, idx) => {
