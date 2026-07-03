@@ -100,10 +100,10 @@
   background: transparent;
   border: none;
   overflow: visible;
-  transition: transform 550ms cubic-bezier(.34, 1.36, .64, 1),
-              filter 550ms cubic-bezier(.34, 1.36, .64, 1),
-              opacity 550ms cubic-bezier(.34, 1.36, .64, 1),
-              box-shadow 550ms cubic-bezier(.34, 1.36, .64, 1);
+  transition: transform 600ms var(--ease-out),
+              filter 600ms var(--ease-out),
+              opacity 600ms var(--ease-out),
+              box-shadow 600ms var(--ease-out);
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -631,6 +631,7 @@ let currentIndex = 0;
 let slidesData = [];
 let isDragging = false;
 let startX = 0;
+let startY = 0;
 let activeFilter = 'all';
 
 const defaultFilterTabs = [
@@ -811,45 +812,6 @@ function setupSliderInteraction() {
     };
   }
 
-  // Interactive 3D tilt tracking for the active card
-  container.addEventListener('mousemove', (e) => {
-    if (isDragging) return;
-    const activeSlide = document.querySelector('.slider-3d-slide.active');
-    if (!activeSlide) return;
-
-    const rect = activeSlide.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
-    const y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
-
-    // Check if mouse is hovering over or near the active slide
-    const distance = Math.hypot(e.clientX - (rect.left + rect.width / 2), e.clientY - (rect.top + rect.height / 2));
-    if (distance < 450) {
-      // Pause CSS bobbing animation and rotate card relative to cursor
-      activeSlide.style.animation = 'none';
-      const tiltX = -y * 22; // max tilt degrees on X-axis
-      const tiltY = x * 22;  // max tilt degrees on Y-axis
-      activeSlide.style.transform = `translate3d(0, -8px, 140px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.03)`;
-      activeSlide.style.boxShadow = `0 35px 75px rgba(0,0,0,0.35), 0 0 12px ${ambientColors[slidesData[currentIndex].key] || 'rgba(255,255,255,0.1)'}`;
-      activeSlide.style.transition = 'transform 0.15s ease-out, box-shadow 0.3s ease-out';
-    } else {
-      // Restore CSS bobbing animation when pointer moves away
-      activeSlide.style.animation = '';
-      activeSlide.style.transform = '';
-      activeSlide.style.boxShadow = '';
-      activeSlide.style.transition = '';
-    }
-  });
-
-  container.addEventListener('mouseleave', () => {
-    const activeSlide = document.querySelector('.slider-3d-slide.active');
-    if (activeSlide) {
-      activeSlide.style.animation = '';
-      activeSlide.style.transform = '';
-      activeSlide.style.boxShadow = '';
-      activeSlide.style.transition = '';
-    }
-  });
-
   // Cursor drag gesture
   container.addEventListener('mousedown', (e) => {
     isDragging = true;
@@ -878,24 +840,30 @@ function setupSliderInteraction() {
   // Touch swiping
   container.addEventListener('touchstart', (e) => {
     startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
   }, { passive: true });
 
   container.addEventListener('touchmove', (e) => {
     const currentX = e.touches[0].clientX;
-    const walk = currentX - startX;
-    if (Math.abs(walk) > 60) {
-      if (walk > 0) {
+    const currentY = e.touches[0].clientY;
+    const walkX = currentX - startX;
+    const walkY = currentY - startY;
+
+    // Only swipe if horizontal drag is dominant
+    if (Math.abs(walkX) > Math.abs(walkY) && Math.abs(walkX) > 60) {
+      if (walkX > 0) {
         goToSlide(currentIndex - 1);
       } else {
         goToSlide(currentIndex + 1);
       }
       startX = currentX;
+      startY = currentY;
     }
   }, { passive: true });
 
   // Mouse wheel
   container.addEventListener('wheel', (e) => {
-    if (Math.abs(e.deltaX) > 30) {
+    if (Math.abs(e.deltaX) > 30 && Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
       e.preventDefault();
       if (e.deltaX > 0) {
         goToSlide(currentIndex + 1);
