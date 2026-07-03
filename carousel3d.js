@@ -254,6 +254,7 @@
     idx: 0,
     dragging: false,
     dragStartX: 0,
+    dragStartY: 0,
     dragDelta: 0,
   };
   const DRAG_THR = 55;
@@ -399,12 +400,12 @@
 
     // Trackpad / Mouse Wheel gesture support
     stage.addEventListener('wheel', (e) => {
-      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      if (Math.abs(delta) > 15) {
+      // Only swipe if horizontal wheel movement is dominant and significant
+      if (Math.abs(e.deltaX) > 15 && Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
         e.preventDefault();
         if (!wheelDebounce) {
           wheelDebounce = true;
-          go(delta > 0 ? 1 : -1);
+          go(e.deltaX > 0 ? 1 : -1);
           setTimeout(() => { wheelDebounce = false; }, 300);
         }
       }
@@ -440,13 +441,24 @@
     // Touch Support
     stage.addEventListener('touchstart', e => {
       state.dragStartX = e.touches[0].clientX;
+      state.dragStartY = e.touches[0].clientY;
       state.dragging = false;
     }, { passive: true });
 
     stage.addEventListener('touchmove', e => {
-      state.dragDelta = e.touches[0].clientX - state.dragStartX;
-      if (Math.abs(state.dragDelta) > 8) {
-        state.dragging = true;
+      const currentX = e.touches[0].clientX;
+      const currentY = e.touches[0].clientY;
+      const walkX = currentX - state.dragStartX;
+      const walkY = currentY - state.dragStartY;
+
+      // Only drag/swipe if horizontal movement is dominant
+      if (Math.abs(walkX) > Math.abs(walkY)) {
+        state.dragDelta = walkX;
+        if (Math.abs(state.dragDelta) > 8) {
+          state.dragging = true;
+        }
+      } else {
+        state.dragging = false;
       }
     }, { passive: true });
 

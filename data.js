@@ -333,6 +333,86 @@ window.resetSiteData = async function() {
     return true;
   } catch (e) {
     console.error("Failed to reset site data.", e);
+    // Fallback reset
+    try {
+      localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));
+      window.siteData = DEFAULT_SITE_DATA;
+      document.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: DEFAULT_SITE_DATA }));
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+};
+
+// ── SOCIAL INTERACTIONS & ANALYTICS DATABASE HELPERS ── //
+window.portfolioDb = {
+  findItem(type, itemId, subId) {
+    if (!window.siteData) return null;
+    
+    if (type === 'home_photo') {
+      const id = parseInt(itemId);
+      return window.siteData.homepagePhotos.find(p => p.id === id);
+    } else if (type === 'gallery_photo') {
+      const cat = window.siteData.galleryCategories[itemId];
+      if (cat && cat.photos) {
+        const id = parseInt(subId);
+        return cat.photos.find(p => p.id === id);
+      }
+    } else if (type === 'story') {
+      return window.siteData.stories.find(s => s.id == itemId || s.slug === itemId);
+    } else if (type === 'journal') {
+      return window.siteData.journalEntries.find(j => j.id == itemId);
+    }
+    return null;
+  },
+
+  async incrementView(type, itemId, subId) {
+    const item = this.findItem(type, itemId, subId);
+    if (item) {
+      item.views = (item.views || 0) + 1;
+      await window.saveSiteData(window.siteData);
+    }
+  },
+
+  async incrementLike(type, itemId, subId) {
+    const item = this.findItem(type, itemId, subId);
+    if (item) {
+      item.likes = (item.likes || 0) + 1;
+      await window.saveSiteData(window.siteData);
+      return item.likes;
+    }
+    return 0;
+  },
+
+  async addComment(type, itemId, subId, name, text) {
+    const item = this.findItem(type, itemId, subId);
+    if (item) {
+      if (!item.comments) item.comments = [];
+      const newComment = {
+        id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        name: name || 'Anonymous',
+        text: text,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        timestamp: Date.now()
+      };
+      item.comments.push(newComment);
+      await window.saveSiteData(window.siteData);
+      return newComment;
+    }
+    return null;
+  },
+
+  async deleteComment(type, itemId, subId, commentId) {
+    const item = this.findItem(type, itemId, subId);
+    if (item && item.comments) {
+      const initialLength = item.comments.length;
+      item.comments = item.comments.filter(c => c.id !== commentId);
+      if (item.comments.length !== initialLength) {
+        await window.saveSiteData(window.siteData);
+        return true;
+      }
+    }
     return false;
   }
 };
