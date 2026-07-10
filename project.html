@@ -1033,24 +1033,19 @@ async function likeStory() {
   if (!currentStory) return;
   const likeKey = `liked_story_${currentStory.id}`;
   const isLiked = localStorage.getItem(likeKey) === 'true';
+  const nextLiked = !isLiked;
 
-  if (isLiked) {
-    currentStory.likes = Math.max(0, (currentStory.likes || 0) - 1);
-    localStorage.setItem(likeKey, 'false');
-  } else {
-    currentStory.likes = (currentStory.likes || 0) + 1;
-    localStorage.setItem(likeKey, 'true');
-  }
+  localStorage.setItem(likeKey, nextLiked ? 'true' : 'false');
 
+  // Optimistic UI update
+  currentStory.likes = Math.max(0, (currentStory.likes || 0) + (nextLiked ? 1 : -1));
   document.getElementById('story-likes-count').textContent = currentStory.likes;
-  document.getElementById('story-like-btn').classList.toggle('liked', !isLiked);
+  document.getElementById('story-like-btn').classList.toggle('liked', nextLiked);
 
   // Sync to database
-  const item = window.portfolioDb.findItem('story', currentStory.id);
-  if (item) {
-    item.likes = currentStory.likes;
-    await window.saveSiteData(window.siteData);
-  }
+  const finalLikes = await window.portfolioDb.toggleLike('story', currentStory.id, null, nextLiked);
+  currentStory.likes = finalLikes;
+  document.getElementById('story-likes-count').textContent = currentStory.likes;
 }
 
 async function submitStoryComment(event) {

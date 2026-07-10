@@ -508,24 +508,19 @@ async function likeBlogEntry() {
   if (!selectedBlog) return;
   const likeKey = `liked_blog_${selectedBlog.id}`;
   const isLiked = localStorage.getItem(likeKey) === 'true';
-  
-  if (isLiked) {
-    selectedBlog.likes = Math.max(0, (selectedBlog.likes || 0) - 1);
-    localStorage.setItem(likeKey, 'false');
-  } else {
-    selectedBlog.likes = (selectedBlog.likes || 0) + 1;
-    localStorage.setItem(likeKey, 'true');
-  }
-  
+  const nextLiked = !isLiked;
+
+  localStorage.setItem(likeKey, nextLiked ? 'true' : 'false');
+
+  // Optimistic UI update
+  selectedBlog.likes = Math.max(0, (selectedBlog.likes || 0) + (nextLiked ? 1 : -1));
   document.getElementById('blog-likes-count').textContent = selectedBlog.likes;
-  document.getElementById('blog-like-btn').classList.toggle('liked', !isLiked);
-  
+  document.getElementById('blog-like-btn').classList.toggle('liked', nextLiked);
+
   // Sync to database
-  const item = window.portfolioDb.findItem('journal', selectedBlog.id);
-  if (item) {
-    item.likes = selectedBlog.likes;
-    await window.saveSiteData(window.siteData);
-  }
+  const finalLikes = await window.portfolioDb.toggleLike('journal', selectedBlog.id, null, nextLiked);
+  selectedBlog.likes = finalLikes;
+  document.getElementById('blog-likes-count').textContent = selectedBlog.likes;
 }
 
 async function submitBlogComment(event) {

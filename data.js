@@ -357,7 +357,6 @@ window.resetSiteData = async function() {
 window.portfolioDb = {
   findItem(type, itemId, subId) {
     if (!window.siteData) return null;
-    
     if (type === 'home_photo') {
       const id = parseInt(itemId);
       return window.siteData.homepagePhotos.find(p => p.id === id);
@@ -375,26 +374,66 @@ window.portfolioDb = {
     return null;
   },
 
+  async fetchLatestData() {
+    try {
+      const { data, error } = await supabaseClient
+        .from('portfolio_data')
+        .select('data')
+        .eq('id', 1)
+        .single();
+      if (!error && data && data.data) {
+        window.siteData = data.data;
+        return data.data;
+      }
+    } catch (e) {
+      console.warn("Could not fetch latest database state, using memory fallback.", e);
+    }
+    return window.siteData;
+  },
+
+  findItemOnData(dataObj, type, itemId, subId) {
+    if (!dataObj) return null;
+    if (type === 'home_photo') {
+      const id = parseInt(itemId);
+      return dataObj.homepagePhotos ? dataObj.homepagePhotos.find(p => p.id === id) : null;
+    } else if (type === 'gallery_photo') {
+      const cat = dataObj.galleryCategories ? dataObj.galleryCategories[itemId] : null;
+      if (cat && cat.photos) {
+        const id = parseInt(subId);
+        return cat.photos.find(p => p.id === id);
+      }
+    } else if (type === 'story') {
+      return dataObj.stories ? dataObj.stories.find(s => s.id == itemId || s.slug === itemId) : null;
+    } else if (type === 'journal') {
+      return dataObj.journalEntries ? dataObj.journalEntries.find(j => j.id == itemId) : null;
+    }
+    return null;
+  },
+
   async incrementView(type, itemId, subId) {
-    const item = this.findItem(type, itemId, subId);
+    const data = await this.fetchLatestData();
+    const item = this.findItemOnData(data, type, itemId, subId);
     if (item) {
       item.views = (item.views || 0) + 1;
-      await window.saveSiteData(window.siteData);
+      await window.saveSiteData(data);
     }
   },
 
-  async incrementLike(type, itemId, subId) {
-    const item = this.findItem(type, itemId, subId);
+  async toggleLike(type, itemId, subId, isLike) {
+    const data = await this.fetchLatestData();
+    const item = this.findItemOnData(data, type, itemId, subId);
     if (item) {
-      item.likes = (item.likes || 0) + 1;
-      await window.saveSiteData(window.siteData);
+      const current = item.likes || 0;
+      item.likes = Math.max(0, current + (isLike ? 1 : -1));
+      await window.saveSiteData(data);
       return item.likes;
     }
     return 0;
   },
 
   async addComment(type, itemId, subId, name, text) {
-    const item = this.findItem(type, itemId, subId);
+    const data = await this.fetchLatestData();
+    const item = this.findItemOnData(data, type, itemId, subId);
     if (item) {
       if (!item.comments) item.comments = [];
       const newComment = {
@@ -405,19 +444,20 @@ window.portfolioDb = {
         timestamp: Date.now()
       };
       item.comments.push(newComment);
-      await window.saveSiteData(window.siteData);
+      await window.saveSiteData(data);
       return newComment;
     }
     return null;
   },
 
   async deleteComment(type, itemId, subId, commentId) {
-    const item = this.findItem(type, itemId, subId);
+    const data = await this.fetchLatestData();
+    const item = this.findItemOnData(data, type, itemId, subId);
     if (item && item.comments) {
       const initialLength = item.comments.length;
       item.comments = item.comments.filter(c => c.id !== commentId);
       if (item.comments.length !== initialLength) {
-        await window.saveSiteData(window.siteData);
+        await window.saveSiteData(data);
         return true;
       }
     }

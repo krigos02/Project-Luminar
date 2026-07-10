@@ -1459,25 +1459,22 @@ async function likePhoto() {
 
   const likeKey = `liked_gallery_photo_${currentCategory}_${p.id}`;
   const isLiked = localStorage.getItem(likeKey) === 'true';
+  const nextLiked = !isLiked;
 
-  if (isLiked) {
-    p.likes = Math.max(0, (p.likes || 0) - 1);
-    localStorage.setItem(likeKey, 'false');
-  } else {
-    p.likes = (p.likes || 0) + 1;
-    localStorage.setItem(likeKey, 'true');
+  localStorage.setItem(likeKey, nextLiked ? 'true' : 'false');
+  if (nextLiked) {
     showHeartPop();
   }
 
+  // Optimistic UI update
+  p.likes = Math.max(0, (p.likes || 0) + (nextLiked ? 1 : -1));
   document.getElementById('lb-likes-count').textContent = p.likes;
-  document.getElementById('lb-like-btn').classList.toggle('liked', !isLiked);
+  document.getElementById('lb-like-btn').classList.toggle('liked', nextLiked);
 
   // Sync to database
-  const item = window.portfolioDb.findItem('gallery_photo', currentCategory, p.id);
-  if (item) {
-    item.likes = p.likes;
-    await window.saveSiteData(window.siteData);
-  }
+  const finalLikes = await window.portfolioDb.toggleLike('gallery_photo', currentCategory, p.id, nextLiked);
+  p.likes = finalLikes;
+  document.getElementById('lb-likes-count').textContent = p.likes;
 }
 
 function showHeartPop() {
