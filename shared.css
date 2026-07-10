@@ -594,6 +594,10 @@ button {
   .site-header {
     padding: 2rem 0 1.5rem;
   }
+  .site-header .container {
+    padding-left: 3.5rem;
+    padding-right: 3.5rem;
+  }
   .brand-header {
     margin-bottom: 0;
   }
@@ -608,6 +612,10 @@ button {
   }
 }
 @media (max-width: 768px) {
+  .site-header .container {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
   .brand-logo {
     font-size: 1.4rem;
     letter-spacing: 0.12em;

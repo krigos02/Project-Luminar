@@ -9,6 +9,42 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
+<style>
+  #masonry {
+    column-count: 4;
+    column-gap: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .masonry-item {
+    break-inside: avoid;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    overflow: hidden;
+    background: var(--bg);
+    border: 0.5px solid var(--bg);
+  }
+  .masonry-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: filter 0.3s ease, transform 0.4s ease;
+  }
+  .masonry-item:hover img {
+    filter: brightness(0.85);
+    transform: scale(1.02);
+  }
+  
+  @media (max-width: 900px) {
+    #masonry {
+      column-count: 2;
+    }
+  }
+</style>
 </head>
 <body>
 
@@ -96,8 +132,8 @@
 
   </div>
 
-  <!-- Carousel mounts here — carousel3d.js targets this div -->
-  <div class="container">
+  <!-- Masonry Gallery - Tiled full-width layout -->
+  <div style="max-width: 100%; padding: 0; margin: 0; overflow-x: hidden;">
     <div id="masonry" aria-label="Photo gallery"></div>
   </div>
 </section>
@@ -148,13 +184,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="data.js"></script>
 <script src="shared.js"></script>
-<script src="carousel3d.js"></script>
 
 <script>
 /* ─── HOME PAGE — filter, lightbox ─────────────────────────────────────── */
 
-/* photos array kept in sync by carousel3d.js internal state,
-   but we also keep a local ref for the lightbox */
 let photos = [];
 
 function renderFilterBar() {
@@ -188,20 +221,42 @@ function getAllPhotos() {
   return all;
 }
 
-/* carousel3d.js calls initCarousel3D on DOMContentLoaded + siteDataLoaded.
-   We hook siteDataLoaded here only to keep the local `photos` ref fresh. */
-document.addEventListener('siteDataLoaded', () => {
+function renderMasonry(filtered) {
+  const container = document.getElementById('masonry');
+  if (!container) return;
+  
+  const countLabel = document.getElementById('count-label');
+  if (countLabel) {
+    countLabel.textContent = `Showing ${filtered.length} photograph${filtered.length === 1 ? '' : 's'}`;
+  }
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="text-align: center; width: 100%; padding: 3rem; color: var(--text3); font-size: 13px; font-family: monospace;">No photographs found.</div>`;
+    return;
+  }
+  
+  container.innerHTML = filtered.map((p, idx) => {
+    // Find index of this photo in the global photos array for lightbox nav
+    const globalIdx = photos.findIndex(photo => photo.id === p.id);
+    return `
+      <div class="masonry-item" onclick="openLb(${globalIdx === -1 ? idx : globalIdx})" role="button" aria-label="View ${p.title}">
+        <img src="${p.src}" alt="${p.title || ''}" loading="lazy">
+      </div>
+    `;
+  }).join('');
+}
+
+function initHomepage() {
   photos = getAllPhotos();
   renderFilterBar();
-});
-document.addEventListener('DOMContentLoaded', () => {
-  photos = getAllPhotos();
-  renderFilterBar();
-});
+  renderMasonry(photos);
+}
+
+document.addEventListener('siteDataLoaded', initHomepage);
+document.addEventListener('DOMContentLoaded', initHomepage);
 
 /* ── Filter tabs ── */
 function filterPhotos(cat, btn) {
-  /* update active state */
   document.querySelectorAll('.filter-btn').forEach(b => {
     b.classList.remove('active');
     b.setAttribute('aria-selected', 'false');
@@ -209,10 +264,9 @@ function filterPhotos(cat, btn) {
   btn.classList.add('active');
   btn.setAttribute('aria-selected', 'true');
 
-  /* delegate to carousel */
-  if (typeof window.carousel3DFilter === 'function') {
-    window.carousel3DFilter(cat);
-  }
+  const filtered = cat === 'all' ? photos : photos.filter(p => p.cat === cat || (p.tag && p.tag.toLowerCase() === cat.toLowerCase()));
+  window._c3dFiltered = filtered;
+  renderMasonry(filtered);
 }
 
 /* ── Lightbox ── */

@@ -431,6 +431,31 @@
     padding: 3px 6px;
     border-radius: 1px;
   }
+
+  .card-star-toggle {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    background: none !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 40px;
+    cursor: pointer;
+    z-index: 10;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.8), 0 0 1px rgba(0, 0, 0, 0.9);
+    transition: transform 0.2s, color 0.2s;
+    padding: 0;
+    line-height: 1;
+    display: inline-block;
+  }
+  .card-star-toggle.active {
+    color: var(--gold) !important;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.8), 0 0 1px rgba(0, 0, 0, 0.9);
+  }
+  .card-star-toggle:hover {
+    transform: scale(1.25);
+    color: rgba(255, 255, 255, 0.95);
+  }
   
   .success-banner {
     background: rgba(201,169,110,0.08);
@@ -554,6 +579,25 @@
           <button onclick="saveProfile()" class="btn-primary" style="padding: 10px 24px; font-size: 11px;">Save Profile</button>
         </div>
         <form id="form-profile" onsubmit="event.preventDefault()">
+          <!-- Profile Picture Section -->
+          <div class="admin-form-group" style="border: 1px dashed var(--border); padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 4px;">
+            <label style="font-weight: bold; color: var(--gold); margin-bottom: 8px;">Profile Picture</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+              <button type="button" id="btn-choice-prof-upload" class="cms-card-btn active" onclick="window.setProfileImageSourceMode('upload')">Upload Image</button>
+              <button type="button" id="btn-choice-prof-url" class="cms-card-btn" onclick="window.setProfileImageSourceMode('url')">Image URL</button>
+            </div>
+            
+            <div id="prof-source-mode-upload" class="uploader-wrap" style="padding: 1.5rem; text-align: center; border: 1px dashed var(--border); border-radius: 4px; cursor: pointer; background: var(--bg2); position: relative;">
+              <div class="uploader-text" style="font-size: 13px; color: var(--text3);">Drag &amp; drop or <span>Browse</span> profile image</div>
+              <input type="file" id="prof-file" accept="image/*" onchange="window.previewProfileImageFile(this)" style="position: absolute; inset: 0; opacity: 0; cursor: pointer;">
+              <img id="prof-upload-preview" class="preview-thumbnail" style="max-height: 120px; display: none; margin-top: 10px; border: 1px solid var(--border); margin-left: auto; margin-right: auto;">
+            </div>
+            
+            <div id="prof-source-mode-url" class="admin-form-group" style="display:none; margin-bottom: 0;">
+              <input type="text" id="prof-avatar-url" class="admin-form-control" placeholder="https://images.unsplash.com/photo-...">
+            </div>
+          </div>
+
           <div class="form-row-2">
             <div class="admin-form-group">
               <label>Artist Name</label>
@@ -908,8 +952,11 @@
       </div>
       
       <div class="admin-form-group">
-        <label>Behind-the-Lens Story</label>
-        <textarea id="photo-story" class="admin-form-control"></textarea>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+          <label style="margin:0;">Behind-the-Lens Story</label>
+          <button type="button" class="btn-outline" onclick="window.openStoryEditor()" style="padding: 2px 8px; font-size: 10px; text-transform:none !important; border-color: var(--gold); color: var(--gold); border-radius: 2px; height: auto; line-height: 1.4;">Open Large View & Formatting</button>
+        </div>
+        <textarea id="photo-story" class="admin-form-control" placeholder="Write story here or click 'Open Large View' for formatting/symbols..."></textarea>
       </div>
       <div class="form-row-2">
         <div class="admin-form-group">
@@ -967,6 +1014,47 @@
         <button type="submit" class="btn-primary">Save Picture</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- MODAL: RICH STORY EDITOR -->
+<div id="story-editor-modal" class="admin-modal" style="z-index: 100000;">
+  <div class="modal-content" style="max-width: 800px; width: 90%;">
+    <h3 class="panel-title" style="margin-bottom:1rem">Behind-the-Lens Story Editor</h3>
+    
+    <!-- Toolbar -->
+    <div class="editor-toolbar" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; padding: 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;">
+      <button type="button" class="btn-outline" onclick="insertStoryFormat('<b>', '</b>')" style="padding: 4px 8px; font-size: 11px; font-weight: bold; text-transform: none !important;">B</button>
+      <button type="button" class="btn-outline" onclick="insertStoryFormat('<i>', '</i>')" style="padding: 4px 8px; font-size: 11px; font-style: italic; text-transform: none !important;">I</button>
+      <button type="button" class="btn-outline" onclick="insertStoryFormat('<u>', '</u>')" style="padding: 4px 8px; font-size: 11px; text-decoration: underline; text-transform: none !important;">U</button>
+      <div style="width: 1px; background: var(--border); margin: 0 4px;"></div>
+      <!-- Greek Symbols & Special Characters -->
+      <button type="button" class="btn-outline" onclick="insertStoryChar('α')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">α</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('β')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">β</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('γ')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">γ</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('δ')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">δ</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('λ')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">λ</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('θ')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">θ</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('π')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">π</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('Σ')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">Σ</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('Ω')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">Ω</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('°')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">°</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('′')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">′</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('″')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">″</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('×')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">×</button>
+      <button type="button" class="btn-outline" onclick="insertStoryChar('±')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">±</button>
+    </div>
+    <div style="font-size: 11px; color: var(--text3); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+      <span>Or copy/paste directly (click to copy):</span>
+      <input type="text" value="α β γ δ λ θ π Σ Ω ° ′ ″ × ±" readonly onclick="this.select(); document.execCommand('copy');" style="background: rgba(255,255,255,0.05); border: 1px dashed var(--border); color: var(--gold); font-size: 11px; padding: 2px 6px; border-radius: 2px; width: 220px; cursor: pointer; text-align: center;" title="Click to copy all">
+    </div>
+    
+    <textarea id="story-editor-textarea" style="width: 100%; height: 350px; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px; font-family: inherit; font-size: 13px; line-height: 1.6; border-radius: 4px; resize: vertical; outline: none;"></textarea>
+    
+    <div class="modal-actions" style="margin-top: 15px;">
+      <button type="button" id="btn-story-cancel" class="btn-outline" onclick="window.closeModal('story-editor-modal')">Cancel</button>
+      <button type="button" id="btn-story-apply" class="btn-primary" onclick="window.saveStoryEditorContent()">Apply Changes</button>
+    </div>
   </div>
 </div>
 
@@ -1105,8 +1193,11 @@
   let currentChallengeId = "";
   let imageSourceMode = "upload";
   let storyImageSourceMode = "upload";
+  let profileImageSourceMode = "upload";
   let currentUploadedPhotoBase64 = "";
   let currentUploadedStoryBase64 = "";
+  let currentUploadedProfileBase64 = "";
+  let originalPhotoCategory = "";
   
   // WebP compression state variables
   let originalFileBlob = null;
@@ -1698,6 +1789,27 @@
     const awardsContainer = document.getElementById('awards-container');
     awardsContainer.innerHTML = '';
     profile.awards.forEach(award => addAwardRow(award.year, award.name, award.org, award.badge));
+
+    // Load Profile Picture settings
+    currentUploadedProfileBase64 = "";
+    document.getElementById('prof-file').value = "";
+    document.getElementById('prof-upload-preview').style.display = 'none';
+    document.getElementById('prof-avatar-url').value = "";
+
+    const avatar = profile.avatar || '';
+    if (avatar) {
+      if (avatar.startsWith('data:image')) {
+        currentUploadedProfileBase64 = avatar;
+        document.getElementById('prof-upload-preview').src = avatar;
+        document.getElementById('prof-upload-preview').style.display = 'block';
+        window.setProfileImageSourceMode('upload');
+      } else {
+        document.getElementById('prof-avatar-url').value = avatar;
+        window.setProfileImageSourceMode('url');
+      }
+    } else {
+      window.setProfileImageSourceMode('upload');
+    }
   }
 
   function addStatRow(value = '', label = '') {
@@ -1771,6 +1883,25 @@
         badge: row.querySelector('.award-badge').value
       });
     });
+
+    // Parse Profile Picture
+    let avatarUrl = "";
+    if (profileImageSourceMode === 'upload') {
+      if (currentUploadedProfileBase64) {
+        if (window.uploadToCloudinary) {
+          const publicId = getCloudinaryPublicId(window.siteData.profile.avatar || '');
+          const url = await uploadToCloudinary(currentUploadedProfileBase64, publicId);
+          avatarUrl = url || currentUploadedProfileBase64;
+        } else {
+          avatarUrl = currentUploadedProfileBase64;
+        }
+      } else {
+        avatarUrl = window.siteData.profile.avatar || "";
+      }
+    } else {
+      avatarUrl = document.getElementById('prof-avatar-url').value.trim();
+    }
+    newProfile.avatar = avatarUrl;
 
     const data = { ...window.siteData, profile: newProfile };
     if (await window.saveSiteData(data)) {
@@ -2254,6 +2385,9 @@
           <div class="cms-card-title">${p.title}</div>
           <div class="cms-card-meta">Tag: ${p.tag} · Loc: ${p.loc || '-'}</div>
           ${p.featured ? '<div class="badge-featured">Featured</div>' : ''}
+          <button type="button" class="card-star-toggle${p.featured ? ' active' : ''}" onclick="window.toggleFeaturedCms('${catKey}', ${p.id || idx}, event)" title="Toggle Featured status">
+            ★
+          </button>
         </div>
         <div class="cms-card-actions">
           <button class="cms-card-btn" onclick="openPhotoModal('edit', ${p.id || idx})">Edit</button>
@@ -2271,6 +2405,31 @@
     document.getElementById('source-mode-upload').style.display = mode === 'upload' ? 'block' : 'none';
     document.getElementById('source-mode-url').style.display = mode === 'url' ? 'block' : 'none';
   }
+
+  function setProfileImageSourceMode(mode) {
+    profileImageSourceMode = mode;
+    document.getElementById('btn-choice-prof-upload').classList.toggle('active', mode === 'upload');
+    document.getElementById('btn-choice-prof-url').classList.toggle('active', mode === 'url');
+    document.getElementById('prof-source-mode-upload').style.display = mode === 'upload' ? 'block' : 'none';
+    document.getElementById('prof-source-mode-url').style.display = mode === 'url' ? 'block' : 'none';
+  }
+
+  function previewProfileImageFile(input) {
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentUploadedProfileBase64 = e.target.result;
+        const preview = document.getElementById('prof-upload-preview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  window.setProfileImageSourceMode = setProfileImageSourceMode;
+  window.previewProfileImageFile = previewProfileImageFile;
 
   function previewImageFile(input) {
     const file = input.files[0];
@@ -2535,6 +2694,7 @@
     
     const catKey = document.getElementById('gallery-filter-cat').value;
     document.getElementById('photo-category').value = catKey;
+    originalPhotoCategory = catKey;
 
     if (mode === 'edit' && id !== -1) {
       document.getElementById('photo-modal-title').textContent = "Edit Photograph Details";
@@ -2650,9 +2810,79 @@
     }
   }
 
+  // Helper to compress large image files before uploading
+  async function autoCompressLargeImage(data) {
+    let size = 0;
+    if (data instanceof Blob) {
+      size = data.size;
+    } else if (typeof data === 'string' && data.startsWith('data:image')) {
+      size = data.length * 0.75;
+    }
+    
+    // Skip if file is already small (under 3MB)
+    if (size < 3 * 1024 * 1024) {
+      return data;
+    }
+    
+    console.log("Image size is large (" + (size / (1024 * 1024)).toFixed(2) + "MB). Auto-compressing before upload...");
+    
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        
+        // Downscale if image has excessive dimensions
+        const maxDim = 2560;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            console.log("Auto-compressed image down to: " + (blob.size / 1024).toFixed(1) + "KB");
+            resolve(blob);
+          } else {
+            resolve(data);
+          }
+        }, 'image/webp', 0.82);
+      };
+      img.onerror = () => {
+        resolve(data);
+      };
+      
+      if (data instanceof Blob) {
+        const url = URL.createObjectURL(data);
+        img.src = url;
+      } else {
+        img.src = data;
+      }
+    });
+  }
+
   // Helper to upload base64 image data or Blob to Cloudinary unsigned
   async function uploadToCloudinary(fileData, publicId = null) {
     if (!fileData) return "";
+    
+    // Auto-compress large files on the fly to prevent Cloudinary size violations (>3MB)
+    try {
+      fileData = await autoCompressLargeImage(fileData);
+    } catch (e) {
+      console.warn("Auto-compression failed, uploading original:", e);
+    }
+    
     try {
       const formData = new FormData();
       if (fileData instanceof Blob) {
@@ -2777,7 +3007,11 @@
           document.getElementById('photo-shutter').value.trim(),
           document.getElementById('photo-focal').value.trim(),
           document.getElementById('photo-aperture').value.trim(),
-          document.getElementById('photo-iso').value.trim()
+          (function() {
+            const val = document.getElementById('photo-iso').value.trim();
+            if (val && /^\d+$/.test(val)) return `ISO ${val}`;
+            return val;
+          })()
         ].filter(Boolean).join(' · '),
         loc: document.getElementById('photo-loc').value,
         date: document.getElementById('photo-date').value,
@@ -2790,10 +3024,22 @@
       if (!cat.photos) cat.photos = [];
       
       if (mode === 'edit') {
-        const idx = cat.photos.findIndex(p => p.id === photoId || cat.photos.indexOf(p) === photoId);
-        if (idx !== -1) {
-          photoData.id = photoId;
-          cat.photos[idx] = photoData;
+        photoData.id = photoId;
+        if (catKey !== originalPhotoCategory) {
+          // Remove photo from the old category
+          const oldCat = db[originalPhotoCategory];
+          if (oldCat && oldCat.photos) {
+            oldCat.photos = oldCat.photos.filter(p => p.id !== photoId && oldCat.photos.indexOf(p) !== photoId);
+            oldCat.photosCount = `${oldCat.photos.length} Photographs`;
+          }
+          // Add photo to the new category
+          cat.photos.push(photoData);
+        } else {
+          // Normal edit in the same category
+          const idx = cat.photos.findIndex(p => p.id === photoId || cat.photos.indexOf(p) === photoId);
+          if (idx !== -1) {
+            cat.photos[idx] = photoData;
+          }
         }
       } else {
         // Find highest ID
@@ -2872,6 +3118,44 @@
       }
     }
   }
+
+  async function toggleFeaturedCms(catKey, photoId, event) {
+    if (event) event.stopPropagation();
+    
+    const db = { ...window.siteData.galleryCategories };
+    const cat = db[catKey];
+    if (!cat || !cat.photos) return;
+    
+    const photo = cat.photos.find((p, idx) => p.id === photoId || idx === photoId);
+    if (!photo) return;
+    
+    photo.featured = !photo.featured;
+    
+    // Sync to homepagePhotos as well if they toggled featured status
+    let homepagePhotos = window.siteData.homepagePhotos || [];
+    if (photo.featured) {
+      const homePhoto = {
+        id: photo.id,
+        title: photo.title,
+        cat: catKey,
+        meta: photo.caption,
+        exif: photo.exp,
+        src: photo.src,
+        bg: photo.bg
+      };
+      const exists = homepagePhotos.some(p => p.id === photo.id);
+      if (!exists) homepagePhotos.push(homePhoto);
+    } else {
+      homepagePhotos = homepagePhotos.filter(p => p.id !== photo.id);
+    }
+    
+    const data = { ...window.siteData, galleryCategories: db, homepagePhotos };
+    if (await window.saveSiteData(data)) {
+      loadGalleryCms();
+      showSuccess();
+    }
+  }
+  window.toggleFeaturedCms = toggleFeaturedCms;
 
   /* ── BLOG POSTS METHODS ── */
   function loadBlogCms() {
@@ -3234,8 +3518,52 @@
 
   /* ── UTILITIES & MODAL CONTROLS ── */
   function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('open');
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.remove('open');
   }
+
+  function openStoryEditor() {
+    const mainVal = document.getElementById('photo-story').value;
+    document.getElementById('story-editor-textarea').value = mainVal;
+    document.getElementById('story-editor-modal').classList.add('open');
+  }
+
+  function insertStoryFormat(startTag, endTag) {
+    const tx = document.getElementById('story-editor-textarea');
+    const start = tx.selectionStart;
+    const end = tx.selectionEnd;
+    const val = tx.value;
+    
+    const selected = val.substring(start, end);
+    const replacement = startTag + selected + endTag;
+    
+    tx.value = val.substring(0, start) + replacement + val.substring(end);
+    tx.focus();
+    tx.setSelectionRange(start + startTag.length, start + startTag.length + selected.length);
+  }
+
+  function insertStoryChar(char) {
+    const tx = document.getElementById('story-editor-textarea');
+    const start = tx.selectionStart;
+    const end = tx.selectionEnd;
+    const val = tx.value;
+    
+    tx.value = val.substring(0, start) + char + val.substring(end);
+    tx.focus();
+    tx.setSelectionRange(start + char.length, start + char.length);
+  }
+
+  function saveStoryEditorContent() {
+    const editorVal = document.getElementById('story-editor-textarea').value;
+    document.getElementById('photo-story').value = editorVal;
+    closeModal('story-editor-modal');
+  }
+
+  window.openStoryEditor = openStoryEditor;
+  window.insertStoryFormat = insertStoryFormat;
+  window.insertStoryChar = insertStoryChar;
+  window.saveStoryEditorContent = saveStoryEditorContent;
+  window.closeModal = closeModal;
 
   function exportConfig() {
     const code = `// Dynamic Content Management System (CMS) Database\n// Consolidates all website data, making it dynamic and editable.\n\nconst DEFAULT_SITE_DATA = ${JSON.stringify(window.siteData, null, 2)};\n\n// Global Store Management\nlet siteData = DEFAULT_SITE_DATA;\n\nconst DB_KEY = 'luminar_site_data';\n\ntry {\n  const rawData = localStorage.getItem(DB_KEY);\n  if (rawData) {\n    siteData = JSON.parse(rawData);\n    if (!siteData.profile) siteData.profile = DEFAULT_SITE_DATA.profile;\n    if (!siteData.homepagePhotos) siteData.homepagePhotos = DEFAULT_SITE_DATA.homepagePhotos;\n    if (!siteData.homepageFilterTabs) siteData.homepageFilterTabs = DEFAULT_SITE_DATA.homepageFilterTabs;\n    if (!siteData.portfolioFilterTabs) siteData.portfolioFilterTabs = DEFAULT_SITE_DATA.portfolioFilterTabs;\n    if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;\n    if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;\n    if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;\n  } else {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n  }\n} catch (e) {\n  console.warn("LocalStorage failed to initialize.", e);\n}\n\nwindow.siteData = siteData;\n\nwindow.saveSiteData = function(newData) {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(newData));\n    window.siteData = newData;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n\nwindow.resetSiteData = function() {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n    window.siteData = DEFAULT_SITE_DATA;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n`;
@@ -3382,7 +3710,10 @@
         suggestionsBox.style.display = 'none';
       }
     });
+
   });
+
+  // Story Editor controls are initialized globally and bound via inline onclick triggers to prevent timing issues.
 </script>
 </body>
 </html>

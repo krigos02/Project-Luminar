@@ -529,6 +529,7 @@
   color: var(--text2);
   line-height: 1.8;
   margin-bottom: 2rem;
+  white-space: pre-wrap;
 }
 .lb-info-divider {
   height: 1px;
@@ -541,8 +542,9 @@
   gap: 0.75rem;
 }
 .lb-exif-row {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 10px;
   align-items: baseline;
   font-size: 12px;
 }
@@ -557,6 +559,7 @@
   font-family: monospace;
   font-size: 11px;
   text-align: right;
+  word-break: break-word;
 }
 .lb-info-footer {
   padding: 1.25rem 1.5rem;
@@ -1061,7 +1064,7 @@
         </div>
 
         <div class="lb-info-story" id="lb-story">Photo Story</div>
-        <div class="lb-info-divider"></div>
+        <div class="lb-info-divider" id="lb-story-divider"></div>
         
         <div class="lb-exif">
           <div class="lb-exif-row"><span class="lb-exif-label">Camera</span><span class="lb-exif-val" id="lb-cam">-</span></div>
@@ -1071,7 +1074,7 @@
           <div class="lb-exif-row"><span class="lb-exif-label">Date</span><span class="lb-exif-val" id="lb-date">-</span></div>
         </div>
 
-        <div class="lb-info-divider"></div>
+        <div class="lb-info-divider" id="lb-exif-divider"></div>
 
         <!-- Comments section -->
         <div class="lb-comments-section">
@@ -1136,11 +1139,14 @@ function formatPhotoDate(dateStr) {
 function parseUrlCategory() {
   const params = new URLSearchParams(window.location.search);
   const cat = params.get('category');
-  if (cat && categoriesDb[cat.toLowerCase()]) {
-    currentCategory = cat.toLowerCase();
-  } else {
-    currentCategory = 'wildlife';
+  if (cat) {
+    const matchedKey = Object.keys(categoriesDb).find(k => k.toLowerCase() === cat.toLowerCase());
+    if (matchedKey) {
+      currentCategory = matchedKey;
+      return;
+    }
   }
+  currentCategory = Object.keys(categoriesDb).find(k => k.toLowerCase() === 'wildlife') || Object.keys(categoriesDb)[0] || 'wildlife';
 }
 
 /* ── INITIALIZE PAGE DATA ── */
@@ -1326,9 +1332,33 @@ function loadMore() {
 
 /* ── NAVIGATE BETWEEN CATEGORIES ── */
 function navigateToCategory(cat) {
-  // To preserve multi-page feel, update query parameter and reload
-  window.location.href = `gallery.html?category=${cat}`;
+  const newUrl = `gallery.html?category=${cat}`;
+  window.history.pushState({}, '', newUrl);
+  initPage();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+window.navigateToCategory = navigateToCategory;
+
+// Intercept all menu category link clicks to update dynamically
+document.addEventListener('click', e => {
+  const link = e.target.closest('a');
+  if (link && link.getAttribute('href') && link.getAttribute('href').includes('gallery.html?category=')) {
+    const url = new URL(link.href, window.location.origin);
+    const cat = url.searchParams.get('category');
+    if (cat) {
+      e.preventDefault();
+      window.navigateToCategory(cat);
+      
+      // Close mobile menu if open
+      const menu = document.getElementById('mobile-menu');
+      const hamburger = document.getElementById('hamburger');
+      if (menu && menu.classList.contains('open')) {
+        menu.classList.remove('open');
+        if (hamburger) hamburger.classList.remove('active');
+      }
+    }
+  }
+});
 
 /* ── LIGHTBOX LOGIC ── */
 function buildThumbstrip() {
@@ -1347,8 +1377,13 @@ function openLb(idx) {
   document.body.style.overflow = 'hidden';
   const panel = document.getElementById('lb-info-panel');
   if (panel) {
-    infoPanelOpen = true;
-    panel.style.display = 'flex';
+    if (window.innerWidth <= 900) {
+      infoPanelOpen = false;
+      panel.style.display = 'none';
+    } else {
+      infoPanelOpen = true;
+      panel.style.display = 'flex';
+    }
   }
 }
 
@@ -1382,17 +1417,61 @@ function updateLb() {
   
   document.getElementById('lb-title').textContent = p.title;
   document.getElementById('lb-caption').textContent = p.caption;
-  document.getElementById('lb-story').textContent = p.story;
   
-  document.getElementById('lb-cam').textContent = p.cam || '-';
-  document.getElementById('lb-lens').textContent = p.lens || '-';
-  let expVal = p.exp || '-';
-  if ((!p.exp || p.exp === '-') && (p.shutter || p.focal || p.aperture || p.iso)) {
-    expVal = [p.shutter, p.focal, p.aperture, p.iso].filter(Boolean).join(' · ');
+  // Render Behind-the-Lens Story with HTML and layout toggling
+  const storyEl = document.getElementById('lb-story');
+  const storyDiv = document.getElementById('lb-story-divider');
+  if (p.story && p.story.trim() !== '' && p.story !== '-') {
+    storyEl.innerHTML = p.story;
+    storyEl.style.display = '';
+    if (storyDiv) storyDiv.style.display = '';
+  } else {
+    storyEl.innerHTML = '';
+    storyEl.style.display = 'none';
+    if (storyDiv) storyDiv.style.display = 'none';
   }
-  document.getElementById('lb-exp').textContent = expVal;
-  document.getElementById('lb-loc').textContent = p.loc || '-';
-  document.getElementById('lb-date').textContent = formatPhotoDate(p.date);
+
+  // Helper to dynamically toggle EXIF rows if data is blank
+  let visibleExifCount = 0;
+  const updateExifRow = (id, value) => {
+    const el = document.getElementById(id);
+    const row = el.closest('.lb-exif-row');
+    if (value && value !== '-' && value.trim() !== '') {
+      el.textContent = value;
+      row.style.display = '';
+      visibleExifCount++;
+    } else {
+      row.style.display = 'none';
+    }
+  };
+
+  updateExifRow('lb-cam', p.cam);
+  updateExifRow('lb-lens', p.lens);
+  
+  // Clean format ISO: prepend "ISO " if only numbers were added
+  let isoVal = p.iso ? String(p.iso).trim() : '';
+  if (isoVal && /^\d+$/.test(isoVal)) {
+    isoVal = `ISO ${isoVal}`;
+  }
+  
+  let expVal = p.exp || '';
+  if ((!p.exp || p.exp === '-') && (p.shutter || p.focal || p.aperture || p.iso)) {
+    expVal = [p.shutter, p.focal, p.aperture, isoVal].filter(Boolean).join(' · ');
+  }
+  updateExifRow('lb-exp', expVal);
+  updateExifRow('lb-loc', p.loc);
+  updateExifRow('lb-date', formatPhotoDate(p.date));
+
+  // Toggle EXIF parent container and divider visibility
+  const exifContainer = document.querySelector('.lb-exif');
+  const exifDiv = document.getElementById('lb-exif-divider');
+  if (visibleExifCount > 0) {
+    if (exifContainer) exifContainer.style.display = '';
+    if (exifDiv) exifDiv.style.display = '';
+  } else {
+    if (exifContainer) exifContainer.style.display = 'none';
+    if (exifDiv) exifDiv.style.display = 'none';
+  }
   
   if (p.src) {
     lbImgEl.src = p.src;
