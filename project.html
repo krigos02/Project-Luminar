@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -585,6 +585,36 @@ a {
   .story-stat { border-right: none; border-bottom: 1px solid var(--border); }
   .story-stat:nth-child(odd) { border-right: 1px solid var(--border); }
 }
+
+.toast-notif {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translate3d(-50%, 100px, 0);
+  background: var(--bg3);
+  color: var(--text1);
+  border: 1px solid var(--border);
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+}
+.toast-notif.show {
+  transform: translate3d(-50%, 0, 0);
+  opacity: 1;
+}
+.lb-social-btn.liked {
+  color: #ff3b30 !important;
+}
+.lb-social-btn.liked svg {
+  fill: #ff3b30;
+  stroke: #ff3b30;
+}
 </style>
 </head>
 <body class="no-select">
@@ -816,6 +846,39 @@ a {
       </div>
     </div>
 
+    <!-- Social Interaction Panel -->
+    <div style="max-width: 680px; margin: 3rem auto 0; padding-top: 2rem; border-top: 1px solid var(--border);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div style="display: flex; gap: 1.5rem; align-items: center; font-size: 13px; color: var(--text2);">
+          <button id="story-like-btn" onclick="likeStory()" class="lb-social-btn" style="cursor: pointer; display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--text2); font-size: 13px;">
+            <svg id="story-heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 18px; height: 18px; transition: all 0.2s;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <span id="story-likes-count">0</span> Likes
+          </button>
+          <div style="display: flex; align-items: center; gap: 6px; color: var(--text3);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 18px; height: 18px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span id="story-views-count">0</span> Views
+          </div>
+        </div>
+        <button onclick="shareStory()" class="btn-primary" style="padding: 8px 16px; font-size: 11px; width: auto; gap: 6px; display: inline-flex; align-items: center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 14px; height: 14px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Share Essay
+        </button>
+      </div>
+
+      <!-- Comments section -->
+      <div style="margin-top: 2rem;">
+        <h3 style="font-family: var(--font-display); font-size: 1.1rem; color: var(--text); margin-bottom: 1rem; text-transform: none; letter-spacing: 0;">Comments (<span id="story-comments-count">0</span>)</h3>
+        <div id="story-comments-list" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+          <!-- Comments -->
+        </div>
+        <form onsubmit="submitStoryComment(event)" style="display: flex; flex-direction: column; gap: 10px;">
+          <input type="text" id="story-comment-name" placeholder="Your Name" required class="admin-form-control" style="background: var(--bg2); border: 1px solid var(--border); padding: 10px; border-radius: 4px; color: var(--text1); font-size: 13px;">
+          <textarea id="story-comment-text" placeholder="Add your reflection on this essay..." required rows="3" class="admin-form-control" style="background: var(--bg2); border: 1px solid var(--border); padding: 10px; border-radius: 4px; color: var(--text1); font-size: 13px; font-family: inherit; resize: vertical;"></textarea>
+          <button type="submit" class="btn-primary" style="padding: 10px 20px; font-size: 11px; align-self: flex-end; width: auto;">Post Comment</button>
+        </form>
+      </div>
+    </div>
+
   </div><!-- end article -->
 
   <!-- Next projects -->
@@ -889,6 +952,8 @@ function copyLink() {
 document.addEventListener('DOMContentLoaded', loadStoryDetails);
 document.addEventListener('siteDataLoaded', loadStoryDetails);
 
+let currentStory = null;
+
 function loadStoryDetails() {
   if (window.siteData && window.siteData.stories) {
     const params = new URLSearchParams(window.location.search);
@@ -896,6 +961,7 @@ function loadStoryDetails() {
     if (storySlug) {
       const story = window.siteData.stories.find(s => s.slug === storySlug);
       if (story) {
+        currentStory = story;
         document.title = `${story.title} — Stories · Luminar`;
         
         const tagEl = document.querySelector('.story-tag');
@@ -918,11 +984,127 @@ function loadStoryDetails() {
             heroBg.innerHTML = `<div class="hero-ph" style="background: ${story.bg || 'linear-gradient(160deg,#151515,#2a2a2a)'}"></div>`;
           }
         }
+
+        // ── Social data rendering ──
+        document.getElementById('story-likes-count').textContent = story.likes || 0;
+        document.getElementById('story-views-count').textContent = story.views || 0;
+        
+        const likeKey = `liked_story_${story.id}`;
+        const isLiked = localStorage.getItem(likeKey) === 'true';
+        document.getElementById('story-like-btn').classList.toggle('liked', isLiked);
+        
+        renderStoryComments(story.comments || []);
+
+        // Track view
+        if (!story._viewed) {
+          story._viewed = true;
+          window.portfolioDb.incrementView('story', story.id);
+          story.views = (story.views || 0) + 1;
+          document.getElementById('story-views-count').textContent = story.views;
+        }
       }
     }
   }
 }
+
+function renderStoryComments(comments) {
+  const list = document.getElementById('story-comments-list');
+  const countEl = document.getElementById('story-comments-count');
+  if (!list || !countEl) return;
+
+  countEl.textContent = comments.length;
+  if (comments.length === 0) {
+    list.innerHTML = `<div style="font-size:12px;color:var(--text3);font-style:italic;padding:1rem 0;">No comments yet on this essay. Be the first to share your reflection!</div>`;
+    return;
+  }
+
+  list.innerHTML = comments.map(c => `
+    <div style="background: var(--bg2); padding: 12px 15px; border-radius: 4px; border-left: 3px solid var(--gold); text-align: left;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-weight:600;font-size:12px;color:var(--gold)">${c.name}</span>
+        <span style="font-size:10px;color:var(--text3)">${c.date || new Date(c.timestamp).toLocaleDateString()}</span>
+      </div>
+      <p style="font-size:13px;color:var(--text2);margin:0;white-space:pre-wrap;line-height:1.6;">${c.text}</p>
+    </div>
+  `).join('');
+}
+
+async function likeStory() {
+  if (!currentStory) return;
+  const likeKey = `liked_story_${currentStory.id}`;
+  const isLiked = localStorage.getItem(likeKey) === 'true';
+
+  if (isLiked) {
+    currentStory.likes = Math.max(0, (currentStory.likes || 0) - 1);
+    localStorage.setItem(likeKey, 'false');
+  } else {
+    currentStory.likes = (currentStory.likes || 0) + 1;
+    localStorage.setItem(likeKey, 'true');
+  }
+
+  document.getElementById('story-likes-count').textContent = currentStory.likes;
+  document.getElementById('story-like-btn').classList.toggle('liked', !isLiked);
+
+  // Sync to database
+  const item = window.portfolioDb.findItem('story', currentStory.id);
+  if (item) {
+    item.likes = currentStory.likes;
+    await window.saveSiteData(window.siteData);
+  }
+}
+
+async function submitStoryComment(event) {
+  event.preventDefault();
+  if (!currentStory) return;
+
+  const nameInput = document.getElementById('story-comment-name');
+  const textInput = document.getElementById('story-comment-text');
+
+  const name = nameInput.value.trim() || 'Anonymous';
+  const text = textInput.value.trim();
+  if (!text) return;
+
+  const newComment = await window.portfolioDb.addComment('story', currentStory.id, null, name, text);
+  if (newComment) {
+    if (!currentStory.comments) currentStory.comments = [];
+    currentStory.comments.push(newComment);
+    renderStoryComments(currentStory.comments);
+    textInput.value = '';
+  }
+}
+
+function shareStory() {
+  if (!currentStory) return;
+  const shareTitle = `${currentStory.title} | Essays & Stories | Krishnendu Goswami`;
+  const shareText = `Read this beautiful essay: "${currentStory.title}" by Krishnendu Goswami`;
+  const shareUrl = window.location.href;
+
+  if (navigator.share) {
+    navigator.share({
+      title: shareTitle,
+      text: shareText,
+      url: shareUrl
+    }).catch(err => console.log("Share failed:", err));
+  } else {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showToast("Link copied to clipboard!");
+    }).catch(() => {
+      alert("Failed to copy link. Here is the URL: " + shareUrl);
+    });
+  }
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast-notif');
+  if (!toast) return;
+  if (message) toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
 </script>
+<div id="toast-notif" class="toast-notif">Link copied to clipboard</div>
 </body>
 </html>
 

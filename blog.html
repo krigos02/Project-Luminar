@@ -144,8 +144,6 @@
     <nav class="site-nav" role="navigation" aria-label="Main navigation">
       <ul class="nav-menu">
         <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="blog.html" class="active">Deep Dive</a></li>
         <li class="dropdown">
           <a href="portfolio.html" class="dropdown-trigger">Genre</a>
           <ul class="dropdown-menu">
@@ -155,8 +153,11 @@
             <li><a href="gallery.html?category=portrait">Portraits</a></li>
             <li><a href="gallery.html?category=street">Streets</a></li>
             <li><a href="gallery.html?category=aerial">Aerial</a></li>
+            <li><a href="gallery.html?category=astrophotography">Astrophotography</a></li>
           </ul>
         </li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="blog.html" class="active">Deep Dive</a></li>
         <li><a href="stories.html">Stories</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
@@ -293,13 +294,113 @@
   </div>
 </footer>
 
+<!-- Blog post detail viewer modal -->
+<div id="blog-view-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(4,4,6,0.98); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:2rem;">
+  <div style="width:100%; max-width:1100px; height:100%; max-height:85vh; display:flex; border-radius:12px; overflow:hidden; border:1px solid var(--border); background:var(--bg); position:relative;">
+    
+    <!-- Left Stage: Gradient & Text -->
+    <div id="blog-view-stage" style="flex:1; padding:3rem; display:flex; flex-direction:column; justify-content:center; position:relative; overflow:hidden; min-width:0; background:linear-gradient(135deg,#151515,#2a2a2a); text-align: left;">
+      <!-- Close floating button inside stage -->
+      <button onclick="closeBlogView()" style="position:absolute; top:20px; left:20px; width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:rgba(0,0,0,0.5); color:white; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px;">✕</button>
+      
+      <div id="blog-view-cat" style="font-family:var(--font-sans); font-size:11px; text-transform:uppercase; letter-spacing:0.18em; color:var(--gold); margin-bottom:1.5rem;">CATEGORY</div>
+      <h1 id="blog-view-title" style="font-family:var(--font-serif); font-size:2.4rem; line-height:1.2; color:white; margin-bottom:1.5rem; max-width:80%;">Title of Journal Post</h1>
+      <p id="blog-view-excerpt" style="font-family:var(--font-serif); font-size:1.15rem; font-style:italic; line-height:1.7; color:var(--text2); max-width:85%; margin-bottom:2rem; overflow-y:auto; max-height:40vh; padding-right:10px;">Excerpt details...</p>
+      
+      <div style="display:flex; align-items:center; gap:12px; font-size:12px; color:var(--text3);">
+        <span id="blog-view-date">Date</span>
+        <div style="width:4px; height:4px; border-radius:50%; background:var(--border);"></div>
+        <span id="blog-view-readtime">5 min read</span>
+      </div>
+    </div>
+    
+    <!-- Right glassmorphic panel -->
+    <div id="blog-view-sidebar" style="width:360px; flex-shrink:0; border-left:1px solid var(--border); background:rgba(20, 20, 20, 0.85); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); display:flex; flex-direction:column; overflow-y:auto; padding:2rem 1.5rem; justify-content:space-between;">
+      <div>
+        <!-- Social counters -->
+        <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:2rem;">
+          <button id="blog-like-btn" onclick="likeBlogEntry()" class="lb-social-btn" style="cursor:pointer; display:flex; align-items:center; gap:6px; background:none; border:none; color:var(--text2); font-size:13px;">
+            <svg id="blog-heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 18px; height: 18px; transition: all 0.2s;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <span id="blog-likes-count">0</span> Likes
+          </button>
+          <div style="display:flex; align-items:center; gap:6px; color:var(--text3); font-size:13px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 18px; height: 18px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span id="blog-views-count">0</span> Views
+          </div>
+        </div>
+        
+        <div style="margin-bottom:1.5rem;">
+          <button onclick="shareBlogEntry()" class="btn-primary" style="padding: 8px 16px; font-size: 11px; width: 100%; gap: 6px; display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 14px; height: 14px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share Article
+          </button>
+        </div>
+
+        <!-- Comments -->
+        <h4 style="font-family:var(--font-sans); font-size:11px; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:1rem; color:var(--text); text-align: left;">Comments (<span id="blog-comments-count">0</span>)</h4>
+        <div id="blog-comments-list" style="max-height: 240px; overflow-y: auto; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; padding-right:4px;">
+          <!-- Comments list -->
+        </div>
+      </div>
+      
+      <!-- Comment Form -->
+      <form onsubmit="submitBlogComment(event)" style="display:flex; flex-direction:column; gap:8px; border-top:1px solid var(--border); padding-top:1.25rem;">
+        <input type="text" id="blog-comment-name" placeholder="Your Name" required style="background:var(--bg2); border:1px solid var(--border); padding:8px; border-radius:4px; color:var(--text); font-size:12px;">
+        <textarea id="blog-comment-text" placeholder="Add a comment..." required rows="2" style="background:var(--bg2); border:1px solid var(--border); padding:8px; border-radius:4px; color:var(--text); font-size:12px; font-family:inherit; resize:none;"></textarea>
+        <button type="submit" class="btn-primary" style="padding:8px 12px; font-size:11px; width:100%;">Post Comment</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+.toast-notif {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translate3d(-50%, 100px, 0);
+  background: var(--bg3);
+  color: var(--text1);
+  border: 1px solid var(--border);
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+}
+.toast-notif.show {
+  transform: translate3d(-50%, 0, 0);
+  opacity: 1;
+}
+.lb-social-btn.liked {
+  color: #ff3b30 !important;
+}
+.lb-social-btn.liked svg {
+  fill: #ff3b30;
+  stroke: #ff3b30;
+}
+</style>
+<div id="toast-notif" class="toast-notif">Link copied to clipboard</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="data.js"></script>
 <script src="shared.js"></script>
 <script>
 // Initialize
-document.addEventListener('DOMContentLoaded', renderJournalEntries);
-document.addEventListener('siteDataLoaded', renderJournalEntries);
+document.addEventListener('DOMContentLoaded', () => {
+  renderJournalEntries();
+  setTimeout(checkUrlParams, 500);
+});
+document.addEventListener('siteDataLoaded', () => {
+  renderJournalEntries();
+  setTimeout(checkUrlParams, 500);
+});
+
+let selectedBlog = null;
 
 function renderJournalEntries() {
   if (window.siteData && window.siteData.journalEntries) {
@@ -321,7 +422,7 @@ function renderJournalEntries() {
         return;
       }
       grid.innerHTML = posts.map((post, idx) => `
-        <div class="blog-card reveal visible" style="transition-delay: ${idx * 0.1}s" onclick="window.location.href='#'">
+        <div class="blog-card reveal visible" style="transition-delay: ${idx * 0.1}s; cursor: pointer;" onclick="openBlogView(${post.id !== undefined ? post.id : idx})">
           <div class="blog-thumb">
             <div class="blog-ph" style="width:100%; height:100%; background: ${post.bg || 'linear-gradient(135deg,#151515,#2a2a2a)'}"></div>
           </div>
@@ -336,6 +437,153 @@ function renderJournalEntries() {
         </div>
       `).join('');
     }
+  }
+}
+
+function openBlogView(id) {
+  const posts = window.siteData.journalEntries || [];
+  const post = posts.find(p => p.id === id || posts.indexOf(p) === id);
+  if (!post) return;
+  
+  selectedBlog = post;
+  
+  document.getElementById('blog-view-cat').textContent = post.cat;
+  document.getElementById('blog-view-title').textContent = post.title;
+  document.getElementById('blog-view-excerpt').textContent = post.excerpt;
+  document.getElementById('blog-view-date').textContent = post.date;
+  document.getElementById('blog-view-readtime').textContent = post.readTime;
+  document.getElementById('blog-view-stage').style.background = post.bg || 'linear-gradient(135deg,#151515,#2a2a2a)';
+  
+  // Render counters
+  document.getElementById('blog-likes-count').textContent = post.likes || 0;
+  document.getElementById('blog-views-count').textContent = post.views || 0;
+  
+  const likeKey = `liked_blog_${post.id}`;
+  const isLiked = localStorage.getItem(likeKey) === 'true';
+  document.getElementById('blog-like-btn').classList.toggle('liked', isLiked);
+  
+  renderBlogComments(post.comments || []);
+  
+  document.getElementById('blog-view-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  
+  // Increment view
+  if (!post._viewed) {
+    post._viewed = true;
+    window.portfolioDb.incrementView('journal', post.id);
+    post.views = (post.views || 0) + 1;
+    document.getElementById('blog-views-count').textContent = post.views;
+  }
+}
+
+function closeBlogView() {
+  document.getElementById('blog-view-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function renderBlogComments(comments) {
+  const list = document.getElementById('blog-comments-list');
+  const countEl = document.getElementById('blog-comments-count');
+  if (!list || !countEl) return;
+  
+  countEl.textContent = comments.length;
+  if (comments.length === 0) {
+    list.innerHTML = `<div style="font-size:12px;color:var(--text3);font-style:italic;text-align:center;padding:1rem 0;">No comments yet. Be the first to comment!</div>`;
+    return;
+  }
+  
+  list.innerHTML = comments.map(c => `
+    <div style="background: var(--bg2); padding: 8px 10px; border-radius: 4px; text-align: left;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-weight:600;font-size:11px;color:var(--gold)">${c.name}</span>
+        <span style="font-size:9px;color:var(--text3)">${c.date || new Date(c.timestamp).toLocaleDateString()}</span>
+      </div>
+      <p style="font-size:12px;color:var(--text2);margin:0;white-space:pre-wrap;">${c.text}</p>
+    </div>
+  `).join('');
+  list.scrollTop = list.scrollHeight;
+}
+
+async function likeBlogEntry() {
+  if (!selectedBlog) return;
+  const likeKey = `liked_blog_${selectedBlog.id}`;
+  const isLiked = localStorage.getItem(likeKey) === 'true';
+  
+  if (isLiked) {
+    selectedBlog.likes = Math.max(0, (selectedBlog.likes || 0) - 1);
+    localStorage.setItem(likeKey, 'false');
+  } else {
+    selectedBlog.likes = (selectedBlog.likes || 0) + 1;
+    localStorage.setItem(likeKey, 'true');
+  }
+  
+  document.getElementById('blog-likes-count').textContent = selectedBlog.likes;
+  document.getElementById('blog-like-btn').classList.toggle('liked', !isLiked);
+  
+  // Sync to database
+  const item = window.portfolioDb.findItem('journal', selectedBlog.id);
+  if (item) {
+    item.likes = selectedBlog.likes;
+    await window.saveSiteData(window.siteData);
+  }
+}
+
+async function submitBlogComment(event) {
+  event.preventDefault();
+  if (!selectedBlog) return;
+  
+  const nameInput = document.getElementById('blog-comment-name');
+  const textInput = document.getElementById('blog-comment-text');
+  
+  const name = nameInput.value.trim() || 'Anonymous';
+  const text = textInput.value.trim();
+  if (!text) return;
+  
+  const newComment = await window.portfolioDb.addComment('journal', selectedBlog.id, null, name, text);
+  if (newComment) {
+    if (!selectedBlog.comments) selectedBlog.comments = [];
+    selectedBlog.comments.push(newComment);
+    renderBlogComments(selectedBlog.comments);
+    textInput.value = '';
+  }
+}
+
+function shareBlogEntry() {
+  if (!selectedBlog) return;
+  const shareTitle = `${selectedBlog.title} | Deep Dive | Krishnendu Goswami`;
+  const shareText = `Read "${selectedBlog.title}" on Krishnendu Goswami's Journal`;
+  const shareUrl = `${window.location.origin}${window.location.pathname}?post=${selectedBlog.id}`;
+  
+  if (navigator.share) {
+    navigator.share({
+      title: shareTitle,
+      text: shareText,
+      url: shareUrl
+    }).catch(err => console.log("Share failed:", err));
+  } else {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showToast("Link copied to clipboard!");
+    }).catch(() => {
+      alert("Failed to copy link. Here is the URL: " + shareUrl);
+    });
+  }
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast-notif');
+  if (!toast) return;
+  if (message) toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+function checkUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const postId = parseInt(params.get('post'));
+  if (!isNaN(postId) && window.siteData && window.siteData.journalEntries) {
+    openBlogView(postId);
   }
 }
 </script>

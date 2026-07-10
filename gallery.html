@@ -475,13 +475,27 @@
   -webkit-user-drag: none;
 }
 .lb-info-panel {
-  width: 320px;
-  flex-shrink: 0;
-  border-left: 1px solid var(--border);
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  width: 350px;
+  border-radius: 8px;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  z-index: 10;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
+  transition: all 0.3s ease;
+}
+[data-theme="light"] .lb-info-panel {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
 }
 .lb-info-content {
   padding: 2rem 1.5rem;
@@ -796,7 +810,15 @@
 
 @media(max-width: 900px) {
   .gallery-masonry { columns: 2; }
-  .lb-info-panel { display: none; }
+  .lb-info-panel {
+    top: auto;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1.5rem;
+    width: auto;
+    max-height: 50vh;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  }
   .lb-topbar-title { display: none; }
 }
 @media(max-width: 600px) {
@@ -832,8 +854,6 @@
     <nav class="site-nav" role="navigation" aria-label="Main navigation">
       <ul class="nav-menu">
         <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="blog.html">Deep Dive</a></li>
         <li class="dropdown">
           <a href="portfolio.html" class="dropdown-trigger active">Genre</a>
           <ul class="dropdown-menu">
@@ -843,8 +863,11 @@
             <li><a href="gallery.html?category=portrait">Portraits</a></li>
             <li><a href="gallery.html?category=street">Streets</a></li>
             <li><a href="gallery.html?category=aerial">Aerial</a></li>
+            <li><a href="gallery.html?category=astrophotography">Astrophotography</a></li>
           </ul>
         </li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="blog.html">Deep Dive</a></li>
         <li><a href="stories.html">Stories</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
@@ -1376,6 +1399,137 @@ function updateLb() {
   lbPhBg.style.background = p.bg;
   lbPhBg.style.width = '100%';
   lbPhBg.style.height = '420px';
+
+  // ── Social counters & Likes state ──
+  document.getElementById('lb-likes-count').textContent = p.likes || 0;
+  document.getElementById('lb-views-count').textContent = p.views || 0;
+  
+  const likeKey = `liked_gallery_photo_${currentCategory}_${p.id}`;
+  const isLiked = localStorage.getItem(likeKey) === 'true';
+  document.getElementById('lb-like-btn').classList.toggle('liked', isLiked);
+
+  // Render comments
+  renderLbComments(p.comments || []);
+
+  // Track page/photo views
+  if (!p._viewed) {
+    p._viewed = true;
+    window.portfolioDb.incrementView('gallery_photo', currentCategory, p.id);
+    p.views = (p.views || 0) + 1;
+    document.getElementById('lb-views-count').textContent = p.views;
+  }
+}
+
+function renderLbComments(comments) {
+  const list = document.getElementById('lb-comments-list');
+  const countEl = document.getElementById('lb-comments-count');
+  if (!list || !countEl) return;
+
+  countEl.textContent = comments.length;
+  if (comments.length === 0) {
+    list.innerHTML = `<div style="font-size:12px;color:var(--text3);font-style:italic;text-align:center;padding:1rem 0;">No comments yet. Be the first to comment!</div>`;
+    return;
+  }
+
+  list.innerHTML = comments.map(c => `
+    <div class="lb-comment-item">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-weight:600;font-size:11px;color:var(--gold)">${c.name}</span>
+        <span style="font-size:9px;color:var(--text3)">${c.date || new Date(c.timestamp).toLocaleDateString()}</span>
+      </div>
+      <p style="font-size:12px;color:var(--text2);margin:0;white-space:pre-wrap;">${c.text}</p>
+    </div>
+  `).join('');
+  list.scrollTop = list.scrollHeight;
+}
+
+async function likePhoto() {
+  const p = filteredPhotos[lbIdx];
+  if (!p) return;
+
+  const likeKey = `liked_gallery_photo_${currentCategory}_${p.id}`;
+  const isLiked = localStorage.getItem(likeKey) === 'true';
+
+  if (isLiked) {
+    p.likes = Math.max(0, (p.likes || 0) - 1);
+    localStorage.setItem(likeKey, 'false');
+  } else {
+    p.likes = (p.likes || 0) + 1;
+    localStorage.setItem(likeKey, 'true');
+    showHeartPop();
+  }
+
+  document.getElementById('lb-likes-count').textContent = p.likes;
+  document.getElementById('lb-like-btn').classList.toggle('liked', !isLiked);
+
+  // Sync to database
+  const item = window.portfolioDb.findItem('gallery_photo', currentCategory, p.id);
+  if (item) {
+    item.likes = p.likes;
+    await window.saveSiteData(window.siteData);
+  }
+}
+
+function showHeartPop() {
+  const overlay = document.getElementById('pop-heart-overlay');
+  if (!overlay) return;
+  overlay.classList.remove('animate');
+  void overlay.offsetWidth; // Force reflow
+  overlay.classList.add('animate');
+}
+
+async function submitComment(event) {
+  event.preventDefault();
+  const p = filteredPhotos[lbIdx];
+  if (!p) return;
+
+  const nameInput = document.getElementById('lb-comment-name');
+  const textInput = document.getElementById('lb-comment-text');
+
+  const name = nameInput.value.trim() || 'Anonymous';
+  const text = textInput.value.trim();
+  if (!text) return;
+
+  const newComment = await window.portfolioDb.addComment('gallery_photo', currentCategory, p.id, name, text);
+  if (newComment) {
+    if (!p.comments) p.comments = [];
+    p.comments.push(newComment);
+    renderLbComments(p.comments);
+    textInput.value = '';
+  }
+}
+
+function sharePhoto() {
+  const p = filteredPhotos[lbIdx];
+  if (!p) return;
+
+  const shareTitle = `${p.title} | Krishnendu Goswami Photography`;
+  const shareText = `Check out this photograph by Krishnendu Goswami: "${p.title}"`;
+  const shareUrl = `${window.location.origin}${window.location.pathname}?category=${currentCategory}&photo=${p.id}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: shareTitle,
+      text: shareText,
+      url: shareUrl
+    }).catch(err => console.log("Share failed:", err));
+  } else {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showToast("Link copied to clipboard!");
+    }).catch(() => {
+      alert("Failed to copy link. Here is the URL: " + shareUrl);
+    });
+  }
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast-notif');
+  if (!toast) return;
+  if (message) toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
 }
 
 function toggleInfoPanel() {
@@ -1397,9 +1551,42 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') lbNav(-1);
 });
 
+// Double tap/click to like
+let lastTap = 0;
+document.getElementById('lb-image-container').addEventListener('click', e => {
+  const currentTime = new Date().getTime();
+  const tapLength = currentTime - lastTap;
+  if (tapLength < 300 && tapLength > 0) {
+    likePhoto();
+    e.preventDefault();
+  }
+  lastTap = currentTime;
+});
+document.getElementById('lb-image-container').addEventListener('dblclick', () => {
+  likePhoto();
+});
+
+// Auto-open photo if requested in query parameter
+function checkUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const photoId = parseInt(params.get('photo'));
+  if (!isNaN(photoId) && filteredPhotos) {
+    const idx = filteredPhotos.findIndex(p => p.id === photoId);
+    if (idx !== -1) {
+      openLb(idx);
+    }
+  }
+}
+
 /* Initialize */
-document.addEventListener('DOMContentLoaded', initPage);
-document.addEventListener('siteDataLoaded', initPage);
+document.addEventListener('DOMContentLoaded', () => {
+  initPage();
+  setTimeout(checkUrlParams, 500);
+});
+document.addEventListener('siteDataLoaded', () => {
+  initPage();
+  setTimeout(checkUrlParams, 500);
+});
 </script>
 </body>
 </html>

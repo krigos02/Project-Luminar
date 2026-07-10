@@ -538,6 +538,7 @@
       <button class="sidebar-btn" onclick="switchPanel('blog', this)">Deep Dive (Blog)</button>
       <button class="sidebar-btn" onclick="switchPanel('stories', this)">Essays &amp; Stories</button>
       <button class="sidebar-btn" onclick="switchPanel('messages', this)">Contact Messages</button>
+      <button class="sidebar-btn" onclick="switchPanel('interactions', this)">Interactions &amp; Comments</button>
       <button class="sidebar-btn" onclick="switchPanel('config', this)">Backup &amp; Export</button>
     </aside>
 
@@ -701,6 +702,51 @@
         </div>
       </section>
 
+      <!-- PANEL: SOCIAL INTERACTIONS & ANALYTICS -->
+      <section id="panel-interactions" class="admin-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Social Interactions &amp; Comments Manager</h2>
+          <button onclick="loadInteractionsCms()" class="btn-primary" style="padding: 10px 24px; font-size: 11px;">Refresh Stats</button>
+        </div>
+
+        <!-- Stats grid summary cards -->
+        <div class="cms-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px;">
+            <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:5px">Overall Site Views</div>
+            <div id="stats-site-views" style="font-size:2.5rem; font-weight:700; color:var(--gold)">0</div>
+          </div>
+          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px;">
+            <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:5px">Total Photo Likes</div>
+            <div id="stats-photo-likes" style="font-size:2.5rem; font-weight:700; color:white">0</div>
+          </div>
+          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px;">
+            <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:5px">Total Essay Likes</div>
+            <div id="stats-story-likes" style="font-size:2.5rem; font-weight:700; color:white">0</div>
+          </div>
+          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px;">
+            <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:5px">Total Comments</div>
+            <div id="stats-comments-count" style="font-size:2.5rem; font-weight:700; color:white">0</div>
+          </div>
+        </div>
+
+        <!-- Hot assets highlights -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2.5rem;">
+          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px; text-align: left;">
+            <h4 style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); margin-bottom:1rem;">Most Liked Asset</h4>
+            <div id="stats-top-liked" style="font-size:14px; font-weight:500; color:white">-</div>
+          </div>
+          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px; text-align: left;">
+            <h4 style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); margin-bottom:1rem;">Most Viewed Asset</h4>
+            <div id="stats-top-viewed" style="font-size:14px; font-weight:500; color:white">-</div>
+          </div>
+        </div>
+
+        <h3 style="font-family:var(--font-display); font-size:1.2rem; color:var(--text); margin-bottom:1rem; text-align: left;">All Comments &amp; Moderation</h3>
+        <div class="cms-grid" style="grid-template-columns: 1fr; gap: 1rem;" id="all-comments-list">
+          <div style="text-align: center; padding: 2rem; color: var(--text3);">Loading comments data...</div>
+        </div>
+      </section>
+
       <!-- PANEL: BACKUP / CONFIG -->
       <section id="panel-config" class="admin-panel">
         <div class="panel-header">
@@ -736,7 +782,7 @@
       <input type="hidden" id="cat-orig-key">
       <div class="admin-form-group">
         <label>Category Key (unique url slug, e.g. "wildlife")</label>
-        <input type="text" id="cat-key" class="admin-form-control" pattern="[a-z0-9\-]+" required>
+        <input type="text" id="cat-key" class="admin-form-control" pattern="[a-zA-Z0-9\-]+" title="Use letters, numbers, and hyphens only (e.g., Astrophotography)" oninput="this.value = this.value.replace(/[^a-zA-Z0-9\-]/g, '')" required>
       </div>
       <div class="form-row-2">
         <div class="admin-form-group">
@@ -773,7 +819,7 @@
       <input type="hidden" id="ptab-orig-id">
       <div class="admin-form-group">
         <label>Tab ID / Slug (unique, lowercase, e.g. "outdoors")</label>
-        <input type="text" id="ptab-id" class="admin-form-control" pattern="[a-z0-9\-]+" required>
+        <input type="text" id="ptab-id" class="admin-form-control" pattern="[a-zA-Z0-9\-]+" title="Use letters, numbers, and hyphens only (e.g., Astrophotography)" oninput="this.value = this.value.replace(/[^a-zA-Z0-9\-]/g, '')" required>
       </div>
       <div class="admin-form-group">
         <label>Tab Label (Display name, e.g. "Outdoors")</label>
@@ -896,7 +942,10 @@
       <div class="form-row-3">
         <div class="admin-form-group">
           <label>Location Specifics</label>
-          <input type="text" id="photo-loc" class="admin-form-control" placeholder="Kibber, HP">
+          <div style="position:relative; width:100%;" id="photo-loc-wrapper">
+            <input type="text" id="photo-loc" class="admin-form-control" placeholder="Kibber, HP" autocomplete="off">
+            <div id="photo-loc-suggestions" style="display:none; position:absolute; left:0; right:0; top:100%; background:var(--bg); border:1px solid var(--border); border-top:none; border-radius:0 0 4px 4px; box-shadow:0 8px 24px rgba(0,0,0,0.6); z-index:1000; max-height:220px; overflow-y:auto; margin-top:2px;"></div>
+          </div>
         </div>
         <div class="admin-form-group">
           <label>Date Captured</label>
@@ -920,6 +969,8 @@
     </form>
   </div>
 </div>
+
+
 
 <!-- MODAL: BLOG POST EDITOR -->
 <div id="blog-modal" class="admin-modal">
@@ -974,7 +1025,7 @@
       <div class="form-row-2">
         <div class="admin-form-group">
           <label>Slug / URL (unique lowercase word, e.g. "snow-leopard")</label>
-          <input type="text" id="story-slug" class="admin-form-control" pattern="[a-z0-9\-]+" required>
+          <input type="text" id="story-slug" class="admin-form-control" pattern="[a-zA-Z0-9\-]+" title="Use letters, numbers, and hyphens only (e.g., Astrophotography)" oninput="this.value = this.value.replace(/[^a-zA-Z0-9\-]/g, '')" required>
         </div>
         <div class="admin-form-group">
           <label>Tag/Type (e.g. "Wildlife · Long-form Project")</label>
@@ -1424,6 +1475,10 @@
     
     document.getElementById(`panel-${panelId}`).classList.add('active');
     btn.classList.add('active');
+    
+    if (panelId === 'interactions') {
+      loadInteractionsCms();
+    }
   }
 
   /* ── INITIALIZE DASHBOARD ── */
@@ -1440,6 +1495,7 @@
     loadBlogCms();
     loadStoriesCms();
     loadContactMessages();
+    loadInteractionsCms();
   }
 
   function showSuccess() {
@@ -1448,6 +1504,155 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setTimeout(() => { banner.style.display = 'none'; }, 4000);
   }
+
+  /* ── SOCIAL INTERACTIONS & MODERATION METHODS ── */
+  window.loadInteractionsCms = function() {
+    const data = window.siteData;
+    if (!data) return;
+
+    // 1. Overall view count
+    document.getElementById('stats-site-views').textContent = data.views || 0;
+
+    // 2. Accumulate likes & comments
+    let photoLikes = 0;
+    let storyLikes = 0;
+    let totalComments = 0;
+    
+    let allComments = []; // { type, itemId, subId, itemTitle, comment }
+    
+    let topLikedAsset = null; // { title, likes }
+    let topViewedAsset = null; // { title, views }
+
+    function trackAsset(title, likes, views) {
+      if (likes !== undefined && (!topLikedAsset || likes > topLikedAsset.likes)) {
+        topLikedAsset = { title, likes };
+      }
+      if (views !== undefined && (!topViewedAsset || views > topViewedAsset.views)) {
+        topViewedAsset = { title, views };
+      }
+    }
+
+    // Process Gallery photos
+    if (data.galleryCategories) {
+      Object.keys(data.galleryCategories).forEach(catKey => {
+        const cat = data.galleryCategories[catKey];
+        if (cat && cat.photos) {
+          cat.photos.forEach(p => {
+            const likes = p.likes || 0;
+            const views = p.views || 0;
+            photoLikes += likes;
+            trackAsset(`Photo: ${p.title} (${cat.title})`, likes, views);
+
+            if (p.comments) {
+              totalComments += p.comments.length;
+              p.comments.forEach(c => {
+                allComments.push({
+                  type: 'gallery_photo',
+                  itemId: catKey,
+                  subId: p.id,
+                  itemTitle: `Photo: ${p.title}`,
+                  comment: c
+                });
+              });
+            }
+          });
+        }
+      });
+    }
+
+    // Process Deep Dive blog posts
+    if (data.journalEntries) {
+      data.journalEntries.forEach(post => {
+        const likes = post.likes || 0;
+        const views = post.views || 0;
+        trackAsset(`Deep Dive: ${post.title}`, likes, views);
+
+        if (post.comments) {
+          totalComments += post.comments.length;
+          post.comments.forEach(c => {
+            allComments.push({
+              type: 'journal',
+              itemId: post.id,
+              subId: null,
+              itemTitle: `Deep Dive: ${post.title}`,
+              comment: c
+            });
+          });
+        }
+      });
+    }
+
+    // Process Essays & Stories
+    if (data.stories) {
+      data.stories.forEach(story => {
+        const likes = story.likes || 0;
+        const views = story.views || 0;
+        storyLikes += likes;
+        trackAsset(`Story: ${story.title}`, likes, views);
+
+        if (story.comments) {
+          totalComments += story.comments.length;
+          story.comments.forEach(c => {
+            allComments.push({
+              type: 'story',
+              itemId: story.id,
+              subId: null,
+              itemTitle: `Story: ${story.title}`,
+              comment: c
+            });
+          });
+        }
+      });
+    }
+
+    // Update highlights
+    document.getElementById('stats-photo-likes').textContent = photoLikes;
+    document.getElementById('stats-story-likes').textContent = storyLikes;
+    document.getElementById('stats-comments-count').textContent = totalComments;
+
+    document.getElementById('stats-top-liked').innerHTML = topLikedAsset ? `${topLikedAsset.title} <strong style="color:var(--gold); margin-left:10px">${topLikedAsset.likes} Likes</strong>` : 'No likes recorded';
+    document.getElementById('stats-top-viewed').innerHTML = topViewedAsset ? `${topViewedAsset.title} <strong style="color:var(--gold); margin-left:10px">${topViewedAsset.views} Views</strong>` : 'No views recorded';
+
+    // Render comments list
+    const listContainer = document.getElementById('all-comments-list');
+    if (allComments.length === 0) {
+      listContainer.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--text3);">No comments have been posted yet.</div>`;
+      return;
+    }
+
+    // Sort by timestamp desc
+    allComments.sort((a, b) => b.comment.timestamp - a.comment.timestamp);
+
+    listContainer.innerHTML = '';
+    allComments.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'cms-card';
+      card.style.textAlign = 'left';
+      card.innerHTML = `
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); margin-bottom:4px">${item.itemTitle}</div>
+          <div style="font-weight:600; font-size:13px; color:white; margin-bottom:4px">${item.comment.name} <span style="font-weight:400; font-size:10px; color:var(--text3); margin-left:10px">${item.comment.date || new Date(item.comment.timestamp).toLocaleDateString()}</span></div>
+          <p style="font-size:12.5px; color:var(--text2); line-height:1.5; margin:0; white-space:pre-wrap;">${item.comment.text}</p>
+        </div>
+        <div class="cms-card-actions">
+          <button class="cms-card-btn btn-danger" onclick="deleteCommentByAdmin('${item.type}', '${item.itemId}', '${item.subId}', '${item.comment.id}')">Remove</button>
+        </div>
+      `;
+      listContainer.appendChild(card);
+    });
+  };
+
+  window.deleteCommentByAdmin = async function(type, itemId, subId, commentId) {
+    if (confirm("Are you sure you want to permanently delete this comment?")) {
+      const success = await window.portfolioDb.deleteComment(type, itemId, subId, commentId);
+      if (success) {
+        loadInteractionsCms();
+        showSuccess();
+      } else {
+        alert("Failed to delete comment. Please try again.");
+      }
+    }
+  };
 
   /* ── PROFILE & ABOUT METHODS ── */
   function loadProfileForm() {
@@ -3065,6 +3270,118 @@
       reader.readAsDataURL(file);
     }
   }
+
+  /* ── LOCATION AUTOCOMPLETE SUGGESTIONS ── */
+  let searchTimeout = null;
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    const locInput = document.getElementById('photo-loc');
+    const suggestionsBox = document.getElementById('photo-loc-suggestions');
+    if (!locInput || !suggestionsBox) return;
+
+    const styleEl = document.createElement('style');
+    styleEl.innerHTML = `
+      .suggestion-item {
+        padding: 10px 14px;
+        font-size: 12.5px;
+        color: var(--text2);
+        cursor: pointer;
+        border-bottom: 1px solid var(--border);
+        transition: background 0.2s, color 0.2s;
+        text-align: left;
+      }
+      .suggestion-item:last-child {
+        border-bottom: none;
+      }
+      .suggestion-item:hover {
+        background: var(--bg2);
+        color: var(--text);
+      }
+    `;
+    document.head.appendChild(styleEl);
+
+    locInput.addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      const query = locInput.value.trim();
+      
+      if (query.length < 3) {
+        suggestionsBox.style.display = 'none';
+        return;
+      }
+      
+      searchTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`);
+          const data = await res.json();
+          
+          if (data && data.length > 0) {
+            const seen = new Set();
+            const uniqueSuggestions = [];
+            
+            data.forEach(place => {
+              const rawParts = place.display_name.split(',').map(p => p.trim());
+              const cleanParts = rawParts.filter(p => p && !/^\d+$/.test(p));
+              
+              if (cleanParts.length < 2) return;
+              
+              const country = cleanParts[cleanParts.length - 1] || "";
+              const state = cleanParts[cleanParts.length - 2] || "";
+              let local = cleanParts[0];
+              for (const part of cleanParts) {
+                const lower = part.toLowerCase();
+                if (lower.match(/\b(road|street|lane|ave|highway|bypass|st|rd|path|route|galli|sarani|building|house|plot|apartment|flat|block|sector|no\b|market|shop|mall|station|railway|temple|mosque|church|park|garden|hospital|school|college|university)\b/)) {
+                  continue;
+                }
+                local = part;
+                break;
+              }
+              
+              let formatted = local;
+              const parts = [];
+              if (state) parts.push(state);
+              if (country) parts.push(country);
+              
+              if (parts.length > 0) {
+                formatted += ", " + parts.join(' - ');
+              } else {
+                formatted = place.display_name;
+              }
+              
+              if (!seen.has(formatted)) {
+                seen.add(formatted);
+                uniqueSuggestions.push(formatted);
+              }
+            });
+            
+            if (uniqueSuggestions.length > 0) {
+              suggestionsBox.innerHTML = uniqueSuggestions.map(formatted => {
+                const safeVal = formatted.replace(/'/g, "\\'");
+                return `<div class="suggestion-item" onclick="selectSuggestion('${safeVal}')">${formatted}</div>`;
+              }).join('');
+              suggestionsBox.style.display = 'block';
+            } else {
+              suggestionsBox.style.display = 'none';
+            }
+          } else {
+            suggestionsBox.style.display = 'none';
+          }
+        } catch (err) {
+          console.error("Autocomplete failed:", err);
+        }
+      }, 300);
+    });
+
+    window.selectSuggestion = function(value) {
+      locInput.value = value;
+      suggestionsBox.style.display = 'none';
+    };
+
+    document.addEventListener('click', function(e) {
+      if (e.target !== locInput && e.target !== suggestionsBox) {
+        suggestionsBox.style.display = 'none';
+      }
+    });
+  });
 </script>
 </body>
 </html>

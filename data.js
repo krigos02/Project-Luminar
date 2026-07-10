@@ -272,6 +272,13 @@ async function initDatabase() {
   if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;
   if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;
 
+  // Increment overall session views once per browser session
+  if (!sessionStorage.getItem('session_counted')) {
+    siteData.views = (siteData.views || 0) + 1;
+    sessionStorage.setItem('session_counted', 'true');
+    needsSave = true;
+  }
+
   // Export globally
   window.siteData = siteData;
 
