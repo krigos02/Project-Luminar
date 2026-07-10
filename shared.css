@@ -607,6 +607,15 @@ button {
     top: 86px; /* Matches header height on mobile */
   }
 }
+@media (max-width: 768px) {
+  .brand-logo {
+    font-size: 1.4rem;
+    letter-spacing: 0.12em;
+  }
+  .nav-back span {
+    display: none;
+  }
+}
 
 /* ─────────────── FOOTER ─────────────── */
 footer {

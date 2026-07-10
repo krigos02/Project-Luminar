@@ -294,9 +294,8 @@ function updateDynamicLayout() {
       }
     });
 
-    // Update dropdown menus based on galleryCategories & rename Selected Works to Genre
     if (window.siteData.galleryCategories) {
-      const cats = Object.keys(window.siteData.galleryCategories);
+      const cats = window.siteData.categoriesOrder || Object.keys(window.siteData.galleryCategories);
       
       const dropdownMenu = document.querySelector('.dropdown-menu');
       if (dropdownMenu) {

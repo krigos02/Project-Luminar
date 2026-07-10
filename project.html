@@ -636,7 +636,7 @@ a {
 <header id="header" class="site-header" role="banner">
   <div class="container">
     <div class="header-left-actions">
-      <a href="stories.html" class="nav-back">← All Stories</a>
+      <a href="stories.html" class="nav-back">← <span>All Stories</span></a>
     </div>
     <div class="brand-header">
       <a href="index.html" class="brand-logo">
@@ -1066,9 +1066,7 @@ async function submitStoryComment(event) {
 
   const newComment = await window.portfolioDb.addComment('story', currentStory.id, null, name, text);
   if (newComment) {
-    if (!currentStory.comments) currentStory.comments = [];
-    currentStory.comments.push(newComment);
-    renderStoryComments(currentStory.comments);
+    renderStoryComments(currentStory.comments || []);
     textInput.value = '';
   }
 }

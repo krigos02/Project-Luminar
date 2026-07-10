@@ -1783,7 +1783,7 @@
     const container = document.getElementById('categories-list');
     container.innerHTML = '';
     const cats = window.siteData.galleryCategories;
-    const catKeys = Object.keys(cats);
+    const catKeys = window.siteData.categoriesOrder || Object.keys(cats);
     
     catKeys.forEach((key, index) => {
       const cat = cats[key];
@@ -1851,7 +1851,7 @@
     if (!draggedKey || draggedKey === targetKey) return;
 
     const cats = window.siteData.galleryCategories;
-    const keys = Object.keys(cats);
+    const keys = window.siteData.categoriesOrder ? [...window.siteData.categoriesOrder] : Object.keys(cats);
     const dragIdx = keys.indexOf(draggedKey);
     const targetIdx = keys.indexOf(targetKey);
 
@@ -1860,12 +1860,7 @@
       const [dragged] = keys.splice(dragIdx, 1);
       keys.splice(targetIdx, 0, dragged);
 
-      const newCats = {};
-      keys.forEach(k => {
-        newCats[k] = cats[k];
-      });
-
-      window.siteData.galleryCategories = newCats;
+      window.siteData.categoriesOrder = keys;
 
       if (await window.saveSiteData(window.siteData)) {
         loadCategoriesCms();
@@ -2187,7 +2182,12 @@
       db[key] = catData;
     }
     
-    const data = { ...window.siteData, galleryCategories: db };
+    const order = window.siteData.categoriesOrder ? [...window.siteData.categoriesOrder] : Object.keys(window.siteData.galleryCategories);
+    if (mode !== 'edit' && !order.includes(key)) {
+      order.push(key);
+    }
+    
+    const data = { ...window.siteData, galleryCategories: db, categoriesOrder: order };
     if (await window.saveSiteData(data)) {
       closeModal('category-modal');
       loadCategoriesCms();
@@ -2201,7 +2201,8 @@
     if (confirm(`Are you sure you want to delete the category "${key}"? All photographs inside it will be removed.`)) {
       const db = { ...window.siteData.galleryCategories };
       delete db[key];
-      const data = { ...window.siteData, galleryCategories: db };
+      const order = window.siteData.categoriesOrder ? window.siteData.categoriesOrder.filter(k => k !== key) : Object.keys(db);
+      const data = { ...window.siteData, galleryCategories: db, categoriesOrder: order };
       if (await window.saveSiteData(data)) {
         loadCategoriesCms();
         setupGalleryDropdowns();
@@ -2216,7 +2217,7 @@
     const listFilter = document.getElementById('gallery-filter-cat');
     const formDrop = document.getElementById('photo-category');
     
-    const cats = Object.keys(window.siteData.galleryCategories);
+    const cats = window.siteData.categoriesOrder || Object.keys(window.siteData.galleryCategories);
     
     const html = cats.map(key => {
       const cat = window.siteData.galleryCategories[key];

@@ -271,6 +271,7 @@ async function initDatabase() {
   if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;
   if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;
   if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;
+  if (!siteData.categoriesOrder) siteData.categoriesOrder = Object.keys(siteData.galleryCategories);
 
   // Increment overall session views once per browser session
   if (!sessionStorage.getItem('session_counted')) {

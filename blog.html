@@ -541,9 +541,7 @@ async function submitBlogComment(event) {
   
   const newComment = await window.portfolioDb.addComment('journal', selectedBlog.id, null, name, text);
   if (newComment) {
-    if (!selectedBlog.comments) selectedBlog.comments = [];
-    selectedBlog.comments.push(newComment);
-    renderBlogComments(selectedBlog.comments);
+    renderBlogComments(selectedBlog.comments || []);
     textInput.value = '';
   }
 }

@@ -673,7 +673,7 @@ function renderCategories() {
     const dotsContainer = document.getElementById('slider-3d-dots');
     if (!wrapper) return;
 
-    const cats = Object.keys(window.siteData.galleryCategories);
+    const cats = window.siteData.categoriesOrder || Object.keys(window.siteData.galleryCategories);
     const filterTabs = getPortfolioFilterTabs();
     const activeTabObj = filterTabs.find(t => t.id === activeFilter) || filterTabs.find(t => t.id === 'all') || filterTabs[0];
     const allowedKeys = activeTabObj ? activeTabObj.categories : cats;

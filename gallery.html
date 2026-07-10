@@ -427,6 +427,7 @@
   display: flex;
   overflow: hidden;
   min-height: 0;
+  position: relative;
 }
 .lb-main {
   flex: 1;
@@ -812,12 +813,15 @@
   .gallery-masonry { columns: 2; }
   .lb-info-panel {
     top: auto;
-    left: 1rem;
-    right: 1rem;
-    bottom: 1.5rem;
-    width: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
     max-height: 50vh;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    border-radius: 12px 12px 0 0;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
   }
   .lb-topbar-title { display: none; }
 }
@@ -844,7 +848,7 @@
 <header id="header" class="site-header" role="banner">
   <div class="container">
     <div class="header-left-actions">
-      <a href="portfolio.html" class="nav-back">← All Categories</a>
+      <a href="portfolio.html" class="nav-back">← <span>All Categories</span></a>
     </div>
     <div class="brand-header">
       <a href="index.html" class="brand-logo">
@@ -1181,7 +1185,8 @@ function initPage() {
   // 4. Update Switcher active state & render list
   const switcherList = document.getElementById('category-switcher-list');
   if (switcherList) {
-    switcherList.innerHTML = Object.keys(categoriesDb).map(key => {
+    const catKeys = window.siteData.categoriesOrder || Object.keys(categoriesDb);
+    switcherList.innerHTML = catKeys.map(key => {
       const cat = categoriesDb[key];
       const count = cat.photos ? cat.photos.length : 0;
       const isActive = key === currentCategory ? ' active' : '';
@@ -1340,6 +1345,11 @@ function openLb(idx) {
   buildThumbstrip();
   lb.classList.add('open');
   document.body.style.overflow = 'hidden';
+  const panel = document.getElementById('lb-info-panel');
+  if (panel) {
+    infoPanelOpen = true;
+    panel.style.display = 'flex';
+  }
 }
 
 function closeLb() {
@@ -1492,9 +1502,7 @@ async function submitComment(event) {
 
   const newComment = await window.portfolioDb.addComment('gallery_photo', currentCategory, p.id, name, text);
   if (newComment) {
-    if (!p.comments) p.comments = [];
-    p.comments.push(newComment);
-    renderLbComments(p.comments);
+    renderLbComments(p.comments || []);
     textInput.value = '';
   }
 }
