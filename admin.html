@@ -8,74 +8,155 @@
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
-  /* ── ADMIN BOARD STYLING ── */
+  /* ── ADMIN BOARD LIQUID GLASS STYLING ── */
   body {
-    background: var(--bg2);
+    background: #0f172a; /* Soothing slate midnight blue */
     min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
   }
+  
+  /* Floating fluid blob animations - 3 Blobs for deep color blend */
+  body::before, body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(150px);
+    z-index: -1;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  body::before {
+    width: 60vw;
+    height: 60vw;
+    top: -20%;
+    left: -10%;
+    background: radial-gradient(circle, rgba(201, 169, 110, 0.15) 0%, rgba(201, 169, 110, 0) 70%);
+    animation: liquid-float-1 25s infinite alternate ease-in-out;
+    opacity: 0.22;
+  }
+  body::after {
+    width: 55vw;
+    height: 55vw;
+    bottom: -15%;
+    right: -10%;
+    background: radial-gradient(circle, rgba(14, 165, 233, 0.18) 0%, rgba(14, 165, 233, 0) 70%);
+    animation: liquid-float-2 28s infinite alternate ease-in-out;
+    opacity: 0.2;
+  }
+  
+  /* Third floating blob to enhance color landscape */
+  .bg-blob-3 {
+    position: absolute;
+    width: 45vw;
+    height: 45vw;
+    top: 35%;
+    left: 45%;
+    border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
+    filter: blur(140px);
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.14) 0%, rgba(139, 92, 246, 0) 70%);
+    animation: liquid-float-3 22s infinite alternate ease-in-out;
+    opacity: 0.15;
+    mix-blend-mode: screen;
+  }
+  
+  @keyframes liquid-float-1 {
+    0% { transform: translate(0, 0) scale(1); border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; }
+    50% { transform: translate(8vw, 15vh) scale(1.1); border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%; }
+    100% { transform: translate(-4vw, 8vh) scale(0.9); border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; }
+  }
+  @keyframes liquid-float-2 {
+    0% { transform: translate(0, 0) scale(1.1); border-radius: 50% 50% 30% 70% / 50% 60% 40% 50%; }
+    50% { transform: translate(-10vw, -8vh) scale(0.9); border-radius: 30% 70% 70% 30% / 50% 30% 70% 50%; }
+    100% { transform: translate(6vw, 6vh) scale(1.05); border-radius: 50% 50% 30% 70% / 50% 60% 40% 50%; }
+  }
+  @keyframes liquid-float-3 {
+    0% { transform: translate(0, 0) scale(0.9); border-radius: 40% 60% 50% 50% / 40% 50% 50% 60%; }
+    50% { transform: translate(12vw, -12vh) scale(1.15); border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
+    100% { transform: translate(-6vw, 5vh) scale(1.0); border-radius: 40% 60% 50% 50% / 40% 50% 50% 60%; }
+  }
+
+  /* Admin Gates and Login UI */
   .admin-gate {
     position: fixed;
     inset: 0;
     z-index: 10000;
-    background: var(--bg);
+    background: radial-gradient(circle at center, #0a0e1c 0%, #03050c 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 2rem;
   }
   .gate-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    padding: 3rem 2.5rem;
-    max-width: 420px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    padding: 3.5rem 2.5rem;
+    max-width: 440px;
     width: 100%;
-    border-radius: 2px;
+    border-radius: 20px;
     text-align: center;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(28px) saturate(200%);
+    -webkit-backdrop-filter: blur(28px) saturate(200%);
   }
   .gate-card h2 {
-    font-family: var(--font-display);
-    font-size: 1.8rem;
-    letter-spacing: 0.12em;
+    font-family: var(--font-sans);
+    font-weight: 800;
+    font-size: 2rem;
+    letter-spacing: 0.15em;
     margin-bottom: 0.5rem;
     text-transform: uppercase;
+    background: linear-gradient(135deg, #fff 30%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   .gate-card p {
     font-size: 13px;
     color: var(--text3);
     margin-bottom: 2rem;
+    letter-spacing: 0.02em;
   }
   .admin-input {
     width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 12px 14px;
+    background: rgba(0, 0, 0, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    color: #fff;
+    padding: 14px 16px;
     font-family: var(--font-sans);
     font-size: 14px;
-    border-radius: 2px;
+    border-radius: 8px;
     margin-bottom: 1.25rem;
     outline: none;
     text-align: center;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
   }
   .admin-input:focus {
-    border-color: var(--gold);
+    border-color: rgba(201, 169, 110, 0.85);
+    box-shadow: 0 0 20px rgba(201, 169, 110, 0.45);
+    background: rgba(0, 0, 0, 0.65) !important;
   }
   .login-error {
     display: none;
     font-size: 12px;
-    color: #e1306c;
+    color: #ff4a7d;
     margin-top: 1rem;
+    font-weight: 500;
   }
   #mfa-qr-container img {
     display: block;
     margin: 0 auto;
     max-width: 200px;
     height: auto;
+    border: 4px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
   }
   
   /* Drag and drop categories styling */
   .cms-card {
-    transition: transform 0.25s, border-color 0.25s, opacity 0.25s, box-shadow 0.25s;
+    transition: transform 0.25s ease, border-color 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
   }
   .cms-card[draggable="true"] {
     cursor: grab;
@@ -84,21 +165,64 @@
     cursor: grabbing;
   }
   .cms-card.dragging {
-    opacity: 0.3;
+    opacity: 0.25;
     border: 1px dashed var(--gold);
     transform: scale(0.97);
   }
   .cms-card.drag-over {
     border-color: var(--gold);
     transform: scale(1.02);
-    box-shadow: 0 8px 30px rgba(201, 169, 110, 0.15);
+    box-shadow: 0 8px 30px rgba(201, 169, 110, 0.25);
+  }
+
+  /* Button styling overrides */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold) 0%, #b89352 100%) !important;
+    color: #000 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    padding: 12px 24px !important;
+    box-shadow: 0 4px 15px rgba(201, 169, 110, 0.25) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(201, 169, 110, 0.45) !important;
+    filter: brightness(1.05);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+  
+  .btn-outline {
+    background: rgba(255, 255, 255, 0.02) !important;
+    color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    padding: 12px 24px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer;
+  }
+  .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    transform: translateY(-2px);
   }
 
   /* Dashboard Layout */
   .admin-nav {
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem 0;
+    background: rgba(11, 17, 32, 0.4);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    padding: 1.25rem 0;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -110,14 +234,14 @@
   }
   .admin-logo {
     font-family: var(--font-sans);
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    font-size: 1.15rem;
     text-transform: uppercase;
   }
   .admin-logo span {
     font-weight: 300;
-    color: var(--text3);
+    color: rgba(255, 255, 255, 0.5);
   }
   .admin-actions {
     display: flex;
@@ -125,97 +249,120 @@
     align-items: center;
   }
   .admin-container {
-    max-width: 1200px;
-    margin: 2.5rem auto 5rem;
-    padding: 0 20px;
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 2.5rem;
-    align-items: start;
-  }
-  .admin-sidebar {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 1rem 0;
-  }
-  .sidebar-btn {
-    width: 100%;
-    text-align: left;
-    padding: 12px 24px;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text3);
-    transition: all 0.25s;
-    border-left: 3px solid transparent;
-  }
-  .sidebar-btn:hover {
-    color: var(--text);
-    background: var(--bg2);
-  }
-  .sidebar-btn.active {
-    color: var(--text);
-    border-left-color: var(--gold);
-    background: var(--bg2);
+    max-width: 1240px;
+    margin: 2rem auto 6rem;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
   }
   
-  /* Panels */
+  /* Sidebar Navigation styled as Horizontal Floating Glass Dock */
+  .admin-sidebar {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    padding: 0.6rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .sidebar-btn {
+    width: auto;
+    text-align: center;
+    padding: 10px 18px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+  }
+  .sidebar-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+  }
+  .sidebar-btn.active {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(201, 169, 110, 0.18) 0%, rgba(201, 169, 110, 0.03) 100%);
+    border: 1px solid rgba(201, 169, 110, 0.4);
+    box-shadow: 0 4px 15px rgba(201, 169, 110, 0.15);
+  }
+  
+  /* Panels as Frosted Glass */
   .admin-panel {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    padding: 2.5rem;
-    border-radius: 2px;
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
     display: none;
   }
   .admin-panel.active {
     display: block;
   }
   .panel-header {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 1.25rem;
-    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   .panel-title {
     font-family: var(--font-display);
-    font-size: 1.6rem;
-    font-weight: 400;
+    font-size: 1.65rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    background: linear-gradient(135deg, #fff 60%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   
-  /* Forms */
+  /* Forms & Glass Inputs */
   .admin-form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
   }
   .admin-form-group label {
     display: block;
     font-size: 10px;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 6px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 8px;
     font-weight: 600;
   }
   .admin-form-control {
     width: 100%;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 11px 13px;
+    background: rgba(0, 0, 0, 0.45) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: #fff;
+    padding: 12px 15px;
     font-family: var(--font-sans);
     font-size: 13.5px;
-    border-radius: 2px;
+    border-radius: 8px;
     outline: none;
-    transition: border-color 0.25s;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
   }
   .admin-form-control:focus {
-    border-color: var(--text2);
+    border-color: rgba(201, 169, 110, 0.8);
+    box-shadow: 0 0 15px rgba(201, 169, 110, 0.25);
+    background: rgba(0, 0, 0, 0.55) !important;
   }
   textarea.admin-form-control {
-    min-height: 100px;
+    min-height: 120px;
     font-family: var(--font-serif);
     font-size: 15px;
     line-height: 1.6;
@@ -224,145 +371,234 @@
   .form-row-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
   .form-row-3 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 1rem;
+    gap: 1.25rem;
   }
   .form-row-4 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 1rem;
+    gap: 1.25rem;
   }
   
   /* Mini List Editors */
   .list-item-row {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
   .list-item-row input, .list-item-row textarea {
     flex: 1;
     margin-bottom: 0;
   }
   .btn-remove {
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    color: #e1306c;
-    background: rgba(225, 48, 108, 0.05);
-    transition: all 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #ff527f;
+    background: rgba(255, 82, 127, 0.06);
+    transition: all 0.2s ease;
+    cursor: pointer;
   }
   .btn-remove:hover {
-    background: #e1306c;
+    background: #ff527f;
     color: #fff;
+    border-color: #ff527f;
   }
   .btn-add {
-    margin-top: 10px;
+    margin-top: 12px;
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--gold);
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-add:hover {
+    opacity: 0.85;
   }
 
-  /* Grid lists in CMS */
+  /* Grid lists in CMS (Frosted Glass Cards) */
   .cms-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.25rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  /* Compact Drafts Grid */
+  .drafts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .drafts-grid .cms-card {
+    padding: 10px 12px !important;
+    border-radius: 8px !important;
+  }
+  .drafts-grid .cms-card-img {
+    aspect-ratio: 16/10;
+    max-height: 80px;
+    object-fit: cover;
+    margin-bottom: 8px !important;
+  }
+  .drafts-grid .cms-card-ph {
+    aspect-ratio: 16/10;
+    max-height: 80px;
+    margin-bottom: 8px !important;
+    font-size: 10px !important;
+  }
+  .drafts-grid .cms-card-title {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    margin-bottom: 3px !important;
+  }
+  .drafts-grid .cms-card-meta {
+    font-size: 10.5px !important;
+    margin-bottom: 8px !important;
+    line-height: 1.35;
+  }
+  .drafts-grid .cms-card-actions {
+    gap: 6px !important;
+    margin-top: 6px !important;
+  }
+  .drafts-grid .cms-card-btn {
+    padding: 6px 10px !important;
+    font-size: 9px !important;
+    border-radius: 4px !important;
   }
   .cms-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 1.25rem;
+    background: rgba(30, 41, 59, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 1.5rem;
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
+    overflow: hidden;
+  }
+  .cms-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-25deg);
+    pointer-events: none;
+    transition: none;
+  }
+  .cms-card:hover::before {
+    left: 150%;
+    transition: all 0.85s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .cms-card:hover {
+    border-color: rgba(201, 169, 110, 0.45);
+    background: rgba(30, 41, 59, 0.35);
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 15px rgba(201,169,110,0.1);
   }
   .cms-card-img {
     aspect-ratio: 16/10;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     object-fit: cover;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    border-radius: 8px;
   }
   .cms-card-ph {
     aspect-ratio: 16/10;
     width: 100%;
-    border-radius: 2px;
-    margin-bottom: 10px;
+    border-radius: 8px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text3);
     font-size: 11px;
+    background: rgba(0,0,0,0.25);
+    border: 1px dashed rgba(255,255,255,0.06);
   }
   .cms-card-title {
-    font-size: 14px;
+    font-size: 14.5px;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
+    color: #fff;
   }
   .cms-card-meta {
-    font-size: 11px;
+    font-size: 11.5px;
     color: var(--text3);
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
   .cms-card-actions {
     display: flex;
     gap: 8px;
-    margin-top: 8px;
+    margin-top: 10px;
   }
   .cms-card-btn {
     flex: 1;
-    padding: 8px;
-    font-size: 10.5px;
-    font-weight: 500;
+    padding: 9px 12px;
+    font-size: 10px;
+    font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     text-align: center;
-    border-radius: 2px;
-    transition: all 0.2s;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.01);
+    color: rgba(255, 255, 255, 0.75);
+    cursor: pointer;
   }
   .cms-card-btn:hover {
-    border-color: var(--text2);
-    color: var(--text);
+    border-color: rgba(255,255,255,0.35);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.06);
   }
   .cms-card-btn.btn-danger {
-    color: #e1306c;
-    border-color: rgba(225, 48, 108, 0.2);
+    color: #ff527f;
+    border-color: rgba(255, 82, 127, 0.15);
   }
   .cms-card-btn.btn-danger:hover {
-    background: #e1306c;
+    background: #ff527f;
     color: #fff;
-    border-color: #e1306c;
+    border-color: #ff527f;
   }
 
-  /* File Uploader */
+  /* File Uploader Cards */
   .uploader-wrap {
-    border: 1px dashed var(--border);
-    padding: 1.5rem;
-    border-radius: 2px;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    padding: 2rem 1.5rem;
+    border-radius: 10px;
     text-align: center;
-    background: var(--bg2);
+    background: rgba(255, 255, 255, 0.015);
     cursor: pointer;
     position: relative;
     margin-bottom: 10px;
+    transition: all 0.3s ease;
+  }
+  .uploader-wrap:hover {
+    border-color: var(--gold);
+    background: rgba(255, 255, 255, 0.04);
   }
   .uploader-wrap input {
     position: absolute;
@@ -371,25 +607,29 @@
     cursor: pointer;
   }
   .uploader-text {
-    font-size: 12px;
-    color: var(--text3);
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.6);
   }
   .uploader-text span {
     color: var(--gold);
-    font-weight: 500;
+    font-weight: 600;
   }
   .preview-thumbnail {
-    max-height: 120px;
-    margin: 10px auto 0;
+    max-height: 140px;
+    margin: 12px auto 0;
     display: none;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
 
-  /* Modal */
+  /* Glassmorphism Modals */
   .admin-modal {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.8);
+    background: rgba(4, 6, 12, 0.65);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
     display: none;
     align-items: center;
     justify-content: center;
@@ -400,22 +640,25 @@
     display: flex;
   }
   .modal-content {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    max-width: 600px;
+    background: rgba(12, 16, 28, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    max-width: 650px;
     width: 100%;
-    padding: 2.5rem;
-    border-radius: 2px;
+    padding: 3rem;
+    border-radius: 20px;
     max-height: calc(100vh - 4rem);
     overflow-y: auto;
+    box-shadow: 0 35px 80px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
   }
   .modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    margin-top: 2rem;
-    border-top: 1px solid var(--border);
-    padding-top: 1.25rem;
+    gap: 12px;
+    margin-top: 2.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 1.5rem;
   }
 
   .badge-featured {
@@ -423,13 +666,14 @@
     top: 1.75rem;
     right: 1.75rem;
     background: var(--gold);
-    color: var(--bg);
+    color: #000;
     font-size: 8.5px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 3px 6px;
-    border-radius: 1px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(201, 169, 110, 0.3);
   }
 
   .card-star-toggle {
@@ -458,30 +702,218 @@
   }
   
   .success-banner {
-    background: rgba(201,169,110,0.08);
+    background: rgba(201,169,110,0.12);
     border: 1px solid var(--gold);
     padding: 14px 20px;
-    border-radius: 2px;
+    border-radius: 8px;
     font-size: 13px;
     color: var(--gold);
     margin-bottom: 2rem;
     display: none;
+    box-shadow: 0 4px 15px rgba(201, 169, 110, 0.15);
+    backdrop-filter: blur(8px);
   }
   
+  /* ── LIGHT MODE GLASSMORPHISM OPTIMIZATION ── */
+  html[data-theme="light"] body {
+    background: #eef1f6;
+  }
+  html[data-theme="light"] body::before {
+    background: radial-gradient(circle, rgba(201, 169, 110, 0.45) 0%, rgba(201, 169, 110, 0) 70%);
+    opacity: 0.45;
+  }
+  html[data-theme="light"] body::after {
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.35) 0%, rgba(99, 102, 241, 0) 70%);
+    opacity: 0.4;
+  }
+  html[data-theme="light"] .bg-blob-3 {
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.3) 0%, rgba(45, 212, 191, 0) 70%);
+    opacity: 0.35;
+  }
+  html[data-theme="light"] .admin-gate {
+    background: radial-gradient(circle at center, #f4f6f9 0%, #e9ecef 100%);
+  }
+  html[data-theme="light"] .gate-card {
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 20px 50px rgba(31, 38, 135, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  }
+  html[data-theme="light"] .gate-card h2 {
+    background: linear-gradient(135deg, #111 30%, #a48148 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  html[data-theme="light"] .admin-input {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #111;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+  }
+  html[data-theme="light"] .admin-input:focus {
+    border-color: rgba(201, 169, 110, 0.8);
+    box-shadow: 0 0 15px rgba(201, 169, 110, 0.3);
+    background: #ffffff !important;
+  }
+  html[data-theme="light"] .admin-nav {
+    background: rgba(255, 255, 255, 0.45);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+  }
+  html[data-theme="light"] .admin-logo {
+    color: #111;
+  }
+  html[data-theme="light"] .admin-logo span {
+    color: #666;
+  }
+  
+  /* Horizontal Floating Dock styling in Light Mode */
+  html[data-theme="light"] .admin-sidebar {
+    background: rgba(255, 255, 255, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  }
+  html[data-theme="light"] .sidebar-btn {
+    color: #555;
+  }
+  html[data-theme="light"] .sidebar-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: #000;
+  }
+  html[data-theme="light"] .sidebar-btn.active {
+    color: #82622b !important;
+    background: linear-gradient(135deg, rgba(201, 169, 110, 0.25) 0%, rgba(201, 169, 110, 0.08) 100%) !important;
+    border: 1px solid rgba(201, 169, 110, 0.45) !important;
+    box-shadow: 0 4px 15px rgba(201, 169, 110, 0.15) !important;
+  }
+  
+  /* Light mode Frosted glass panels */
+  html[data-theme="light"] .admin-panel {
+    background: rgba(255, 255, 255, 0.45) !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 25px 60px rgba(31, 38, 135, 0.07), inset 0 1px 1px rgba(255, 255, 255, 0.9) !important;
+  }
+  html[data-theme="light"] .panel-title {
+    background: linear-gradient(135deg, #111 60%, #a48148 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  html[data-theme="light"] .admin-form-group label {
+    color: #555;
+  }
+  html[data-theme="light"] .admin-form-control {
+    background: rgba(255, 255, 255, 0.75) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #111;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+  }
+  html[data-theme="light"] .admin-form-control:focus {
+    border-color: rgba(201, 169, 110, 0.8);
+    box-shadow: 0 0 12px rgba(201, 169, 110, 0.2);
+    background: #ffffff !important;
+  }
+  
+  /* Light mode Photo Cards */
+  html[data-theme="light"] .cms-card {
+    background: rgba(255, 255, 255, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  }
+  html[data-theme="light"] .cms-card:hover {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(201, 169, 110, 0.45) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
+  }
+  html[data-theme="light"] .cms-card-title {
+    color: #111;
+  }
+  html[data-theme="light"] .cms-card-btn {
+    border-color: rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.8);
+    color: #555;
+  }
+  html[data-theme="light"] .cms-card-btn:hover {
+    border-color: rgba(0, 0, 0, 0.25);
+    background: #fff;
+    color: #000;
+  }
+  html[data-theme="light"] .uploader-wrap {
+    border-color: rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.6);
+  }
+  html[data-theme="light"] .uploader-wrap:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+  html[data-theme="light"] .uploader-text {
+    color: #444;
+  }
+  html[data-theme="light"] .admin-modal {
+    background: rgba(240, 242, 247, 0.6);
+  }
+  html[data-theme="light"] .modal-content {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 35px 80px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+  }
+  html[data-theme="light"] .btn-outline {
+    background: rgba(255, 255, 255, 0.6) !important;
+    color: #444 !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  }
+  html[data-theme="light"] .btn-outline:hover {
+    background: #fff !important;
+    border-color: rgba(0, 0, 0, 0.3) !important;
+    color: #000 !important;
+  }
+
+  /* Fixed + ADD PICTURE button colour override in Light Mode */
+  html[data-theme="light"] .btn-primary {
+    background: linear-gradient(135deg, #c9a96e 0%, #a48148 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(201, 169, 110, 0.35) !important;
+  }
+  html[data-theme="light"] .btn-primary:hover {
+    box-shadow: 0 8px 24px rgba(201, 169, 110, 0.55) !important;
+    filter: brightness(1.08);
+  }
+
+  /* Fixed Featured Tag colour override in Light Mode */
+  html[data-theme="light"] .badge-featured {
+    background: #c9a96e !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(201, 169, 110, 0.25) !important;
+  }
+
+  /* Fixed Star Toggle colour override in Light Mode */
+  html[data-theme="light"] .card-star-toggle {
+    color: rgba(0, 0, 0, 0.3) !important;
+  }
+  html[data-theme="light"] .card-star-toggle.active {
+    color: #c9a96e !important;
+  }
+  html[data-theme="light"] .card-star-toggle:hover {
+    color: rgba(0, 0, 0, 0.7) !important;
+  }
+
   @media (max-width: 768px) {
     .form-row-2, .form-row-3, .form-row-4 {
       grid-template-columns: 1fr;
       gap: 0.75rem;
     }
     .admin-container {
+      grid-template-columns: 1fr;
       padding: 1rem;
       max-width: 100%;
+      gap: 1.5rem;
     }
-    .admin-card {
-      padding: 1.5rem;
+    .admin-sidebar {
+      margin-bottom: 1.5rem;
+    }
+    .admin-panel {
+      padding: 1.75rem;
     }
   }
 </style>
+<div class="bg-blob-3"></div>
 </head>
 <body>
 
@@ -557,9 +989,9 @@
     
     <!-- Sidebar Navigation -->
     <aside class="admin-sidebar">
-      <button class="sidebar-btn active" onclick="switchPanel('profile', this)">Profile &amp; About</button>
+      <button class="sidebar-btn" onclick="switchPanel('profile', this)">Profile &amp; About</button>
       <button class="sidebar-btn" onclick="switchPanel('categories', this)">Category Tabs</button>
-      <button class="sidebar-btn" onclick="switchPanel('gallery', this)">Gallery Pictures</button>
+      <button class="sidebar-btn active" onclick="switchPanel('gallery', this)">Gallery Pictures</button>
       <button class="sidebar-btn" onclick="switchPanel('blog', this)">Deep Dive (Blog)</button>
       <button class="sidebar-btn" onclick="switchPanel('stories', this)">Essays &amp; Stories</button>
       <button class="sidebar-btn" onclick="switchPanel('messages', this)">Contact Messages</button>
@@ -573,7 +1005,7 @@
       <div id="success-banner" class="success-banner">Settings saved successfully! Previews updated instantly.</div>
 
       <!-- PANEL: PROFILE & ABOUT -->
-      <section id="panel-profile" class="admin-panel active">
+      <section id="panel-profile" class="admin-panel">
         <div class="panel-header">
           <h2 class="panel-title">Profile &amp; About Details</h2>
           <button onclick="saveProfile()" class="btn-primary" style="padding: 10px 24px; font-size: 11px;">Save Profile</button>
@@ -706,7 +1138,7 @@
       </section>
 
       <!-- PANEL: GALLERY -->
-      <section id="panel-gallery" class="admin-panel">
+      <section id="panel-gallery" class="admin-panel active">
         <div class="panel-header">
           <h2 class="panel-title">Gallery Pictures Manager</h2>
           <div style="display:flex; gap:10px;">
@@ -714,6 +1146,13 @@
             <button onclick="openPhotoModal()" class="btn-primary" style="padding: 10px 24px; font-size: 11px;">+ Add Picture</button>
           </div>
         </div>
+        
+        <!-- Drafts Section Container -->
+        <div id="gallery-drafts-container" style="display:none; margin-bottom: 2.5rem; padding: 1.5rem; border: 1px dashed rgba(201, 169, 110, 0.35); border-radius: 12px; background: rgba(201, 169, 110, 0.02);">
+          <h3 style="font-size: 13.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0; margin-bottom: 1.25rem; color: var(--gold);">Draft Uploads</h3>
+          <div id="gallery-drafts-list" class="drafts-grid" style="margin-bottom:0;"></div>
+        </div>
+
         <div id="gallery-pictures-list" class="cms-grid"></div>
       </section>
 
@@ -929,6 +1368,18 @@
         <!-- Live Image Preview (Shared) -->
         <img id="photo-upload-preview" class="preview-thumbnail" style="display:none; margin-top: 10px; max-height: 200px; object-fit: contain; border: 1px solid var(--border); padding: 4px; border-radius: 2px;">
         
+        <!-- EXIF RAW Reader Section (Optional) -->
+        <div class="admin-form-group" style="margin-top: 15px; border: 1px dashed var(--gold3); padding: 15px; border-radius: 4px; background: rgba(201,169,110,0.02);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+            <label style="margin:0; font-weight: bold; color: var(--gold);">Auto-fill EXIF from RAW/Source Image (Optional)</label>
+            <span id="exif-read-status" style="font-size: 11px; color: var(--text3);">No file attached</span>
+          </div>
+          <div class="uploader-wrap" style="padding: 10px; text-align: center; border: 1px dashed var(--border); border-radius: 2px; cursor: pointer; background: var(--bg2); position: relative; height: 50px; display: flex; align-items: center; justify-content: center;">
+            <div class="uploader-text" style="font-size: 12px; color: var(--text3);">Attach RAW (.CR2, .NEF, .ARW, .DNG) or JPEG to extract metadata</div>
+            <input type="file" id="photo-exif-raw-file" accept="image/*,.cr2,.cr3,.nef,.arw,.dng,.raf,.rw2" onchange="window.extractRawExifMetadata(this)" style="position: absolute; inset: 0; opacity: 0; cursor: pointer;">
+          </div>
+        </div>
+        
         <!-- WebP Conversion Options -->
         <div id="webp-options-container" style="display:none; margin-top: 15px; padding: 15px; border-radius: 4px; background: var(--bg2); border: 1px solid var(--border); box-sizing: border-box;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
@@ -958,7 +1409,7 @@
         </div>
         <textarea id="photo-story" class="admin-form-control" placeholder="Write story here or click 'Open Large View' for formatting/symbols..."></textarea>
       </div>
-      <div class="form-row-2">
+      <div class="form-row-3">
         <div class="admin-form-group">
           <label>Camera Model</label>
           <input type="text" id="photo-cam" class="admin-form-control" placeholder="Sony A7R V">
@@ -966,6 +1417,10 @@
         <div class="admin-form-group">
           <label>Lens Used</label>
           <input type="text" id="photo-lens" class="admin-form-control" placeholder="70-200mm f/2.8">
+        </div>
+        <div class="admin-form-group">
+          <label>Telescope / Optics (Optional)</label>
+          <input type="text" id="photo-telescope" class="admin-form-control" placeholder="e.g. Sky-Watcher Evostar 72ED">
         </div>
       </div>
       <div class="form-row-4">
@@ -1011,6 +1466,7 @@
 
       <div class="modal-actions">
         <button type="button" onclick="closeModal('photo-modal')" class="btn-outline">Cancel</button>
+        <button type="button" onclick="saveAsDraft(event)" class="btn-outline" style="border-color: var(--gold); color: var(--gold);">Save Draft</button>
         <button type="submit" class="btn-primary">Save Picture</button>
       </div>
     </form>
@@ -1175,6 +1631,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="data.js"></script>
 <script src="shared.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exifreader@4.23.0/dist/exif-reader.min.js"></script>
 <script>
   /* ── GOOGLE AUTHENTICATOR / MFA / TOTP LOGIN ── */
   function safePushState(url) {
@@ -2360,6 +2817,7 @@
   }
 
   function loadGalleryCms() {
+    if (typeof renderDraftsList === 'function') renderDraftsList();
     const catKey = document.getElementById('gallery-filter-cat').value;
     const container = document.getElementById('gallery-pictures-list');
     container.innerHTML = '';
@@ -2430,6 +2888,632 @@
 
   window.setProfileImageSourceMode = setProfileImageSourceMode;
   window.previewProfileImageFile = previewProfileImageFile;
+
+  function parseExifLocally(arrayBuffer) {
+    const dataView = new DataView(arrayBuffer);
+    let offset = 0;
+    
+    // Check if JPEG SOI
+    if (dataView.byteLength < 4) return null;
+    if (dataView.getUint16(0) === 0xFFD8) {
+      offset = 2;
+      const length = dataView.byteLength;
+      let foundApp1 = false;
+      while (offset < length - 2) {
+        const marker = dataView.getUint16(offset);
+        const size = dataView.getUint16(offset + 2);
+        if (marker === 0xFFE1) {
+          // Check Exif header
+          if (dataView.getUint32(offset + 4) === 0x45786966 && dataView.getUint16(offset + 8) === 0x0000) {
+            offset += 10;
+            foundApp1 = true;
+            break;
+          }
+        }
+        offset += 2 + size;
+      }
+      if (!foundApp1) return null;
+    }
+    
+    // Parse TIFF header
+    const tiffOffset = offset;
+    if (tiffOffset + 8 > dataView.byteLength) return null;
+    const endianWord = dataView.getUint16(tiffOffset);
+    let isLittleEndian = true;
+    if (endianWord === 0x4949) {
+      isLittleEndian = true;
+    } else if (endianWord === 0x4D4D) {
+      isLittleEndian = false;
+    } else {
+      return null;
+    }
+    
+    if (dataView.getUint16(tiffOffset + 2, isLittleEndian) !== 0x002A) {
+      return null;
+    }
+    
+    const firstIFDOffset = dataView.getUint32(tiffOffset + 4, isLittleEndian);
+    const tags = {};
+    
+    function readString(offset, length) {
+      let str = "";
+      for (let i = 0; i < length; i++) {
+        if (offset + i >= dataView.byteLength) break;
+        const charCode = dataView.getUint8(offset + i);
+        if (charCode === 0) break;
+        str += String.fromCharCode(charCode);
+      }
+      return str.trim();
+    }
+    
+    function readRational(offset, isLittleEndian) {
+      if (offset + 8 > dataView.byteLength) return 0;
+      const num = dataView.getUint32(offset, isLittleEndian);
+      const den = dataView.getUint32(offset + 4, isLittleEndian);
+      if (den === 0) return 0;
+      return num / den;
+    }
+    
+    function gcd(a, b) {
+      return b === 0 ? a : gcd(b, a % b);
+    }
+    
+    function readRationalString(offset, isLittleEndian) {
+      if (offset + 8 > dataView.byteLength) return "0";
+      const num = dataView.getUint32(offset, isLittleEndian);
+      const den = dataView.getUint32(offset + 4, isLittleEndian);
+      if (den === 0) return "0";
+      if (num % den === 0) return String(num / den);
+      
+      const divisor = gcd(num, den);
+      const sNum = num / divisor;
+      const sDen = den / divisor;
+      
+      if (sNum === 1 || sDen > sNum) {
+        return `${sNum}/${sDen}`;
+      }
+      return (num / den).toFixed(2);
+    }
+    
+    function parseIFD(ifdOffset) {
+      if (tiffOffset + ifdOffset + 2 > dataView.byteLength) return;
+      const numEntries = dataView.getUint16(tiffOffset + ifdOffset, isLittleEndian);
+      let entryOffset = ifdOffset + 2;
+      
+      for (let i = 0; i < numEntries; i++) {
+        if (tiffOffset + entryOffset + 12 > dataView.byteLength) break;
+        const tag = dataView.getUint16(tiffOffset + entryOffset, isLittleEndian);
+        const type = dataView.getUint16(tiffOffset + entryOffset + 2, isLittleEndian);
+        const count = dataView.getUint32(tiffOffset + entryOffset + 4, isLittleEndian);
+        const valueOffset = dataView.getUint32(tiffOffset + entryOffset + 8, isLittleEndian);
+        
+        let value = null;
+        let dataPos = tiffOffset + valueOffset;
+        if (type === 2) {
+          if (count <= 4) {
+            value = readString(tiffOffset + entryOffset + 8, count);
+          } else {
+            value = readString(dataPos, count);
+          }
+        } else if (type === 3) {
+          value = dataView.getUint16(tiffOffset + entryOffset + 8, isLittleEndian);
+        } else if (type === 4) {
+          value = dataView.getUint32(tiffOffset + entryOffset + 8, isLittleEndian);
+        } else if (type === 5 || type === 10) {
+          if (count === 1) {
+            value = readRational(dataPos, isLittleEndian);
+          } else {
+            value = [];
+            for (let j = 0; j < count; j++) {
+              value.push(readRational(dataPos + j * 8, isLittleEndian));
+            }
+          }
+        }
+        
+        if (tag === 0x010F) tags.make = value;
+        else if (tag === 0x0110) tags.model = value;
+        else if (tag === 0x9003) tags.dateOriginal = value;
+        else if (tag === 0x829A) {
+          tags.shutter = readRationalString(dataPos, isLittleEndian);
+        }
+        else if (tag === 0x829D) {
+          const f = readRational(dataPos, isLittleEndian);
+          tags.aperture = f ? `f/${f.toFixed(1).replace(/\.0$/, "")}` : "";
+        }
+        else if (tag === 0x8827) tags.iso = value;
+        else if (tag === 0x920A) {
+          const f = readRational(dataPos, isLittleEndian);
+          tags.focal = f ? `${f}mm` : "";
+        }
+        else if (tag === 0xA434) tags.lens = value;
+        else if (tag === 0x8769) {
+          parseIFD(valueOffset);
+        }
+        else if (tag === 0x8825) {
+          parseGPSIFD(valueOffset);
+        }
+        
+        entryOffset += 12;
+      }
+    }
+
+    function parseGPSIFD(gpsOffset) {
+      if (tiffOffset + gpsOffset + 2 > dataView.byteLength) return;
+      const numEntries = dataView.getUint16(tiffOffset + gpsOffset, isLittleEndian);
+      let entryOffset = gpsOffset + 2;
+      
+      let latVal = null, lonVal = null, latRef = 'N', lonRef = 'E';
+      
+      for (let i = 0; i < numEntries; i++) {
+        if (tiffOffset + entryOffset + 12 > dataView.byteLength) break;
+        const tag = dataView.getUint16(tiffOffset + entryOffset, isLittleEndian);
+        const type = dataView.getUint16(tiffOffset + entryOffset + 2, isLittleEndian);
+        const count = dataView.getUint32(tiffOffset + entryOffset + 4, isLittleEndian);
+        const valueOffset = dataView.getUint32(tiffOffset + entryOffset + 8, isLittleEndian);
+        const dataPos = tiffOffset + valueOffset;
+        
+        if (tag === 1) {
+          latRef = readString(tiffOffset + entryOffset + 8, 2);
+        } else if (tag === 2) {
+          latVal = [];
+          for (let j = 0; j < 3; j++) latVal.push(readRational(dataPos + j * 8, isLittleEndian));
+        } else if (tag === 3) {
+          lonRef = readString(tiffOffset + entryOffset + 8, 2);
+        } else if (tag === 4) {
+          lonVal = [];
+          for (let j = 0; j < 3; j++) lonVal.push(readRational(dataPos + j * 8, isLittleEndian));
+        }
+        entryOffset += 12;
+      }
+      
+      if (latVal && lonVal) {
+        const dmsToDec = (val, ref) => {
+          let deg = val[0] + (val[1] || 0)/60 + (val[2] || 0)/3600;
+          if (ref === 'S' || ref === 'W') deg = -deg;
+          return deg;
+        };
+        tags.lat = dmsToDec(latVal, latRef);
+        tags.lon = dmsToDec(lonVal, lonRef);
+      }
+    }
+    
+    parseIFD(firstIFDOffset);
+    return tags;
+  }
+
+  async function extractRawExifMetadata(input) {
+    const file = input.files[0];
+    const statusEl = document.getElementById('exif-read-status');
+    if (!file) {
+      if (statusEl) statusEl.textContent = "No file attached";
+      return;
+    }
+    
+    if (statusEl) {
+      statusEl.textContent = "Reading EXIF...";
+      statusEl.style.color = "var(--gold)";
+    }
+    
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      try {
+        let ExifLib = null;
+        try {
+          if (typeof ExifReader !== 'undefined') ExifLib = ExifReader;
+          else if (typeof exifReader !== 'undefined') ExifLib = exifReader;
+          else if (window.ExifReader) ExifLib = window.ExifReader;
+          else if (window.exifReader) ExifLib = window.exifReader;
+        } catch (err) {}
+        
+        // Dynamically load script tag from backup CDN if not found
+        if (!ExifLib) {
+          try {
+            if (statusEl) statusEl.textContent = "Loading library dynamically...";
+            await new Promise((resolve, reject) => {
+              const script = document.createElement('script');
+              script.src = "https://unpkg.com/exifreader@4.23.0/dist/exif-reader.min.js";
+              script.onload = () => {
+                try {
+                  if (typeof ExifReader !== 'undefined') ExifLib = ExifReader;
+                  else if (typeof exifReader !== 'undefined') ExifLib = exifReader;
+                  resolve();
+                } catch (err) {
+                  reject(err);
+                }
+              };
+              script.onerror = () => reject(new Error("Failed to load script from backup CDN"));
+              document.head.appendChild(script);
+            });
+          } catch (loadErr) {
+            console.warn("CDN load failed. Proceeding with built-in binary parser fallback.");
+          }
+        }
+        
+        let tags = null;
+        let isLocal = false;
+        
+        if (ExifLib) {
+          try {
+            tags = ExifLib.load(e.target.result);
+          } catch (parseErr) {
+            console.warn("ExifReader failed to parse. Trying built-in parser...", parseErr);
+          }
+        }
+        
+        if (!tags) {
+          isLocal = true;
+          tags = parseExifLocally(e.target.result);
+        }
+        
+        if (!tags) {
+          throw new Error("Unable to locate EXIF metadata block in this file.");
+        }
+        
+        var lat = null;
+        var lon = null;
+        
+        if (isLocal) {
+          if (tags.make || tags.model) {
+            let camera = tags.model || '';
+            if (tags.make && !camera.toLowerCase().includes(tags.make.toLowerCase())) {
+              camera = `${tags.make} ${camera}`;
+            }
+            if (camera) document.getElementById('photo-cam').value = camera;
+          }
+          if (tags.lens) document.getElementById('photo-lens').value = tags.lens;
+          if (tags.shutter) document.getElementById('photo-shutter').value = tags.shutter;
+          if (tags.focal) document.getElementById('photo-focal').value = tags.focal;
+          if (tags.aperture) document.getElementById('photo-aperture').value = tags.aperture;
+          if (tags.iso) document.getElementById('photo-iso').value = String(tags.iso);
+          
+          if (tags.dateOriginal) {
+            const parts = tags.dateOriginal.split(' ');
+            if (parts[0]) {
+              const dateParts = parts[0].replace(/:/g, '-');
+              if (/^\d{4}-\d{2}-\d{2}$/.test(dateParts)) {
+                document.getElementById('photo-date').value = dateParts;
+              }
+            }
+          }
+          lat = tags.lat || null;
+          lon = tags.lon || null;
+        } else {
+          // Map ExifLib tags
+          const make = tags['Make'] ? tags['Make'].description : '';
+          const model = tags['Model'] ? tags['Model'].description : '';
+          let camera = model;
+          if (make && !model.toLowerCase().includes(make.toLowerCase())) {
+            camera = `${make} ${model}`;
+          }
+          if (camera) document.getElementById('photo-cam').value = camera;
+          
+          let lens = '';
+          if (tags['LensModel']) {
+            lens = tags['LensModel'].description;
+          } else if (tags['Lens']) {
+            lens = tags['Lens'].description;
+          } else if (tags['LensInfo']) {
+            lens = tags['LensInfo'].description;
+          }
+          if (lens) document.getElementById('photo-lens').value = lens;
+          
+          if (tags['ExposureTime']) {
+            let shutter = tags['ExposureTime'].description;
+            if (shutter.includes('/')) {
+              shutter = shutter.trim() + 's';
+            } else {
+              const num = parseFloat(shutter);
+              if (!isNaN(num)) {
+                shutter = num >= 1 ? `${num}s` : `${shutter}s`;
+              }
+            }
+            document.getElementById('photo-shutter').value = shutter;
+          }
+          
+          if (tags['FocalLength']) {
+            let focal = tags['FocalLength'].description;
+            if (!focal.toLowerCase().includes('mm')) {
+              const num = parseFloat(focal);
+              if (!isNaN(num)) focal = `${num}mm`;
+            }
+            document.getElementById('photo-focal').value = focal.trim();
+          }
+          
+          if (tags['FNumber']) {
+            let fnum = tags['FNumber'].description;
+            if (!fnum.startsWith('f/')) {
+              const num = parseFloat(fnum);
+              if (!isNaN(num)) fnum = `f/${num}`;
+            }
+            document.getElementById('photo-aperture').value = fnum;
+          }
+          
+          let iso = '';
+          if (tags['ISOSpeedRatings']) {
+            iso = tags['ISOSpeedRatings'].description;
+          } else if (tags['ISO']) {
+            iso = tags['ISO'].description;
+          }
+          if (iso) {
+            if (Array.isArray(iso)) iso = iso[0];
+            document.getElementById('photo-iso').value = String(iso).trim();
+          }
+          
+          let dateVal = '';
+          if (tags['DateTimeOriginal']) {
+            dateVal = tags['DateTimeOriginal'].description;
+          } else if (tags['DateTime']) {
+            dateVal = tags['DateTime'].description;
+          }
+          if (dateVal) {
+            const parts = dateVal.split(' ');
+            if (parts[0]) {
+              const dateParts = parts[0].replace(/:/g, '-');
+              if (/^\d{4}-\d{2}-\d{2}$/.test(dateParts)) {
+                document.getElementById('photo-date').value = dateParts;
+              }
+            }
+          }
+          
+          if (tags['GPSLatitude'] && tags['GPSLongitude']) {
+            const latVal = tags['GPSLatitude'].value;
+            const lonVal = tags['GPSLongitude'].value;
+            const latRef = tags['GPSLatitudeRef'] ? tags['GPSLatitudeRef'].description : 'N';
+            const lonRef = tags['GPSLongitudeRef'] ? tags['GPSLongitudeRef'].description : 'E';
+            
+            if (Array.isArray(latVal) && Array.isArray(lonVal)) {
+              const convertDMS = (val, ref) => {
+                const d = parseFloat(val[0]);
+                const m = parseFloat(val[1] || 0);
+                const s = parseFloat(val[2] || 0);
+                let deg = d + m/60 + s/3600;
+                if (ref === 'S' || ref === 'W') deg = -deg;
+                return deg;
+              };
+              lat = convertDMS(latVal, latRef);
+              lon = convertDMS(lonVal, lonRef);
+            }
+          }
+        }
+        
+        if (lat !== null && lon !== null) {
+          if (statusEl) statusEl.textContent = "EXIF read! Resolving location GPS...";
+          try {
+            const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+            const geoData = await geoRes.json();
+            if (geoData && geoData.address) {
+              const addr = geoData.address;
+              const country = addr.country || "";
+              const state = addr.state || "";
+              let local = addr.city || addr.town || addr.village || addr.suburb || addr.county || "";
+              
+              let formattedLoc = local;
+              if (state) formattedLoc += (formattedLoc ? ", " : "") + state;
+              if (country) formattedLoc += (formattedLoc ? " - " : "") + country;
+              
+              if (formattedLoc) {
+                document.getElementById('photo-loc').value = formattedLoc;
+              }
+            }
+          } catch (geoErr) {
+            console.error("Reverse geocoding failed:", geoErr);
+          }
+        }
+        
+        if (statusEl) {
+          statusEl.textContent = "EXIF successfully imported!";
+          statusEl.style.color = "#2e7d32";
+        }
+      } catch (err) {
+        console.error("EXIF import failed:", err);
+        if (statusEl) {
+          statusEl.textContent = "Import failed: " + err.message;
+          statusEl.style.color = "var(--danger)";
+        }
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+  
+  window.extractRawExifMetadata = extractRawExifMetadata;
+
+  let currentEditingDraftIndex = -1;
+
+  function saveAsDraft(e) {
+    if (e) e.preventDefault();
+    
+    const draft = {
+      category: document.getElementById('photo-category').value,
+      tag: document.getElementById('photo-tag').value,
+      title: document.getElementById('photo-title').value.trim() || 'Untitled Draft',
+      caption: document.getElementById('photo-caption').value,
+      story: document.getElementById('photo-story').value,
+      cam: document.getElementById('photo-cam').value,
+      lens: document.getElementById('photo-lens').value,
+      telescope: document.getElementById('photo-telescope').value,
+      shutter: document.getElementById('photo-shutter').value,
+      focal: document.getElementById('photo-focal').value,
+      aperture: document.getElementById('photo-aperture').value,
+      iso: document.getElementById('photo-iso').value,
+      loc: document.getElementById('photo-loc').value,
+      date: document.getElementById('photo-date').value,
+      bg: document.getElementById('photo-bg').value,
+      featured: document.getElementById('photo-featured').checked,
+      imageSourceMode: imageSourceMode,
+      src: document.getElementById('photo-src').value,
+      base64: currentUploadedPhotoBase64,
+      convertWebP: document.getElementById('convert-webp-toggle') ? document.getElementById('convert-webp-toggle').checked : true,
+      webpQuality: document.getElementById('webp-quality') ? document.getElementById('webp-quality').value : 85,
+      timestamp: Date.now()
+    };
+    
+    let drafts = [];
+    try {
+      const draftsStr = localStorage.getItem('cms_photo_drafts');
+      if (draftsStr) drafts = JSON.parse(draftsStr);
+    } catch (err) {}
+    
+    try {
+      if (currentEditingDraftIndex >= 0 && currentEditingDraftIndex < drafts.length) {
+        drafts[currentEditingDraftIndex] = draft;
+      } else {
+        drafts.push(draft);
+      }
+      localStorage.setItem('cms_photo_drafts', JSON.stringify(drafts));
+    } catch (quotaErr) {
+      if (quotaErr.name === 'QuotaExceededError' || quotaErr.code === 22) {
+        alert("Draft image size is too large to store locally. Saving text details only; you will need to re-attach the file when resuming.");
+        draft.base64 = "";
+        if (currentEditingDraftIndex >= 0 && currentEditingDraftIndex < drafts.length) {
+          drafts[currentEditingDraftIndex] = draft;
+        } else {
+          drafts.push(draft);
+        }
+        localStorage.setItem('cms_photo_drafts', JSON.stringify(drafts));
+      } else {
+        alert("Error saving draft: " + quotaErr.message);
+        return;
+      }
+    }
+    
+    closeModal('photo-modal');
+    loadGalleryCms();
+    alert("Draft saved successfully!");
+  }
+
+  function renderDraftsList() {
+    const container = document.getElementById('gallery-drafts-container');
+    const list = document.getElementById('gallery-drafts-list');
+    if (!container || !list) return;
+    
+    let drafts = [];
+    try {
+      const draftsStr = localStorage.getItem('cms_photo_drafts');
+      if (draftsStr) drafts = JSON.parse(draftsStr);
+    } catch (err) {}
+    
+    if (drafts.length === 0) {
+      container.style.display = 'none';
+      return;
+    }
+    
+    container.style.display = 'block';
+    list.innerHTML = drafts.map((draft, idx) => {
+      const imgHtml = draft.base64 
+        ? `<img src="${draft.base64}" class="cms-card-img" style="border:1px dashed var(--gold);">` 
+        : (draft.src 
+            ? `<img src="${draft.src}" class="cms-card-img" style="border:1px dashed var(--gold);">`
+            : `<div class="cms-card-ph">No Image Attached</div>`
+          );
+      const title = draft.title || "Untitled Draft";
+      const catTitle = window.siteData.galleryCategories[draft.category] 
+        ? window.siteData.galleryCategories[draft.category].title 
+        : draft.category;
+        
+      return `
+        <div class="cms-card" style="border: 1px dashed rgba(201, 169, 110, 0.45);">
+          <div>
+            ${imgHtml}
+            <div class="cms-card-title">${title}</div>
+            <div class="cms-card-meta">
+              Category: ${catTitle}<br>
+              Tags: ${draft.tag || '-'}<br>
+              Gear: ${[draft.cam, draft.lens].filter(Boolean).join(' · ') || '-'}
+            </div>
+          </div>
+          <div class="cms-card-actions">
+            <button onclick="resumeDraft(${idx})" class="cms-card-btn" style="border-color: var(--gold); color: var(--gold);">Resume</button>
+            <button onclick="deleteDraft(${idx})" class="cms-card-btn btn-danger">Delete</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function deleteDraft(index) {
+    if (!confirm("Are you sure you want to delete this draft?")) return;
+    let drafts = [];
+    try {
+      const draftsStr = localStorage.getItem('cms_photo_drafts');
+      if (draftsStr) drafts = JSON.parse(draftsStr);
+    } catch (err) {}
+    
+    if (index >= 0 && index < drafts.length) {
+      drafts.splice(index, 1);
+      localStorage.setItem('cms_photo_drafts', JSON.stringify(drafts));
+      loadGalleryCms();
+    }
+  }
+
+  function resumeDraft(index) {
+    let drafts = [];
+    try {
+      const draftsStr = localStorage.getItem('cms_photo_drafts');
+      if (draftsStr) drafts = JSON.parse(draftsStr);
+    } catch (err) {}
+    
+    if (index < 0 || index >= drafts.length) return;
+    const draft = drafts[index];
+    
+    currentEditingDraftIndex = index;
+    
+    openPhotoModal('add', -1, true);
+    
+    document.getElementById('photo-modal-title').textContent = "Resume Draft Upload";
+    document.getElementById('photo-category').value = draft.category;
+    document.getElementById('photo-tag').value = draft.tag;
+    document.getElementById('photo-title').value = draft.title === 'Untitled Draft' ? '' : draft.title;
+    document.getElementById('photo-caption').value = draft.caption;
+    document.getElementById('photo-story').value = draft.story;
+    document.getElementById('photo-cam').value = draft.cam;
+    document.getElementById('photo-lens').value = draft.lens;
+    document.getElementById('photo-telescope').value = draft.telescope;
+    document.getElementById('photo-shutter').value = draft.shutter;
+    document.getElementById('photo-focal').value = draft.focal;
+    document.getElementById('photo-aperture').value = draft.aperture;
+    document.getElementById('photo-iso').value = draft.iso;
+    document.getElementById('photo-loc').value = draft.loc || '';
+    document.getElementById('photo-date').value = draft.date || '';
+    document.getElementById('photo-bg').value = draft.bg || '';
+    document.getElementById('photo-featured').checked = draft.featured === true;
+    
+    if (draft.imageSourceMode) {
+      setImageSourceMode(draft.imageSourceMode);
+    }
+    document.getElementById('photo-src').value = draft.src || '';
+    
+    if (draft.base64) {
+      currentUploadedPhotoBase64 = draft.base64;
+      const preview = document.getElementById('photo-upload-preview');
+      preview.src = draft.base64;
+      preview.style.display = 'block';
+      if (document.getElementById('webp-options-container')) {
+        document.getElementById('webp-options-container').style.display = 'block';
+      }
+      
+      const img = new Image();
+      img.onload = function() {
+        originalImage = img;
+        handleWebPToggle();
+      };
+      img.src = draft.base64;
+    }
+    
+    if (document.getElementById('convert-webp-toggle')) {
+      document.getElementById('convert-webp-toggle').checked = draft.convertWebP !== false;
+    }
+    if (document.getElementById('webp-quality')) {
+      document.getElementById('webp-quality').value = draft.webpQuality || 85;
+      document.getElementById('webp-quality-val').textContent = (draft.webpQuality || 85) + '%';
+    }
+    
+    handleWebPToggle();
+  }
+  
+  window.saveAsDraft = saveAsDraft;
+  window.renderDraftsList = renderDraftsList;
+  window.deleteDraft = deleteDraft;
+  window.resumeDraft = resumeDraft;
 
   function previewImageFile(input) {
     const file = input.files[0];
@@ -2669,7 +3753,10 @@
     return '';
   }
 
-  function openPhotoModal(mode = 'add', id = -1) {
+  function openPhotoModal(mode = 'add', id = -1, isResumingDraft = false) {
+    if (!isResumingDraft) {
+      currentEditingDraftIndex = -1;
+    }
     const modal = document.getElementById('photo-modal');
     document.getElementById('form-photo').reset();
     document.getElementById('photo-mode').value = mode;
@@ -2678,6 +3765,13 @@
     currentUploadedPhotoBase64 = "";
     imageWasModified = false;
     document.getElementById('photo-upload-preview').style.display = 'none';
+    
+    // Reset EXIF RAW Reader status
+    const exifStatus = document.getElementById('exif-read-status');
+    if (exifStatus) {
+      exifStatus.textContent = "No file attached";
+      exifStatus.style.color = "var(--text3)";
+    }
     
     if (document.getElementById('webp-options-container')) {
       document.getElementById('webp-options-container').style.display = 'none';
@@ -2715,6 +3809,7 @@
         document.getElementById('photo-story').value = p.story || '';
         document.getElementById('photo-cam').value = p.cam || '';
         document.getElementById('photo-lens').value = p.lens || '';
+        document.getElementById('photo-telescope').value = p.telescope || '';
         
         // Load split EXIF fields
         const shutter = p.shutter || '';
@@ -2999,6 +4094,7 @@
         story: document.getElementById('photo-story').value,
         cam: document.getElementById('photo-cam').value,
         lens: document.getElementById('photo-lens').value,
+        telescope: document.getElementById('photo-telescope').value.trim(),
         shutter: document.getElementById('photo-shutter').value.trim(),
         focal: document.getElementById('photo-focal').value.trim(),
         aperture: document.getElementById('photo-aperture').value.trim(),
@@ -3082,6 +4178,18 @@
       const data = { ...window.siteData, galleryCategories: db, homepagePhotos };
       const success = await window.saveSiteData(data);
       if (success) {
+        if (currentEditingDraftIndex >= 0) {
+          let drafts = [];
+          try {
+            const draftsStr = localStorage.getItem('cms_photo_drafts');
+            if (draftsStr) drafts = JSON.parse(draftsStr);
+          } catch (e) {}
+          if (currentEditingDraftIndex < drafts.length) {
+            drafts.splice(currentEditingDraftIndex, 1);
+            localStorage.setItem('cms_photo_drafts', JSON.stringify(drafts));
+          }
+          currentEditingDraftIndex = -1;
+        }
         closeModal('photo-modal');
         loadGalleryCms();
         showSuccess();
@@ -3710,6 +4818,11 @@
         suggestionsBox.style.display = 'none';
       }
     });
+
+    // Load drafts list on startup
+    if (typeof window.renderDraftsList === 'function') {
+      window.renderDraftsList();
+    }
 
   });
 

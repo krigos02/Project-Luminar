@@ -1067,6 +1067,7 @@
         <div class="lb-info-divider" id="lb-story-divider"></div>
         
         <div class="lb-exif">
+          <div class="lb-exif-row"><span class="lb-exif-label">Telescope</span><span class="lb-exif-val" id="lb-telescope">-</span></div>
           <div class="lb-exif-row"><span class="lb-exif-label">Camera</span><span class="lb-exif-val" id="lb-cam">-</span></div>
           <div class="lb-exif-row"><span class="lb-exif-label">Lens</span><span class="lb-exif-val" id="lb-lens">-</span></div>
           <div class="lb-exif-row"><span class="lb-exif-label">Exposure</span><span class="lb-exif-val" id="lb-exp">-</span></div>
@@ -1445,6 +1446,7 @@ function updateLb() {
     }
   };
 
+  updateExifRow('lb-telescope', p.telescope);
   updateExifRow('lb-cam', p.cam);
   updateExifRow('lb-lens', p.lens);
   
