@@ -398,8 +398,19 @@ function updateLb() {
 
   document.getElementById('lb-count').textContent = `${pos + 1} / ${total}`;
   document.getElementById('lb-title-text').textContent = p.title || '';
-  document.getElementById('lb-meta').textContent = p.meta || p.caption || '';
-  document.getElementById('lb-exif').textContent = p.exif || p.exp || '';
+  
+  // Format Location & Caption
+  const locParts = [];
+  if (p.loc) locParts.push(p.loc);
+  if (p.caption || p.meta) locParts.push(p.caption || p.meta);
+  document.getElementById('lb-meta').textContent = locParts.filter(Boolean).join(' · ');
+
+  // Format EXIF / specs
+  const exifParts = [];
+  if (p.cam) exifParts.push(p.cam);
+  if (p.lens) exifParts.push(p.lens);
+  if (p.exif || p.exp) exifParts.push(p.exif || p.exp);
+  document.getElementById('lb-exif').textContent = exifParts.filter(Boolean).join(' · ');
 
   // Render stats
   document.getElementById('lb-likes-count').textContent = p.likes || 0;
