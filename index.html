@@ -234,7 +234,8 @@
     <div class="lb-details-floating" style="max-height: 80vh; overflow-y: auto;">
       <span class="lb-count" id="lb-count" aria-live="polite">1 / 18</span>
       <h3 class="lb-title" id="lb-title-text"></h3>
-      <p class="lb-meta" id="lb-meta"></p>
+      <p class="lb-subtitle" id="lb-subtitle" style="font-family:var(--font-serif); font-size:12.5px; color:var(--text2); font-style:italic; margin-top:-6px; margin-bottom:4px; line-height:1.4;"></p>
+      <p class="lb-meta" id="lb-meta" style="display:flex; align-items:center; font-family:var(--font-sans); font-size:12px; color:var(--text3); margin-top:2px; margin-bottom:6px;"></p>
       <p class="lb-exif" id="lb-exif"></p>
       
       <!-- Social counters bar -->
@@ -247,6 +248,16 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:16px; height:16px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           <span id="lb-views-count">0</span> Views
         </span>
+        <button class="lb-social-btn" onclick="sharePhoto()" title="Share photo" style="background:transparent; border:none; cursor:pointer; color:var(--text2); display:flex; align-items:center; gap:6px; padding:0; font-weight:500;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:16px; height:16px;">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          Share
+        </button>
       </div>
 
       <div style="height:1px; background:var(--border); margin:0.25rem 0;"></div>
@@ -399,11 +410,30 @@ function updateLb() {
   document.getElementById('lb-count').textContent = `${pos + 1} / ${total}`;
   document.getElementById('lb-title-text').textContent = p.title || '';
   
-  // Format Location & Caption
-  const locParts = [];
-  if (p.loc) locParts.push(p.loc);
-  if (p.caption || p.meta) locParts.push(p.caption || p.meta);
-  document.getElementById('lb-meta').textContent = locParts.filter(Boolean).join(' · ');
+  // Populate subtitle (caption/story line)
+  const subtitleText = p.caption || p.meta || '';
+  const subtitleEl = document.getElementById('lb-subtitle');
+  if (subtitleEl) {
+    subtitleEl.textContent = subtitleText;
+    subtitleEl.style.display = subtitleText ? 'block' : 'none';
+  }
+  
+  // Populate Location with small pointer icon
+  const locText = typeof window.formatToTitleCase === 'function' ? window.formatToTitleCase(p.loc || '') : (p.loc || '');
+  const metaEl = document.getElementById('lb-meta');
+  if (metaEl) {
+    if (locText) {
+      metaEl.innerHTML = `
+        <svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:var(--gold); margin-right:4px; flex-shrink:0; vertical-align:middle; display:inline-block;" aria-hidden="true">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg><span style="vertical-align:middle;">${locText}</span>
+      `;
+      metaEl.style.display = 'flex';
+    } else {
+      metaEl.innerHTML = '';
+      metaEl.style.display = 'none';
+    }
+  }
 
   // Format EXIF / specs
   const exifParts = [];
@@ -448,16 +478,21 @@ function updateLb() {
   }
 }
 
+let isLikingLock = false;
+
 async function likePhoto(forceLike = false) {
+  if (isLikingLock) return;
   const filtered = window._c3dFiltered || photos;
   const p = filtered[lbIdx];
   if (!p) return;
 
+  isLikingLock = true;
   const likeKey = `liked_gallery_photo_${p.cat}_${p.id}`;
   const isLiked = localStorage.getItem(likeKey) === 'true';
 
   if (forceLike && isLiked) {
     showHeartPop();
+    isLikingLock = false;
     return; // Already liked, show animation and return
   }
 
@@ -474,9 +509,15 @@ async function likePhoto(forceLike = false) {
   document.getElementById('lb-like-btn').classList.toggle('liked', nextLiked);
 
   // Sync to database
-  const finalLikes = await window.portfolioDb.toggleLike('gallery_photo', p.cat, p.id, nextLiked);
-  p.likes = finalLikes;
-  document.getElementById('lb-likes-count').textContent = p.likes;
+  try {
+    const finalLikes = await window.portfolioDb.toggleLike('gallery_photo', p.cat, p.id, nextLiked);
+    p.likes = finalLikes;
+    document.getElementById('lb-likes-count').textContent = p.likes;
+  } catch (err) {
+    console.error(err);
+  } finally {
+    isLikingLock = false;
+  }
 }
 
 function showHeartPop() {
@@ -485,6 +526,35 @@ function showHeartPop() {
   overlay.classList.remove('animate');
   void overlay.offsetWidth; // Force reflow
   overlay.classList.add('animate');
+}
+
+function sharePhoto() {
+  const filtered = window._c3dFiltered || photos;
+  const p = filtered[lbIdx];
+  if (!p) return;
+
+  const shareTitle = `${p.title} | Krishnendu Goswami Photography`;
+  const shareText = `Check out this photograph by Krishnendu Goswami: "${p.title}"`;
+  const shareUrl = `${window.location.origin}/gallery.html?category=${p.cat}&photo=${p.id}`;
+
+  if (navigator.share && window.location.protocol !== 'file:') {
+    navigator.share({
+      title: shareTitle,
+      text: shareText,
+      url: shareUrl
+    }).then(() => {
+      window.portfolioDb.incrementShare('gallery_photo', p.cat, p.id);
+      p.shares = (p.shares || 0) + 1;
+    }).catch(err => console.log("Share failed:", err));
+  } else {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      window.portfolioDb.incrementShare('gallery_photo', p.cat, p.id);
+      p.shares = (p.shares || 0) + 1;
+      alert("Link copied to clipboard!");
+    }).catch(() => {
+      alert("Failed to copy link. Here is the URL: " + shareUrl);
+    });
+  }
 }
 
 async function submitComment(event) {

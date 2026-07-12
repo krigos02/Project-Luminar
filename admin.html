@@ -160,9 +160,7 @@
 
   /* Dashboard Layout */
   .admin-nav {
-    background: rgba(11, 17, 32, 0.4);
-    backdrop-filter: blur(24px) saturate(200%);
-    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    background: rgba(11, 17, 32, 0.98);
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     padding: 1.25rem 0;
     position: sticky;
@@ -201,13 +199,11 @@
   
   /* Sidebar Navigation styled as Horizontal Floating Glass Dock */
   .admin-sidebar {
-    background: rgba(30, 41, 59, 0.4);
+    background: rgba(30, 41, 59, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 16px;
     padding: 0.6rem;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -242,13 +238,11 @@
   
   /* Panels as Frosted Glass */
   .admin-panel {
-    background: rgba(15, 23, 42, 0.65);
+    background: rgba(15, 23, 42, 0.98);
     border: 1px solid rgba(255, 255, 255, 0.07);
     padding: 3rem;
     border-radius: 20px;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
     display: none;
   }
   .admin-panel.active {
@@ -422,7 +416,7 @@
     border-radius: 4px !important;
   }
   .cms-card {
-    background: rgba(30, 41, 59, 0.25);
+    background: #121929;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
     padding: 1.5rem;
@@ -430,10 +424,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
-    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     overflow: hidden;
   }
   .cms-card::before {
@@ -879,6 +871,19 @@
       padding: 1.75rem;
     }
   }
+
+  #photo-scroll-slider-container {
+    display: none !important;
+  }
+
+  /* Cyber Ledger Rows */
+  .cyber-ledger-row:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-bottom-color: rgba(201, 169, 110, 0.25) !important;
+  }
+  .cyber-ledger-row:last-child {
+    border-bottom: none !important;
+  }
 </style>
 <div class="bg-blob-3"></div>
 </head>
@@ -889,7 +894,7 @@
   <!-- Step 1: Email and Password Form -->
   <div id="login-step-1" class="gate-card">
     <h2>LUMINAR CMS</h2>
-    <p>Client-side Portfolio Content Management System</p>
+    <p>Admin Level Content Management System</p>
     
     <div style="text-align: left; width: 100%;">
       <label class="form-label" style="font-size:10px; margin-bottom:4px; display:block;">Email Address</label>
@@ -1155,45 +1160,116 @@
       <!-- PANEL: SOCIAL INTERACTIONS & ANALYTICS -->
       <section id="panel-interactions" class="admin-panel">
         <div class="panel-header">
-          <h2 class="panel-title">Social Interactions &amp; Comments Manager</h2>
+          <h2 class="panel-title">Social Interactions &amp; Analytics Dashboard</h2>
           <button onclick="loadInteractionsCms()" class="btn-primary" style="padding: 10px 24px; font-size: 11px;">Refresh Stats</button>
         </div>
 
-        <!-- Stats grid summary cards -->
-        <div class="cms-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px;">
-            <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:5px">Overall Site Views</div>
-            <div id="stats-site-views" style="font-size:2.5rem; font-weight:700; color:var(--gold)">0</div>
+        <!-- Stats sub-navigation -->
+        <div style="display: flex; gap: 10px; margin-bottom: 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 12px;">
+          <button class="sidebar-btn active" id="btn-stats-tab-overview" onclick="switchStatsTab('overview')" style="font-size: 10px; padding: 6px 14px;">Overview &amp; Comments</button>
+          <button class="sidebar-btn" id="btn-stats-tab-popular" onclick="switchStatsTab('popular')" style="font-size: 10px; padding: 6px 14px;">Performance Tables</button>
+        </div>
+
+        <!-- SUB-PANEL: OVERVIEW -->
+        <div id="stats-view-overview">
+          <!-- Stats grid summary cards -->
+          <div class="cms-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <!-- CARD 1: Views -->
+            <div style="background: #121929; border: 1px solid rgba(255, 255, 255, 0.08); padding: 1.25rem; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; min-height: 100px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+              <div>
+                <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); margin-bottom: 6px; font-weight: 600;">Overall Site Views</div>
+                <div id="stats-site-views" style="font-size: 2rem; font-weight: 700; color: var(--gold); font-family: var(--font-sans); line-height: 1.1;">0</div>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="position: absolute; right: 12px; bottom: 12px; width: 38px; height: 38px; color: var(--gold); opacity: 0.12; pointer-events: none;">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </div>
+            <!-- CARD 2: Photo Likes -->
+            <div style="background: #121929; border: 1px solid rgba(255, 255, 255, 0.08); padding: 1.25rem; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; min-height: 100px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+              <div>
+                <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); margin-bottom: 6px; font-weight: 600;">Total Photo Likes</div>
+                <div id="stats-photo-likes" style="font-size: 2rem; font-weight: 700; color: #fff; font-family: var(--font-sans); line-height: 1.1;">0</div>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="position: absolute; right: 12px; bottom: 12px; width: 38px; height: 38px; color: #e91e63; opacity: 0.12; pointer-events: none;">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+            <!-- CARD 3: Essay Likes -->
+            <div style="background: #121929; border: 1px solid rgba(255, 255, 255, 0.08); padding: 1.25rem; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; min-height: 100px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+              <div>
+                <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); margin-bottom: 6px; font-weight: 600;">Total Essay Likes</div>
+                <div id="stats-story-likes" style="font-size: 2rem; font-weight: 700; color: #fff; font-family: var(--font-sans); line-height: 1.1;">0</div>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="position: absolute; right: 12px; bottom: 12px; width: 38px; height: 38px; color: #9c27b0; opacity: 0.12; pointer-events: none;">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+            </div>
+            <!-- CARD 4: Shares -->
+            <div style="background: #121929; border: 1px solid rgba(255, 255, 255, 0.08); padding: 1.25rem; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; min-height: 100px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+              <div>
+                <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); margin-bottom: 6px; font-weight: 600;">Total Shares</div>
+                <div id="stats-shares-count" style="font-size: 2rem; font-weight: 700; color: #fff; font-family: var(--font-sans); line-height: 1.1;">0</div>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="position: absolute; right: 12px; bottom: 12px; width: 38px; height: 38px; color: #4caf50; opacity: 0.12; pointer-events: none;">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+            </div>
+            <!-- CARD 5: Comments -->
+            <div style="background: #121929; border: 1px solid rgba(255, 255, 255, 0.08); padding: 1.25rem; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; min-height: 100px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+              <div>
+                <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); margin-bottom: 6px; font-weight: 600;">Total Comments</div>
+                <div id="stats-comments-count" style="font-size: 2rem; font-weight: 700; color: #fff; font-family: var(--font-sans); line-height: 1.1;">0</div>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="position: absolute; right: 12px; bottom: 12px; width: 38px; height: 38px; color: #00bcd4; opacity: 0.12; pointer-events: none;">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
           </div>
-          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px;">
-            <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:5px">Total Photo Likes</div>
-            <div id="stats-photo-likes" style="font-size:2.5rem; font-weight:700; color:white">0</div>
+
+          <!-- Hot assets highlights -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;">
+            <!-- MOST LIKED -->
+            <div style="background: #121929; border: 1px solid rgba(255, 255, 255, 0.06); border-left: 3px solid #e91e63; padding: 1.5rem; border-radius: 12px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+              <h4 style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); margin-top: 0; margin-bottom: 12px; font-weight: 600;">Most Liked Asset</h4>
+              <div id="stats-top-liked" style="font-size: 14px; font-weight: 500; color: white; line-height: 1.4;">-</div>
+            </div>
+            <!-- MOST VIEWED -->
+            <div style="background: #121929; border: 1px solid rgba(255, 255, 255, 0.06); border-left: 3px solid var(--gold); padding: 1.5rem; border-radius: 12px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+              <h4 style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); margin-top: 0; margin-bottom: 12px; font-weight: 600;">Most Viewed Asset</h4>
+              <div id="stats-top-viewed" style="font-size: 14px; font-weight: 500; color: white; line-height: 1.4;">-</div>
+            </div>
           </div>
-          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px;">
-            <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:5px">Total Essay Likes</div>
-            <div id="stats-story-likes" style="font-size:2.5rem; font-weight:700; color:white">0</div>
-          </div>
-          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px;">
-            <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:5px">Total Comments</div>
-            <div id="stats-comments-count" style="font-size:2.5rem; font-weight:700; color:white">0</div>
+
+          <h3 style="font-family:var(--font-display); font-size:1.2rem; color:var(--text); margin-bottom:1rem; text-align: left;">All Comments &amp; Moderation</h3>
+          <div class="cms-grid" style="grid-template-columns: 1fr; gap: 1rem;" id="all-comments-list">
+            <div style="text-align: center; padding: 2rem; color: var(--text3);">Loading comments data...</div>
           </div>
         </div>
 
-        <!-- Hot assets highlights -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2.5rem;">
-          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px; text-align: left;">
-            <h4 style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); margin-bottom:1rem;">Most Liked Asset</h4>
-            <div id="stats-top-liked" style="font-size:14px; font-weight:500; color:white">-</div>
-          </div>
-          <div style="background:var(--bg2); border:1px solid var(--border); padding:1.5rem; border-radius:4px; text-align: left;">
-            <h4 style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); margin-bottom:1rem;">Most Viewed Asset</h4>
-            <div id="stats-top-viewed" style="font-size:14px; font-weight:500; color:white">-</div>
-          </div>
-        </div>
+        <!-- SUB-PANEL: PERFORMANCE TABLES -->
+        <div id="stats-view-popular" style="display: none;">
+          <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+            <!-- Photos Ledger Card -->
+            <div style="background: #121929; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1.25rem;">
+              <h3 style="font-size: 13px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0; margin-bottom: 1rem; text-align: left; font-family: var(--font-sans); font-weight: 700;">Popular Photographs Ledger</h3>
+              <div id="stats-popular-photos-ledger" style="display: flex; flex-direction: column;">
+                <div style="text-align:center; padding:1.5rem; color:var(--text3);">Loading metrics...</div>
+              </div>
+            </div>
 
-        <h3 style="font-family:var(--font-display); font-size:1.2rem; color:var(--text); margin-bottom:1rem; text-align: left;">All Comments &amp; Moderation</h3>
-        <div class="cms-grid" style="grid-template-columns: 1fr; gap: 1rem;" id="all-comments-list">
-          <div style="text-align: center; padding: 2rem; color: var(--text3);">Loading comments data...</div>
+            <!-- Essays Ledger Card -->
+            <div style="background: #121929; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1.25rem;">
+              <h3 style="font-size: 13px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0; margin-bottom: 1rem; text-align: left; font-family: var(--font-sans); font-weight: 700;">Popular Essays &amp; Stories Ledger</h3>
+              <div id="stats-popular-essays-ledger" style="display: flex; flex-direction: column;">
+                <div style="text-align:center; padding:1.5rem; color:var(--text3);">Loading metrics...</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1299,7 +1375,7 @@
       <div class="form-row-2">
         <div class="admin-form-group">
           <label>Target Category</label>
-          <select id="photo-category" class="admin-form-control" required></select>
+          <select id="photo-category" class="admin-form-control" onchange="window.updateTelescopeVisibility()" required></select>
         </div>
         <div class="admin-form-group">
           <label>Filter Tags (comma-separated, e.g. "people, portrait")</label>
@@ -1333,12 +1409,12 @@
         </div>
         
         <!-- Live Image Preview (Shared) -->
-        <div id="photo-preview-wrapper" style="display:none; position:relative; margin-top: 10px; height: 200px; overflow: hidden; border: 1px solid var(--border); padding: 4px; border-radius: 2px; background: var(--bg2); display: flex; justify-content: center; align-items: flex-start;">
-          <img id="photo-upload-preview" style="width: 100%; height: auto; display: block; position: absolute; top: 0; left: 0; transition: transform 0.1s ease-out; transform: translateY(0px);">
+        <div id="photo-preview-wrapper" style="display:none; margin-top: 10px; border: 1px solid var(--border); padding: 8px; border-radius: 4px; background: rgba(0,0,0,0.15); display: flex; justify-content: center; align-items: center; min-height: 220px;">
+          <img id="photo-upload-preview" style="display:none; max-height: 200px; object-fit: contain; width: auto; max-width: 100%; border-radius: 2px; transform: none !important; position: static !important;">
         </div>
-        <div id="photo-scroll-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
+        <div id="photo-scroll-slider-container" style="display:none !important;">
           <span style="font-size:11px; color:var(--text3);">Scroll Y:</span>
-          <input type="range" id="photo-scroll-slider" min="-250" max="250" value="0" style="flex:1; cursor:pointer;" oninput="document.getElementById('photo-upload-preview').style.transform = `translateY(${this.value}px)`">
+          <input type="range" id="photo-scroll-slider" min="-250" max="250" value="0">
         </div>
         
         <!-- EXIF RAW Reader Section (Optional) -->
@@ -1391,7 +1467,7 @@
           <label>Lens Used</label>
           <input type="text" id="photo-lens" class="admin-form-control" placeholder="70-200mm f/2.8">
         </div>
-        <div class="admin-form-group">
+        <div class="admin-form-group" id="photo-telescope-group">
           <label>Telescope / Optics (Optional)</label>
           <input type="text" id="photo-telescope" class="admin-form-control" placeholder="e.g. Sky-Watcher Evostar 72ED">
         </div>
@@ -2142,22 +2218,36 @@
   }
 
   /* ── SOCIAL INTERACTIONS & MODERATION METHODS ── */
-  window.loadInteractionsCms = function() {
+  window.switchStatsTab = function(tabId) {
+    document.getElementById('stats-view-overview').style.display = tabId === 'overview' ? 'block' : 'none';
+    document.getElementById('stats-view-popular').style.display = tabId === 'popular' ? 'block' : 'none';
+    document.getElementById('btn-stats-tab-overview').classList.toggle('active', tabId === 'overview');
+    document.getElementById('btn-stats-tab-popular').classList.toggle('active', tabId === 'popular');
+  };
+
+  window.loadInteractionsCms = async function() {
+    if (window.portfolioDb && typeof window.portfolioDb.fetchLatestData === 'function') {
+      window.siteData = await window.portfolioDb.fetchLatestData();
+    }
     const data = window.siteData;
     if (!data) return;
 
     // 1. Overall view count
     document.getElementById('stats-site-views').textContent = data.views || 0;
 
-    // 2. Accumulate likes & comments
+    // 2. Accumulate likes, shares & comments
     let photoLikes = 0;
     let storyLikes = 0;
     let totalComments = 0;
+    let totalShares = 0;
     
     let allComments = []; // { type, itemId, subId, itemTitle, comment }
     
     let topLikedAsset = null; // { title, likes }
     let topViewedAsset = null; // { title, views }
+    
+    let allPhotosList = [];
+    let allEssaysList = [];
 
     function trackAsset(title, likes, views) {
       if (likes !== undefined && (!topLikedAsset || likes > topLikedAsset.likes)) {
@@ -2176,8 +2266,20 @@
           cat.photos.forEach(p => {
             const likes = p.likes || 0;
             const views = p.views || 0;
+            const shares = p.shares || 0;
             photoLikes += likes;
+            totalShares += shares;
             trackAsset(`Photo: ${p.title} (${cat.title})`, likes, views);
+            
+            allPhotosList.push({
+              title: p.title,
+              src: p.src,
+              bg: p.bg,
+              category: cat.title,
+              views: views,
+              likes: likes,
+              shares: shares
+            });
 
             if (p.comments) {
               totalComments += p.comments.length;
@@ -2201,7 +2303,17 @@
       data.journalEntries.forEach(post => {
         const likes = post.likes || 0;
         const views = post.views || 0;
+        const shares = post.shares || 0;
+        totalShares += shares;
         trackAsset(`Deep Dive: ${post.title}`, likes, views);
+        
+        allEssaysList.push({
+          title: post.title,
+          views: views,
+          likes: likes,
+          shares: shares,
+          type: 'Deep Dive'
+        });
 
         if (post.comments) {
           totalComments += post.comments.length;
@@ -2223,8 +2335,18 @@
       data.stories.forEach(story => {
         const likes = story.likes || 0;
         const views = story.views || 0;
+        const shares = story.shares || 0;
         storyLikes += likes;
+        totalShares += shares;
         trackAsset(`Story: ${story.title}`, likes, views);
+        
+        allEssaysList.push({
+          title: story.title,
+          views: views,
+          likes: likes,
+          shares: shares,
+          type: 'Story'
+        });
 
         if (story.comments) {
           totalComments += story.comments.length;
@@ -2245,9 +2367,105 @@
     document.getElementById('stats-photo-likes').textContent = photoLikes;
     document.getElementById('stats-story-likes').textContent = storyLikes;
     document.getElementById('stats-comments-count').textContent = totalComments;
+    document.getElementById('stats-shares-count').textContent = totalShares;
 
     document.getElementById('stats-top-liked').innerHTML = topLikedAsset ? `${topLikedAsset.title} <strong style="color:var(--gold); margin-left:10px">${topLikedAsset.likes} Likes</strong>` : 'No likes recorded';
     document.getElementById('stats-top-viewed').innerHTML = topViewedAsset ? `${topViewedAsset.title} <strong style="color:var(--gold); margin-left:10px">${topViewedAsset.views} Views</strong>` : 'No views recorded';
+
+    // Render popular photo & essay tables
+    allPhotosList.sort((a, b) => b.views - a.views);
+    allEssaysList.sort((a, b) => b.views - a.views);
+
+    const maxPhotoViews = allPhotosList.length > 0 ? Math.max(...allPhotosList.map(p => p.views)) : 1;
+    const maxPhotoLikes = allPhotosList.length > 0 ? Math.max(...allPhotosList.map(p => p.likes)) : 1;
+    const maxPhotoShares = allPhotosList.length > 0 ? Math.max(...allPhotosList.map(p => p.shares)) : 1;
+    
+    const maxPhotoEngagement = allPhotosList.length > 0 ? Math.max(...allPhotosList.map(p => p.views + p.likes + p.shares)) : 1;
+    
+    const photoCardsHtml = allPhotosList.slice(0, 8).map((p, idx) => {
+      const total = p.views + p.likes + p.shares || 1;
+      const viewsPct = (p.views / total) * 100;
+      const likesPct = (p.likes / total) * 100;
+      const sharesPct = (p.shares / total) * 100;
+
+      return `
+        <div class="cyber-ledger-row" style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.04); transition:all 0.2s; position:relative; overflow:hidden;">
+          <div style="display:flex; align-items:center; gap:0.75rem; min-width:0; flex:1;">
+            <span style="font-family:monospace; font-weight:700; font-size:11px; color:${idx === 0 ? 'var(--gold)' : idx === 1 ? '#cbd5e1' : idx === 2 ? '#d97706' : 'var(--text3)'}; width:16px; text-align:left;">
+              #${idx + 1}
+            </span>
+            <div style="width:32px; height:22px; border-radius:3px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); flex-shrink:0; background:rgba(0,0,0,0.2);">
+              ${p.src ? `<img src="${p.src}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%; height:100%; background:${p.bg || '#222'};"></div>`}
+            </div>
+            <div style="min-width:0; text-align:left;">
+              <span style="font-weight:600; font-size:12.5px; color:#fff; text-transform:capitalize; margin-right:8px; display:inline-block; max-width:140px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; vertical-align:middle;">${p.title}</span>
+              <span style="font-size:8px; text-transform:uppercase; letter-spacing:0.08em; padding:1px 5px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); color:var(--text3); display:inline-block; vertical-align:middle;">${p.category}</span>
+            </div>
+          </div>
+          
+          <div style="display:flex; align-items:center; gap:1.25rem; flex-shrink:0;">
+            <div style="display:flex; align-items:center; gap:0.5rem; font-size:11px; font-weight:500;">
+              <span style="color:var(--gold); display:flex; align-items:center; gap:2px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:10px; height:10px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>${p.views}</span>
+              <span style="color:#e91e63; display:flex; align-items:center; gap:2px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:10px; height:10px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>${p.likes}</span>
+              <span style="color:#4caf50; display:flex; align-items:center; gap:2px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:10px; height:10px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>${p.shares}</span>
+            </div>
+            
+            <div style="width:120px; display:flex; align-items:center; gap:8px;">
+              <div style="flex:1; height:4px; background:rgba(255,255,255,0.03); border-radius:2px; display:flex; overflow:hidden; max-width:80px; width:80px;">
+                <div style="width:${viewsPct}%; height:100%; background:var(--gold);"></div>
+                <div style="width:${likesPct}%; height:100%; background:#e91e63;"></div>
+                <div style="width:${sharesPct}%; height:100%; background:#4caf50;"></div>
+              </div>
+              <span style="font-size:11px; font-weight:700; color:white; width: 30px; text-align:right;">${total}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    document.getElementById('stats-popular-photos-ledger').innerHTML = photoCardsHtml || '<div style="text-align:center; padding:1.5rem; color:var(--text3);">No photos recorded.</div>';
+
+    const maxEssayEngagement = allEssaysList.length > 0 ? Math.max(...allEssaysList.map(e => e.views + e.likes + e.shares)) : 1;
+    
+    const essayCardsHtml = allEssaysList.slice(0, 8).map((e, idx) => {
+      const total = e.views + e.likes + e.shares || 1;
+      const viewsPct = (e.views / total) * 100;
+      const likesPct = (e.likes / total) * 100;
+      const sharesPct = (e.shares / total) * 100;
+
+      return `
+        <div class="cyber-ledger-row" style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.04); transition:all 0.2s; position:relative; overflow:hidden;">
+          <div style="display:flex; align-items:center; gap:0.75rem; min-width:0; flex:1;">
+            <span style="font-family:monospace; font-weight:700; font-size:11px; color:${idx === 0 ? 'var(--gold)' : idx === 1 ? '#cbd5e1' : idx === 2 ? '#d97706' : 'var(--text3)'}; width:16px; text-align:left;">
+              #${idx + 1}
+            </span>
+            <div style="min-width:0; text-align:left;">
+              <span style="font-weight:600; font-size:12.5px; color:#fff; text-transform:capitalize; margin-right:8px; display:inline-block; max-width:160px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; vertical-align:middle;">${e.title}</span>
+              <span style="font-size:8px; text-transform:uppercase; letter-spacing:0.08em; padding:1px 5px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); color:var(--text3); display:inline-block; vertical-align:middle;">${e.type}</span>
+            </div>
+          </div>
+          
+          <div style="display:flex; align-items:center; gap:1.25rem; flex-shrink:0;">
+            <div style="display:flex; align-items:center; gap:0.5rem; font-size:11px; font-weight:500;">
+              <span style="color:var(--gold); display:flex; align-items:center; gap:2px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:10px; height:10px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>${e.views}</span>
+              <span style="color:#e91e63; display:flex; align-items:center; gap:2px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:10px; height:10px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>${e.likes}</span>
+              <span style="color:#4caf50; display:flex; align-items:center; gap:2px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:10px; height:10px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>${e.shares}</span>
+            </div>
+            
+            <div style="width:120px; display:flex; align-items:center; gap:8px;">
+              <div style="flex:1; height:4px; background:rgba(255,255,255,0.03); border-radius:2px; display:flex; overflow:hidden; max-width:80px; width:80px;">
+                <div style="width:${viewsPct}%; height:100%; background:var(--gold);"></div>
+                <div style="width:${likesPct}%; height:100%; background:#e91e63;"></div>
+                <div style="width:${sharesPct}%; height:100%; background:#4caf50;"></div>
+              </div>
+              <span style="font-size:11px; font-weight:700; color:white; width: 30px; text-align:right;">${total}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    document.getElementById('stats-popular-essays-ledger').innerHTML = essayCardsHtml || '<div style="text-align:center; padding:1.5rem; color:var(--text3);">No essays recorded.</div>';
 
     // Render comments list
     const listContainer = document.getElementById('all-comments-list');
@@ -2929,7 +3147,7 @@
         <div>
           ${imgContent}
           <div class="cms-card-title">${p.title} ${p.hidden ? '<span style="font-size:10px; padding:2px 6px; background:#f0ad4e; color:white; border-radius:2px; margin-left:6px; font-weight:normal; vertical-align:middle;">Hidden</span>' : ''}</div>
-          <div class="cms-card-meta">Tag: ${p.tag} · Loc: ${p.loc || '-'}</div>
+          <div class="cms-card-meta">Tag: ${p.tag} · Loc: ${typeof formatToTitleCase === 'function' ? formatToTitleCase(p.loc || '-') : (p.loc || '-')}</div>
           ${p.featured ? '<div class="badge-featured">Featured</div>' : ''}
           <button type="button" class="card-star-toggle${p.featured ? ' active' : ''}" onclick="window.toggleFeaturedCms('${catKey}', ${p.id || idx}, event)" title="Toggle Featured status">
             ★
@@ -3601,12 +3819,26 @@
     }
     
     handleWebPToggle();
+    if (typeof updateTelescopeVisibility === 'function') updateTelescopeVisibility();
   }
   
   window.saveAsDraft = saveAsDraft;
   window.renderDraftsList = renderDraftsList;
   window.deleteDraft = deleteDraft;
   window.resumeDraft = resumeDraft;
+
+  function updateTelescopeVisibility() {
+    const catSelect = document.getElementById('photo-category');
+    const telescopeGroup = document.getElementById('photo-telescope-group');
+    if (!catSelect || !telescopeGroup) return;
+    const selectedVal = catSelect.value.toLowerCase().trim();
+    if (selectedVal === 'astrophotography' || selectedVal === 'astro') {
+      telescopeGroup.style.display = 'block';
+    } else {
+      telescopeGroup.style.display = 'none';
+    }
+  }
+  window.updateTelescopeVisibility = updateTelescopeVisibility;
 
   function previewImageFile(input) {
     const file = input.files[0];
@@ -3996,6 +4228,7 @@
       }
     }
     
+    if (typeof updateTelescopeVisibility === 'function') updateTelescopeVisibility();
     modal.classList.add('open');
   }
 

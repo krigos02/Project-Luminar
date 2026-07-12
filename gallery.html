@@ -1460,7 +1460,7 @@ function updateLb() {
     expVal = [p.shutter, p.focal, p.aperture, isoVal].filter(Boolean).join(' · ');
   }
   updateExifRow('lb-exp', expVal);
-  updateExifRow('lb-loc', p.loc);
+  updateExifRow('lb-loc', typeof window.formatToTitleCase === 'function' ? window.formatToTitleCase(p.loc) : p.loc);
   updateExifRow('lb-date', formatPhotoDate(p.date));
 
   // Toggle EXIF parent container and divider visibility
@@ -1533,15 +1533,20 @@ function renderLbComments(comments) {
   list.scrollTop = list.scrollHeight;
 }
 
+let isLikingLock = false;
+
 async function likePhoto(forceLike = false) {
+  if (isLikingLock) return;
   const p = filteredPhotos[lbIdx];
   if (!p) return;
 
+  isLikingLock = true;
   const likeKey = `liked_gallery_photo_${currentCategory}_${p.id}`;
   const isLiked = localStorage.getItem(likeKey) === 'true';
 
   if (forceLike && isLiked) {
     showHeartPop();
+    isLikingLock = false;
     return; // Already liked, show animation and return
   }
 
@@ -1558,9 +1563,15 @@ async function likePhoto(forceLike = false) {
   document.getElementById('lb-like-btn').classList.toggle('liked', nextLiked);
 
   // Sync to database
-  const finalLikes = await window.portfolioDb.toggleLike('gallery_photo', currentCategory, p.id, nextLiked);
-  p.likes = finalLikes;
-  document.getElementById('lb-likes-count').textContent = p.likes;
+  try {
+    const finalLikes = await window.portfolioDb.toggleLike('gallery_photo', currentCategory, p.id, nextLiked);
+    p.likes = finalLikes;
+    document.getElementById('lb-likes-count').textContent = p.likes;
+  } catch (err) {
+    console.error(err);
+  } finally {
+    isLikingLock = false;
+  }
 }
 
 function showHeartPop() {
@@ -1598,14 +1609,19 @@ function sharePhoto() {
   const shareText = `Check out this photograph by Krishnendu Goswami: "${p.title}"`;
   const shareUrl = `${window.location.origin}${window.location.pathname}?category=${currentCategory}&photo=${p.id}`;
 
-  if (navigator.share) {
+  if (navigator.share && window.location.protocol !== 'file:') {
     navigator.share({
       title: shareTitle,
       text: shareText,
       url: shareUrl
+    }).then(() => {
+      window.portfolioDb.incrementShare('gallery_photo', currentCategory, p.id);
+      p.shares = (p.shares || 0) + 1;
     }).catch(err => console.log("Share failed:", err));
   } else {
     navigator.clipboard.writeText(shareUrl).then(() => {
+      window.portfolioDb.incrementShare('gallery_photo', currentCategory, p.id);
+      p.shares = (p.shares || 0) + 1;
       showToast("Link copied to clipboard!");
     }).catch(() => {
       alert("Failed to copy link. Here is the URL: " + shareUrl);

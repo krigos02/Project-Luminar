@@ -1,3 +1,10 @@
+/* ── STRING UTILITIES ── */
+function formatToTitleCase(str) {
+  if (!str) return '';
+  return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+}
+window.formatToTitleCase = formatToTitleCase;
+
 /* ── THEME TOGGLE ── */
 const THEME_STORAGE_KEY = 'luminar-theme';
 

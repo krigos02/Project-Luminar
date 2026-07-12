@@ -1192,20 +1192,46 @@ body.cursor-hover #cursor-ring {
 .lb-nav-btn {
   position: absolute;
   top: 50%; transform: translateY(-50%);
-  width: 40px; height: 40px;
-  border: none;
+  width: 48px; height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   display: flex; align-items: center; justify-content: center;
-  color: rgba(255, 255, 255, 0.5);
-  background: transparent;
+  color: #fff;
+  background: rgba(15, 23, 42, 0.7);
   border-radius: 50%;
-  transition: background 0.35s, color 0.2s, border-color 0.2s;
+  transition: all 0.25s ease;
   cursor: pointer;
-  z-index: 10;
+  z-index: 9100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
-.lb-nav-btn:hover { color: var(--gold); background: rgba(255, 255, 255, 0.05); }
-.lb-nav-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; }
-#lb-prev { left: clamp(8px, 2vw, 24px); }
-#lb-next { right: clamp(8px, 2vw, 24px); }
+.lb-nav-btn:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(15, 23, 42, 0.9);
+  transform: translateY(-50%) scale(1.1);
+}
+.lb-nav-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; }
+#lb-prev { left: clamp(12px, 2vw, 28px); }
+#lb-next { right: clamp(12px, 2vw, 28px); }
+
+#lb-image-container {
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 769px) {
+  #lb-image-container {
+    max-width: calc(100% - 380px) !important;
+    max-height: 85vh !important;
+    margin-right: auto;
+    margin-left: 80px;
+  }
+  #lb-next {
+    right: 380px !important;
+  }
+}
 .lb-footer {
   padding: 1rem clamp(20px, 4vw, 52px);
   border-top: 1px solid var(--border);
@@ -1682,4 +1708,25 @@ body.cursor-hover #cursor-ring {
 }
 .legal-modal-body li {
   margin-bottom: 0.5rem;
+}
+
+/* Enforce Title Case capitalization on title, subtitle, device specs, and category tags */
+.lb-title,
+.lb-subtitle,
+.lb-exif,
+.lb-exif-val,
+.gallery-item-title,
+.lb-info-title,
+.lb-info-caption,
+.lb-topbar-title,
+.cms-card-title,
+.cms-card-meta,
+.slider-3d-name,
+.slider-3d-subtitle,
+.cat-switch-name,
+.story-title,
+.story-card-title,
+.blog-card-title,
+.section-title {
+  text-transform: capitalize;
 }

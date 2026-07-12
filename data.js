@@ -419,6 +419,17 @@ window.portfolioDb = {
     }
   },
 
+  async incrementShare(type, itemId, subId) {
+    const data = await this.fetchLatestData();
+    const item = this.findItemOnData(data, type, itemId, subId);
+    if (item) {
+      item.shares = (item.shares || 0) + 1;
+      await window.saveSiteData(data);
+      return item.shares;
+    }
+    return 0;
+  },
+
   async toggleLike(type, itemId, subId, isLike) {
     const data = await this.fetchLatestData();
     const item = this.findItemOnData(data, type, itemId, subId);
