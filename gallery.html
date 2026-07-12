@@ -1217,7 +1217,7 @@ function initPage() {
   }
   
   // 6. Setup Photos
-  currentPhotos = data.photos || [];
+  currentPhotos = (data.photos || []).filter(p => !p.hidden);
   filteredPhotos = [...currentPhotos];
   currentLimit = Math.min(loadedLimit, filteredPhotos.length);
   
@@ -1534,13 +1534,19 @@ function renderLbComments(comments) {
   list.scrollTop = list.scrollHeight;
 }
 
-async function likePhoto() {
+async function likePhoto(forceLike = false) {
   const p = filteredPhotos[lbIdx];
   if (!p) return;
 
   const likeKey = `liked_gallery_photo_${currentCategory}_${p.id}`;
   const isLiked = localStorage.getItem(likeKey) === 'true';
-  const nextLiked = !isLiked;
+
+  if (forceLike && isLiked) {
+    showHeartPop();
+    return; // Already liked, show animation and return
+  }
+
+  const nextLiked = forceLike ? true : !isLiked;
 
   localStorage.setItem(likeKey, nextLiked ? 'true' : 'false');
   if (nextLiked) {
@@ -1643,13 +1649,13 @@ document.getElementById('lb-image-container').addEventListener('click', e => {
   const currentTime = new Date().getTime();
   const tapLength = currentTime - lastTap;
   if (tapLength < 300 && tapLength > 0) {
-    likePhoto();
+    likePhoto(true);
     e.preventDefault();
   }
   lastTap = currentTime;
 });
 document.getElementById('lb-image-container').addEventListener('dblclick', () => {
-  likePhoto();
+  likePhoto(true);
 });
 
 // Auto-open photo if requested in query parameter

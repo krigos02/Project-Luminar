@@ -594,6 +594,19 @@
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
   }
+  .modal-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  .modal-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .modal-content::-webkit-scrollbar-thumb {
+    background: var(--gold3);
+    border-radius: 4px;
+  }
+  .modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
+  }
   .modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -601,6 +614,18 @@
     margin-top: 2.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     padding-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 600px) {
+    .modal-actions {
+      flex-direction: column-reverse;
+      gap: 10px;
+    }
+    .modal-actions button,
+    .modal-actions input[type="submit"] {
+      width: 100% !important;
+      margin: 0 !important;
+    }
   }
 
   .badge-featured {
@@ -1308,7 +1333,13 @@
         </div>
         
         <!-- Live Image Preview (Shared) -->
-        <img id="photo-upload-preview" class="preview-thumbnail" style="display:none; margin-top: 10px; max-height: 200px; object-fit: contain; border: 1px solid var(--border); padding: 4px; border-radius: 2px;">
+        <div id="photo-preview-wrapper" style="display:none; position:relative; margin-top: 10px; height: 200px; overflow: hidden; border: 1px solid var(--border); padding: 4px; border-radius: 2px; background: var(--bg2); display: flex; justify-content: center; align-items: flex-start;">
+          <img id="photo-upload-preview" style="width: 100%; height: auto; display: block; position: absolute; top: 0; left: 0; transition: transform 0.1s ease-out; transform: translateY(0px);">
+        </div>
+        <div id="photo-scroll-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
+          <span style="font-size:11px; color:var(--text3);">Scroll Y:</span>
+          <input type="range" id="photo-scroll-slider" min="-250" max="250" value="0" style="flex:1; cursor:pointer;" oninput="document.getElementById('photo-upload-preview').style.transform = `translateY(${this.value}px)`">
+        </div>
         
         <!-- EXIF RAW Reader Section (Optional) -->
         <div class="admin-form-group" style="margin-top: 15px; border: 1px dashed var(--gold3); padding: 15px; border-radius: 4px; background: rgba(201,169,110,0.02);">
@@ -1480,7 +1511,10 @@
         <input type="text" id="blog-title" class="admin-form-control" required>
       </div>
       <div class="admin-form-group">
-        <label>Brief Excerpt</label>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+          <label style="margin:0;">Brief Excerpt</label>
+          <button type="button" class="btn-outline" onclick="window.openStoryEditor('blog-excerpt')" style="padding: 2px 8px; font-size: 10px; text-transform:none !important; border-color: var(--gold); color: var(--gold); border-radius: 2px; height: auto; line-height: 1.4;">Open Large View & Formatting</button>
+        </div>
         <textarea id="blog-excerpt" class="admin-form-control" required style="min-height:70px;"></textarea>
       </div>
       <div class="form-row-2">
@@ -1493,6 +1527,46 @@
           <input type="text" id="blog-bg" class="admin-form-control" placeholder="linear-gradient(...)">
         </div>
       </div>
+      
+      <!-- Cover / Thumbnail Image Selector for Blog -->
+      <div class="admin-form-group" style="margin-top: 15px;">
+        <label>Cover / Thumbnail Image</label>
+        <div class="form-row-2" style="margin-bottom: 10px;">
+          <button type="button" id="btn-blog-choice-upload" class="cms-card-btn active" onclick="setBlogImageSourceMode('upload')">Upload File</button>
+          <button type="button" id="btn-blog-choice-url" class="cms-card-btn" onclick="setBlogImageSourceMode('url')">Image URL</button>
+        </div>
+        <div id="blog-source-mode-upload" class="uploader-wrap">
+          <div class="uploader-text">Drag &amp; drop or <span>Browse</span> thumbnail image</div>
+          <input type="file" id="blog-file" accept="image/*" onchange="previewBlogImageFile(this)">
+          
+          <div id="blog-preview-wrapper" style="display:none; position:relative; margin-top: 10px; height: 140px; overflow: hidden; border: 1px solid var(--border); padding: 4px; border-radius: 2px; background: var(--bg2); justify-content: center; align-items: flex-start;">
+            <img id="blog-upload-preview" style="width: 100%; height: auto; display: block; position: absolute; top: 0; left: 0; transition: transform 0.1s ease-out; transform: translateY(0px) scale(1);">
+          </div>
+          
+          <!-- Size reducer slider -->
+          <div id="blog-size-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
+            <span style="font-size:11px; color:var(--text3);">Thumbnail Width:</span>
+            <input type="range" id="blog-size-slider" min="30" max="100" value="100" style="flex:1; cursor:pointer;" oninput="updateBlogPreviewTransform()">
+            <span id="blog-size-val" style="font-size:11px; color:var(--text2);">100%</span>
+          </div>
+          
+          <!-- Scroll Y slider -->
+          <div id="blog-scroll-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
+            <span style="font-size:11px; color:var(--text3);">Scroll Y:</span>
+            <input type="range" id="blog-scroll-slider" min="-250" max="250" value="0" style="flex:1; cursor:pointer;" oninput="updateBlogPreviewTransform()">
+          </div>
+        </div>
+        <div id="blog-source-mode-url" class="admin-form-group" style="display:none;">
+          <input type="text" id="blog-src" class="admin-form-control" placeholder="https://images.unsplash.com/photo-...">
+        </div>
+      </div>
+
+      <!-- Save as Draft Checkbox -->
+      <div class="admin-form-group" style="display:flex; align-items:center; gap:8px; margin-top:15px; margin-bottom:15px;">
+        <input type="checkbox" id="blog-draft" style="width:16px; height:16px; cursor:pointer; margin:0;">
+        <label for="blog-draft" style="cursor:pointer; font-size:13px; font-weight:normal; margin:0; color:var(--text);">Save as Draft (will not be visible to public)</label>
+      </div>
+
       <div class="modal-actions">
         <button type="button" onclick="closeModal('blog-modal')" class="btn-outline">Cancel</button>
         <button type="submit" class="btn-primary">Save Entry</button>
@@ -1523,7 +1597,10 @@
         <input type="text" id="story-title" class="admin-form-control" required>
       </div>
       <div class="admin-form-group">
-        <label>Summary Description</label>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+          <label style="margin:0;">Summary Description</label>
+          <button type="button" class="btn-outline" onclick="window.openStoryEditor('story-desc')" style="padding: 2px 8px; font-size: 10px; text-transform:none !important; border-color: var(--gold); color: var(--gold); border-radius: 2px; height: auto; line-height: 1.4;">Open Large View & Formatting</button>
+        </div>
         <textarea id="story-desc" class="admin-form-control" required style="min-height:70px;"></textarea>
       </div>
       
@@ -1537,7 +1614,23 @@
         <div id="story-source-mode-upload" class="uploader-wrap">
           <div class="uploader-text">Drag &amp; drop or <span>Browse</span> cover image</div>
           <input type="file" id="story-file" accept="image/*" onchange="previewStoryImageFile(this)">
-          <img id="story-upload-preview" class="preview-thumbnail">
+          
+          <div id="story-preview-wrapper" style="display:none; position:relative; margin-top: 10px; height: 140px; overflow: hidden; border: 1px solid var(--border); padding: 4px; border-radius: 2px; background: var(--bg2); justify-content: center; align-items: flex-start;">
+            <img id="story-upload-preview" style="width: 100%; height: auto; display: block; position: absolute; top: 0; left: 0; transition: transform 0.1s ease-out; transform: translateY(0px) scale(1);">
+          </div>
+          
+          <!-- Size reducer slider -->
+          <div id="story-size-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
+            <span style="font-size:11px; color:var(--text3);">Cover Width:</span>
+            <input type="range" id="story-size-slider" min="30" max="100" value="100" style="flex:1; cursor:pointer;" oninput="updateStoryPreviewTransform()">
+            <span id="story-size-val" style="font-size:11px; color:var(--text2);">100%</span>
+          </div>
+          
+          <!-- Scroll Y slider -->
+          <div id="story-scroll-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
+            <span style="font-size:11px; color:var(--text3);">Scroll Y:</span>
+            <input type="range" id="story-scroll-slider" min="-250" max="250" value="0" style="flex:1; cursor:pointer;" oninput="updateStoryPreviewTransform()">
+          </div>
         </div>
         <div id="story-source-mode-url" class="admin-form-group" style="display:none;">
           <input type="text" id="story-src" class="admin-form-control" placeholder="https://images.unsplash.com/photo-...">
@@ -1561,6 +1654,11 @@
       <div class="admin-form-group">
         <label>Placeholder Background Gradient (if no cover image)</label>
         <input type="text" id="story-bg" class="admin-form-control" placeholder="linear-gradient(...)">
+      </div>
+      <!-- Save as Draft Checkbox for Story -->
+      <div class="admin-form-group" style="display:flex; align-items:center; gap:8px; margin-top:15px; margin-bottom:15px;">
+        <input type="checkbox" id="story-draft" style="width:16px; height:16px; cursor:pointer; margin:0;">
+        <label for="story-draft" style="cursor:pointer; font-size:13px; font-weight:normal; margin:0; color:var(--text);">Save as Draft (will not be visible to public)</label>
       </div>
       <div class="modal-actions">
         <button type="button" onclick="closeModal('story-modal')" class="btn-outline">Cancel</button>
@@ -1597,6 +1695,54 @@
   let currentUploadedStoryBase64 = "";
   let currentUploadedProfileBase64 = "";
   let originalPhotoCategory = "";
+  
+  let blogImageSourceMode = "upload";
+  let currentUploadedBlogBase64 = "";
+
+  function setBlogImageSourceMode(mode) {
+    blogImageSourceMode = mode;
+    document.getElementById('btn-blog-choice-upload').classList.toggle('active', mode === 'upload');
+    document.getElementById('btn-blog-choice-url').classList.toggle('active', mode === 'url');
+    document.getElementById('blog-source-mode-upload').style.display = mode === 'upload' ? 'block' : 'none';
+    document.getElementById('blog-source-mode-url').style.display = mode === 'url' ? 'block' : 'none';
+  }
+
+  function previewBlogImageFile(input) {
+    const preview = document.getElementById('blog-upload-preview');
+    handleImageUpload(input, base64 => {
+      currentUploadedBlogBase64 = base64;
+      preview.src = base64;
+      document.getElementById('blog-preview-wrapper').style.display = 'flex';
+      document.getElementById('blog-size-slider-container').style.display = 'flex';
+      document.getElementById('blog-scroll-slider-container').style.display = 'flex';
+      updateBlogPreviewTransform();
+    });
+  }
+
+  function updateBlogPreviewTransform() {
+    const size = document.getElementById('blog-size-slider').value;
+    const scrollY = document.getElementById('blog-scroll-slider').value;
+    document.getElementById('blog-size-val').textContent = size + '%';
+    const preview = document.getElementById('blog-upload-preview');
+    if (preview) {
+      preview.style.transform = `translateY(${scrollY}px) scale(${size / 100})`;
+    }
+  }
+
+  function updateStoryPreviewTransform() {
+    const size = document.getElementById('story-size-slider').value;
+    const scrollY = document.getElementById('story-scroll-slider').value;
+    document.getElementById('story-size-val').textContent = size + '%';
+    const preview = document.getElementById('story-upload-preview');
+    if (preview) {
+      preview.style.transform = `translateY(${scrollY}px) scale(${size / 100})`;
+    }
+  }
+
+  window.setBlogImageSourceMode = setBlogImageSourceMode;
+  window.previewBlogImageFile = previewBlogImageFile;
+  window.updateBlogPreviewTransform = updateBlogPreviewTransform;
+  window.updateStoryPreviewTransform = updateStoryPreviewTransform;
   
   // WebP compression state variables
   let originalFileBlob = null;
@@ -2782,7 +2928,7 @@
       card.innerHTML = `
         <div>
           ${imgContent}
-          <div class="cms-card-title">${p.title}</div>
+          <div class="cms-card-title">${p.title} ${p.hidden ? '<span style="font-size:10px; padding:2px 6px; background:#f0ad4e; color:white; border-radius:2px; margin-left:6px; font-weight:normal; vertical-align:middle;">Hidden</span>' : ''}</div>
           <div class="cms-card-meta">Tag: ${p.tag} · Loc: ${p.loc || '-'}</div>
           ${p.featured ? '<div class="badge-featured">Featured</div>' : ''}
           <button type="button" class="card-star-toggle${p.featured ? ' active' : ''}" onclick="window.toggleFeaturedCms('${catKey}', ${p.id || idx}, event)" title="Toggle Featured status">
@@ -2791,6 +2937,7 @@
         </div>
         <div class="cms-card-actions">
           <button class="cms-card-btn" onclick="openPhotoModal('edit', ${p.id || idx})">Edit</button>
+          <button class="cms-card-btn" onclick="window.toggleHideCms('photo', '${catKey}', ${p.id || idx})">${p.hidden ? 'Show' : 'Hide'}</button>
           <button class="cms-card-btn btn-danger" onclick="deletePhoto(${p.id || idx})">Delete</button>
         </div>
       `;
@@ -3429,6 +3576,10 @@
       const preview = document.getElementById('photo-upload-preview');
       preview.src = draft.base64;
       preview.style.display = 'block';
+      document.getElementById('photo-preview-wrapper').style.display = 'flex';
+      document.getElementById('photo-scroll-slider-container').style.display = 'flex';
+      document.getElementById('photo-scroll-slider').value = draft.offsetY || 0;
+      preview.style.transform = `translateY(${draft.offsetY || 0}px)`;
       if (document.getElementById('webp-options-container')) {
         document.getElementById('webp-options-container').style.display = 'block';
       }
@@ -3527,6 +3678,8 @@
         const oldUrl = preview.src;
         preview.src = URL.createObjectURL(blob);
         preview.style.display = 'block';
+        document.getElementById('photo-preview-wrapper').style.display = 'flex';
+        document.getElementById('photo-scroll-slider-container').style.display = 'flex';
         
         if (oldUrl && oldUrl.startsWith('blob:')) {
           URL.revokeObjectURL(oldUrl);
@@ -3545,6 +3698,8 @@
     const preview = document.getElementById('photo-upload-preview');
     preview.src = originalImage.src;
     preview.style.display = 'block';
+    document.getElementById('photo-preview-wrapper').style.display = 'flex';
+    document.getElementById('photo-scroll-slider-container').style.display = 'flex';
   }
 
   function handleWebPToggle() {
@@ -3568,6 +3723,8 @@
         const oldUrl = preview.src;
         preview.src = currentUploadedPhotoBase64;
         preview.style.display = 'block';
+        document.getElementById('photo-preview-wrapper').style.display = 'flex';
+        document.getElementById('photo-scroll-slider-container').style.display = 'flex';
         
         if (oldUrl && oldUrl.startsWith('blob:')) {
           URL.revokeObjectURL(oldUrl);
@@ -3640,6 +3797,8 @@
       originalFileBlob = null;
       optimizedWebPBlob = null;
       document.getElementById('photo-upload-preview').style.display = 'none';
+      document.getElementById('photo-preview-wrapper').style.display = 'none';
+      document.getElementById('photo-scroll-slider-container').style.display = 'none';
       return;
     }
 
@@ -3650,6 +3809,8 @@
     const preview = document.getElementById('photo-upload-preview');
     preview.src = url;
     preview.style.display = 'block';
+    document.getElementById('photo-preview-wrapper').style.display = 'flex';
+    document.getElementById('photo-scroll-slider-container').style.display = 'flex';
 
     // Get file size from URL (CORS permitting)
     try {
@@ -3706,7 +3867,10 @@
     // reset uploads & WebP options
     currentUploadedPhotoBase64 = "";
     imageWasModified = false;
-    document.getElementById('photo-upload-preview').style.display = 'none';
+    document.getElementById('photo-preview-wrapper').style.display = 'none';
+    document.getElementById('photo-scroll-slider-container').style.display = 'none';
+    document.getElementById('photo-scroll-slider').value = 0;
+    document.getElementById('photo-upload-preview').style.transform = 'translateY(0px)';
     
     // Reset EXIF RAW Reader status
     const exifStatus = document.getElementById('exif-read-status');
@@ -3801,16 +3965,23 @@
         document.getElementById('photo-featured').checked = !!p.featured;
         
         if (p.src) {
+          const wrapper = document.getElementById('photo-preview-wrapper');
+          const sliderCont = document.getElementById('photo-scroll-slider-container');
+          const slider = document.getElementById('photo-scroll-slider');
+          const preview = document.getElementById('photo-upload-preview');
+          
+          slider.value = p.offsetY || 0;
+          preview.style.transform = `translateY(${slider.value}px)`;
+          preview.src = p.src;
+          wrapper.style.display = 'flex';
+          sliderCont.style.display = 'flex';
+
           if (p.src.startsWith('data:image')) {
             setImageSourceMode('upload');
             currentUploadedPhotoBase64 = p.src;
-            const preview = document.getElementById('photo-upload-preview');
-            preview.src = p.src;
-            preview.style.display = 'block';
           } else {
             setImageSourceMode('url');
             document.getElementById('photo-src').value = p.src;
-            handleUrlInput();
           }
         }
       }
@@ -3818,7 +3989,8 @@
       document.getElementById('photo-modal-title').textContent = "Add New Photograph";
       document.getElementById('photo-id').value = "-1";
       document.getElementById('photo-bg').value = "linear-gradient(145deg,#151515,#2a2a2a)";
-      document.getElementById('photo-upload-preview').style.display = 'none';
+      document.getElementById('photo-preview-wrapper').style.display = 'none';
+      document.getElementById('photo-scroll-slider-container').style.display = 'none';
       if (document.getElementById('webp-options-container')) {
         document.getElementById('webp-options-container').style.display = 'none';
       }
@@ -4056,7 +4228,11 @@
         bg: document.getElementById('photo-bg').value,
         featured: document.getElementById('photo-featured').checked,
         src: photoUrl || currentUploadedPhotoBase64,
-        qFactor: parseInt(document.getElementById('webp-quality').value, 10) || 85
+        qFactor: parseInt(document.getElementById('webp-quality').value, 10) || 85,
+        offsetY: parseInt(document.getElementById('photo-scroll-slider').value) || 0,
+        comments: existingPhoto ? (existingPhoto.comments || []) : [],
+        likes: existingPhoto ? (existingPhoto.likes || 0) : 0,
+        views: existingPhoto ? (existingPhoto.views || 0) : 0
       };
       
       if (!cat.photos) cat.photos = [];
@@ -4207,6 +4383,46 @@
   }
   window.toggleFeaturedCms = toggleFeaturedCms;
 
+  async function toggleHideCms(type, catKeyOrIdx, itemId) {
+    if (type === 'photo') {
+      const db = { ...window.siteData.galleryCategories };
+      const cat = db[catKeyOrIdx];
+      if (!cat) return;
+      const photo = cat.photos.find(p => p.id === itemId);
+      if (photo) {
+        photo.hidden = !photo.hidden;
+        const data = { ...window.siteData, galleryCategories: db };
+        if (await window.saveSiteData(data)) {
+          loadGalleryCms();
+          showSuccess();
+        }
+      }
+    } else if (type === 'blog') {
+      const list = [ ...window.siteData.journalEntries ];
+      const post = list.find(item => item.id === itemId);
+      if (post) {
+        post.hidden = !post.hidden;
+        const data = { ...window.siteData, journalEntries: list };
+        if (await window.saveSiteData(data)) {
+          loadBlogCms();
+          showSuccess();
+        }
+      }
+    } else if (type === 'story') {
+      const list = [ ...window.siteData.stories ];
+      const story = list.find(item => item.id === itemId);
+      if (story) {
+        story.hidden = !story.hidden;
+        const data = { ...window.siteData, stories: list };
+        if (await window.saveSiteData(data)) {
+          loadStoriesCms();
+          showSuccess();
+        }
+      }
+    }
+  }
+  window.toggleHideCms = toggleHideCms;
+
   /* ── BLOG POSTS METHODS ── */
   function loadBlogCms() {
     const container = document.getElementById('blog-posts-list');
@@ -4216,15 +4432,24 @@
     entries.forEach((e, idx) => {
       const card = document.createElement('div');
       card.className = 'cms-card';
+      const cover = e.src ? `
+        <div style="position:relative; overflow:hidden; border-radius:2px; height:120px; border:1px solid var(--border); margin-bottom:8px;">
+          <img class="cms-card-img" src="${e.src}" alt="${e.title}" style="width:100%; height:100%; object-fit:cover; transform: translateY(${e.offsetY || 0}px) scale(${(e.scale || 100) / 100}); transform-origin: top center;">
+        </div>
+      ` : `
+        <div class="cms-card-ph" style="background:${e.bg || 'linear-gradient(135deg,#0a101d,#16243b)'}">${e.cat}</div>
+      `;
+
       card.innerHTML = `
         <div>
-          <div class="cms-card-ph" style="background:${e.bg || 'linear-gradient(135deg,#0a101d,#16243b)'}">${e.cat}</div>
-          <div class="cms-card-title">${e.title}</div>
+          ${cover}
+          <div class="cms-card-title">${e.title} ${e.draft ? '<span style="font-size:10px; padding:2px 6px; background:#d9534f; color:white; border-radius:2px; margin-left:6px; font-weight:normal; vertical-align:middle;">Draft</span>' : ''} ${e.hidden ? '<span style="font-size:10px; padding:2px 6px; background:#f0ad4e; color:white; border-radius:2px; margin-left:6px; font-weight:normal; vertical-align:middle;">Hidden</span>' : ''}</div>
           <div class="cms-card-meta">${e.date} · ${e.readTime}</div>
           <p style="font-size:12.5px;color:var(--text3);line-height:1.5;">${e.excerpt}</p>
         </div>
         <div class="cms-card-actions">
           <button class="cms-card-btn" onclick="openBlogModal('edit', ${e.id || idx})">Edit</button>
+          <button class="cms-card-btn" onclick="window.toggleHideCms('blog', null, ${e.id || idx})">${e.hidden ? 'Show' : 'Hide'}</button>
           <button class="cms-card-btn btn-danger" onclick="deleteBlog(${e.id || idx})">Delete</button>
         </div>
       `;
@@ -4236,6 +4461,17 @@
     const modal = document.getElementById('blog-modal');
     document.getElementById('form-blog').reset();
     document.getElementById('blog-mode').value = mode;
+    
+    // Reset blog image state & draft
+    currentUploadedBlogBase64 = "";
+    document.getElementById('blog-preview-wrapper').style.display = 'none';
+    document.getElementById('blog-size-slider-container').style.display = 'none';
+    document.getElementById('blog-scroll-slider-container').style.display = 'none';
+    document.getElementById('blog-size-slider').value = 100;
+    document.getElementById('blog-scroll-slider').value = 0;
+    document.getElementById('blog-upload-preview').style.transform = 'translateY(0px) scale(1)';
+    document.getElementById('blog-draft').checked = false;
+    setBlogImageSourceMode('upload');
     
     if (mode === 'edit' && id !== -1) {
       document.getElementById('blog-modal-title').textContent = "Edit Journal Entry";
@@ -4250,6 +4486,34 @@
         document.getElementById('blog-excerpt').value = e.excerpt;
         document.getElementById('blog-date').value = e.date;
         document.getElementById('blog-bg').value = e.bg || '';
+        document.getElementById('blog-draft').checked = !!e.draft;
+        
+        if (e.src) {
+          const wrapper = document.getElementById('blog-preview-wrapper');
+          const sizeCont = document.getElementById('blog-size-slider-container');
+          const scrollCont = document.getElementById('blog-scroll-slider-container');
+          const sizeSlider = document.getElementById('blog-size-slider');
+          const scrollSlider = document.getElementById('blog-scroll-slider');
+          const preview = document.getElementById('blog-upload-preview');
+          
+          sizeSlider.value = e.scale || 100;
+          scrollSlider.value = e.offsetY || 0;
+          preview.src = e.src;
+          
+          wrapper.style.display = 'flex';
+          sizeCont.style.display = 'flex';
+          scrollCont.style.display = 'flex';
+          
+          updateBlogPreviewTransform();
+          
+          if (e.src.startsWith('data:image')) {
+            setBlogImageSourceMode('upload');
+            currentUploadedBlogBase64 = e.src;
+          } else {
+            setBlogImageSourceMode('url');
+            document.getElementById('blog-src').value = e.src;
+          }
+        }
       }
     } else {
       document.getElementById('blog-modal-title').textContent = "Create Journal Entry";
@@ -4261,16 +4525,44 @@
 
   async function saveBlog(e) {
     e.preventDefault();
+    const saveBtn = e.submitter || document.querySelector("#form-blog button[type='submit']");
+    const origBtnText = saveBtn ? saveBtn.textContent : "Save Entry";
+    if (saveBtn) {
+      saveBtn.textContent = "Uploading Image...";
+      saveBtn.disabled = true;
+    }
+
     const mode = document.getElementById('blog-mode').value;
     const blogId = parseInt(document.getElementById('blog-id').value);
     
+    let blogUrl = getDirectImageUrl(document.getElementById('blog-src').value.trim());
+    if (blogImageSourceMode === 'upload' && currentUploadedBlogBase64) {
+      if (currentUploadedBlogBase64.startsWith('data:image')) {
+        const uploadedUrl = await uploadToCloudinary(currentUploadedBlogBase64);
+        if (!uploadedUrl) {
+          if (saveBtn) {
+            saveBtn.textContent = origBtnText;
+            saveBtn.disabled = false;
+          }
+          return;
+        }
+        blogUrl = uploadedUrl;
+      } else {
+        blogUrl = currentUploadedBlogBase64;
+      }
+    }
+
     const blogData = {
       cat: document.getElementById('blog-cat').value,
       readTime: document.getElementById('blog-readtime').value,
       title: document.getElementById('blog-title').value,
       excerpt: document.getElementById('blog-excerpt').value,
       date: document.getElementById('blog-date').value,
-      bg: document.getElementById('blog-bg').value
+      bg: document.getElementById('blog-bg').value,
+      src: blogUrl,
+      scale: parseInt(document.getElementById('blog-size-slider').value) || 100,
+      offsetY: parseInt(document.getElementById('blog-scroll-slider').value) || 0,
+      draft: document.getElementById('blog-draft').checked
     };
     
     const list = [ ...window.siteData.journalEntries ];
@@ -4279,12 +4571,19 @@
       const idx = list.findIndex(item => item.id === blogId || list.indexOf(item) === blogId);
       if (idx !== -1) {
         blogData.id = blogId;
+        const existing = list[idx];
+        blogData.comments = existing.comments || [];
+        blogData.likes = existing.likes || 0;
+        blogData.views = existing.views || 0;
         list[idx] = blogData;
       }
     } else {
       let maxId = -1;
       list.forEach(item => { if (item.id > maxId) maxId = item.id; });
       blogData.id = maxId + 1;
+      blogData.comments = [];
+      blogData.likes = 0;
+      blogData.views = 0;
       list.push(blogData);
     }
     
@@ -4293,6 +4592,11 @@
       closeModal('blog-modal');
       loadBlogCms();
       showSuccess();
+    }
+
+    if (saveBtn) {
+      saveBtn.textContent = origBtnText;
+      saveBtn.disabled = false;
     }
   }
 
@@ -4318,7 +4622,9 @@
       card.className = 'cms-card';
       
       const cover = e.src ? `
-        <img class="cms-card-img" src="${e.src}" alt="${e.title}">
+        <div style="position:relative; overflow:hidden; border-radius:2px; height:120px; border:1px solid var(--border); margin-bottom:8px;">
+          <img class="cms-card-img" src="${e.src}" alt="${e.title}" style="width:100%; height:100%; object-fit:cover; transform: translateY(${e.offsetY || 0}px) scale(${(e.scale || 100) / 100}); transform-origin: top center;">
+        </div>
       ` : `
         <div class="cms-card-ph" style="background:${e.bg || 'linear-gradient(135deg,#0d101a,#171c2f)'}">Placeholder cover</div>
       `;
@@ -4326,12 +4632,13 @@
       card.innerHTML = `
         <div>
           ${cover}
-          <div class="cms-card-title">${e.title}</div>
+          <div class="cms-card-title">${e.title} ${e.draft ? '<span style="font-size:10px; padding:2px 6px; background:#d9534f; color:white; border-radius:2px; margin-left:6px; font-weight:normal; vertical-align:middle;">Draft</span>' : ''} ${e.hidden ? '<span style="font-size:10px; padding:2px 6px; background:#f0ad4e; color:white; border-radius:2px; margin-left:6px; font-weight:normal; vertical-align:middle;">Hidden</span>' : ''}</div>
           <div class="cms-card-meta">${e.tag} · Slug: ${e.slug}</div>
           <p style="font-size:12.5px;color:var(--text3);line-height:1.5;">${e.desc}</p>
         </div>
         <div class="cms-card-actions">
           <button class="cms-card-btn" onclick="openStoryModal('edit', ${e.id || idx})">Edit</button>
+          <button class="cms-card-btn" onclick="window.toggleHideCms('story', null, ${e.id || idx})">${e.hidden ? 'Show' : 'Hide'}</button>
           <button class="cms-card-btn btn-danger" onclick="deleteStory(${e.id || idx})">Delete</button>
         </div>
       `;
@@ -4352,7 +4659,10 @@
     handleImageUpload(input, base64 => {
       currentUploadedStoryBase64 = base64;
       preview.src = base64;
-      preview.style.display = 'block';
+      document.getElementById('story-preview-wrapper').style.display = 'flex';
+      document.getElementById('story-size-slider-container').style.display = 'flex';
+      document.getElementById('story-scroll-slider-container').style.display = 'flex';
+      updateStoryPreviewTransform();
     });
   }
 
@@ -4361,9 +4671,15 @@
     document.getElementById('form-story').reset();
     document.getElementById('story-mode').value = mode;
     
-    // reset uploads
+    // Reset story uploader state
     currentUploadedStoryBase64 = "";
-    document.getElementById('story-upload-preview').style.display = 'none';
+    document.getElementById('story-preview-wrapper').style.display = 'none';
+    document.getElementById('story-size-slider-container').style.display = 'none';
+    document.getElementById('story-scroll-slider-container').style.display = 'none';
+    document.getElementById('story-size-slider').value = 100;
+    document.getElementById('story-scroll-slider').value = 0;
+    document.getElementById('story-upload-preview').style.transform = 'translateY(0px) scale(1)';
+    document.getElementById('story-draft').checked = false;
     setStoryImageSourceMode('upload');
     
     if (mode === 'edit' && id !== -1) {
@@ -4382,14 +4698,29 @@
         document.getElementById('story-duration').value = e.duration;
         document.getElementById('story-loc').value = e.location;
         document.getElementById('story-bg').value = e.bg || '';
+        document.getElementById('story-draft').checked = !!e.draft;
         
         if (e.src) {
+          const wrapper = document.getElementById('story-preview-wrapper');
+          const sizeCont = document.getElementById('story-size-slider-container');
+          const scrollCont = document.getElementById('story-scroll-slider-container');
+          const sizeSlider = document.getElementById('story-size-slider');
+          const scrollSlider = document.getElementById('story-scroll-slider');
+          const preview = document.getElementById('story-upload-preview');
+          
+          sizeSlider.value = e.scale || 100;
+          scrollSlider.value = e.offsetY || 0;
+          preview.src = e.src;
+          
+          wrapper.style.display = 'flex';
+          sizeCont.style.display = 'flex';
+          scrollCont.style.display = 'flex';
+          
+          updateStoryPreviewTransform();
+          
           if (e.src.startsWith('data:image')) {
             setStoryImageSourceMode('upload');
             currentUploadedStoryBase64 = e.src;
-            const preview = document.getElementById('story-upload-preview');
-            preview.src = e.src;
-            preview.style.display = 'block';
           } else {
             setStoryImageSourceMode('url');
             document.getElementById('story-src').value = e.src;
@@ -4443,7 +4774,10 @@
       duration: document.getElementById('story-duration').value,
       location: document.getElementById('story-loc').value,
       bg: document.getElementById('story-bg').value,
-      src: storyUrl
+      src: storyUrl,
+      scale: parseInt(document.getElementById('story-size-slider').value) || 100,
+      offsetY: parseInt(document.getElementById('story-scroll-slider').value) || 0,
+      draft: document.getElementById('story-draft').checked
     };
     
     const list = [ ...window.siteData.stories ];
@@ -4452,12 +4786,20 @@
       const idx = list.findIndex(item => item.id === storyId || list.indexOf(item) === storyId);
       if (idx !== -1) {
         storyData.id = storyId;
+        // Keep stats
+        const existing = list[idx];
+        storyData.comments = existing.comments || [];
+        storyData.likes = existing.likes || 0;
+        storyData.views = existing.views || 0;
         list[idx] = storyData;
       }
     } else {
       let maxId = -1;
       list.forEach(item => { if (item.id > maxId) maxId = item.id; });
       storyData.id = maxId + 1;
+      storyData.comments = [];
+      storyData.likes = 0;
+      storyData.views = 0;
       list.push(storyData);
     }
     
@@ -4572,9 +4914,24 @@
     if (modal) modal.classList.remove('open');
   }
 
-  function openStoryEditor() {
-    const mainVal = document.getElementById('photo-story').value;
+  let activeTextareaId = 'photo-story';
+
+  function openStoryEditor(targetId = 'photo-story') {
+    activeTextareaId = targetId;
+    const mainVal = document.getElementById(targetId).value;
     document.getElementById('story-editor-textarea').value = mainVal;
+    
+    // Update modal title depending on target textarea
+    const titleEl = document.querySelector('#story-editor-modal .panel-title');
+    if (titleEl) {
+      if (targetId === 'blog-excerpt') {
+        titleEl.textContent = 'Journal Entry Excerpt Editor';
+      } else if (targetId === 'story-desc') {
+        titleEl.textContent = 'Narrative Essay Summary Editor';
+      } else {
+        titleEl.textContent = 'Behind-the-Lens Story Editor';
+      }
+    }
     document.getElementById('story-editor-modal').classList.add('open');
   }
 
@@ -4592,6 +4949,7 @@
     tx.setSelectionRange(start + startTag.length, start + startTag.length + selected.length);
   }
 
+  // Symbol helper
   function insertStoryChar(char) {
     const tx = document.getElementById('story-editor-textarea');
     const start = tx.selectionStart;
@@ -4605,7 +4963,11 @@
 
   function saveStoryEditorContent() {
     const editorVal = document.getElementById('story-editor-textarea').value;
-    document.getElementById('photo-story').value = editorVal;
+    const target = document.getElementById(activeTextareaId);
+    if (target) {
+      target.value = editorVal;
+      target.dispatchEvent(new Event('input'));
+    }
     closeModal('story-editor-modal');
   }
 

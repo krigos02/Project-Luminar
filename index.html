@@ -44,6 +44,60 @@
       column-count: 2;
     }
   }
+  
+  /* Pop Heart Animation styles */
+  .pop-heart-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    color: #ff3b30;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0;
+  }
+  .pop-heart-overlay svg {
+    width: 100px;
+    height: 100px;
+    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.4));
+  }
+  .pop-heart-overlay.animate {
+    animation: heart-pop-anim 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes heart-pop-anim {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    45% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.95; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+  }
+  .lb-social-btn.liked {
+    color: #ff3b30 !important;
+  }
+  .lb-social-btn.liked .lb-heart-icon {
+    fill: #ff3b30;
+    stroke: #ff3b30;
+  }
+  /* Toast styles */
+  .toast-notif {
+    position: fixed;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translate3d(-50%, 50px, 0);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    padding: 8px 18px;
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    border-radius: 20px;
+    z-index: 100000;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.4s var(--ease-out), opacity 0.4s var(--ease-out);
+  }
+  .toast-notif.show {
+    transform: translate3d(-50%, 0, 0);
+    opacity: 1;
+  }
 </style>
 </head>
 <body>
@@ -155,7 +209,7 @@
   </div>
 </footer>
 
-<!-- LIGHTBOX (unchanged) -->
+<!-- LIGHTBOX (interactive) -->
 <div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer" tabindex="-1">
   <button class="lb-close-btn-floating" onclick="closeLb()" aria-label="Close">
     <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -167,18 +221,51 @@
     <div class="lb-ph" id="lb-ph">
       <div class="lb-ph-inner" id="lb-ph-inner" style="aspect-ratio:3/2;"></div>
     </div>
-    <img id="lb-img" src="" alt="" draggable="false">
+    <div style="position:relative; display:flex; align-items:center; justify-content:center;" id="lb-image-container">
+      <img id="lb-img" src="" alt="" draggable="false" style="pointer-events:auto; cursor:pointer;">
+      <!-- Pop Heart Overlay -->
+      <div class="pop-heart-overlay" id="pop-heart-overlay">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </div>
+    </div>
     <button class="lb-nav-btn" id="lb-next" onclick="lbNav(1)" aria-label="Next photo">
       <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
-    <div class="lb-details-floating">
+    <div class="lb-details-floating" style="max-height: 80vh; overflow-y: auto;">
       <span class="lb-count" id="lb-count" aria-live="polite">1 / 18</span>
       <h3 class="lb-title" id="lb-title-text"></h3>
       <p class="lb-meta" id="lb-meta"></p>
       <p class="lb-exif" id="lb-exif"></p>
+      
+      <!-- Social counters bar -->
+      <div class="lb-social-stats" style="display:flex; align-items:center; gap:1.5rem; margin: 0.5rem 0; font-size:12px; font-family:var(--font-sans);">
+        <button class="lb-social-btn" id="lb-like-btn" onclick="likePhoto()" title="Like photo" style="background:transparent; border:none; cursor:pointer; color:var(--text2); display:flex; align-items:center; gap:6px; padding:0; font-weight:500;">
+          <svg class="lb-heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:16px; height:16px; transition:all 0.2s;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <span id="lb-likes-count">0</span> Likes
+        </button>
+        <span class="lb-views-stat" style="display:flex; align-items:center; gap:6px; color:var(--text3);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:16px; height:16px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="lb-views-count">0</span> Views
+        </span>
+      </div>
+
+      <div style="height:1px; background:var(--border); margin:0.25rem 0;"></div>
+
+      <!-- Inline Comment Form -->
+      <div class="lb-comments-section" style="font-family:var(--font-sans);">
+        <h4 style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; margin:0 0 0.5rem 0; color:var(--text);">Add Comment</h4>
+        <form class="lb-comment-form" id="lb-comment-form" onsubmit="submitComment(event)" style="display:flex; flex-direction:column; gap:0.4rem;">
+          <input type="text" id="lb-comment-name" placeholder="Your Name" required style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:6px 8px; font-size:11px; border-radius:2px; outline:none;">
+          <textarea id="lb-comment-text" placeholder="Write comment..." required rows="2" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:6px 8px; font-size:11px; border-radius:2px; outline:none; resize:none;"></textarea>
+          <button type="submit" class="btn-primary" style="padding: 6px 12px; font-size: 11px; margin-top: 0.25rem; width: auto; align-self: flex-end;">Post Comment</button>
+        </form>
+        <div id="comment-posted-message" style="display:none; font-size:11px; color:var(--gold); margin-top:6px; text-align:center;">Your comment has been posted successfully!</div>
+      </div>
     </div>
   </div>
 </div>
+
+<div id="toast-notif" class="toast-notif">Link copied to clipboard</div>
 
 <!-- Scripts — order matters -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -211,6 +298,7 @@ function getAllPhotos() {
     const cat = window.siteData.galleryCategories[catKey];
     if (cat && Array.isArray(cat.photos)) {
       cat.photos.forEach(p => {
+        if (p.hidden) return;
         all.push({
           ...p,
           cat: catKey
@@ -310,8 +398,22 @@ function updateLb() {
 
   document.getElementById('lb-count').textContent = `${pos + 1} / ${total}`;
   document.getElementById('lb-title-text').textContent = p.title || '';
-  document.getElementById('lb-meta').textContent = p.meta || '';
-  document.getElementById('lb-exif').textContent = p.exif || '';
+  document.getElementById('lb-meta').textContent = p.meta || p.caption || '';
+  document.getElementById('lb-exif').textContent = p.exif || p.exp || '';
+
+  // Render stats
+  document.getElementById('lb-likes-count').textContent = p.likes || 0;
+  document.getElementById('lb-views-count').textContent = p.views || 0;
+
+  const likeKey = `liked_gallery_photo_${p.cat}_${p.id}`;
+  const isLiked = localStorage.getItem(likeKey) === 'true';
+  document.getElementById('lb-like-btn').classList.toggle('liked', isLiked);
+
+  // Clear comment form
+  const commentForm = document.getElementById('lb-comment-form');
+  if (commentForm) commentForm.reset();
+  const postedMsg = document.getElementById('comment-posted-message');
+  if (postedMsg) postedMsg.style.display = 'none';
 
   if (p.src) {
     lbImg.src = p.src;
@@ -325,6 +427,80 @@ function updateLb() {
     lbPhInner.style.background = p.bg || '';
     document.getElementById('lb-ph').style.display = 'flex';
   }
+
+  // Increment view count in database
+  if (!p._viewed) {
+    p._viewed = true;
+    window.portfolioDb.incrementView('gallery_photo', p.cat, p.id);
+    p.views = (p.views || 0) + 1;
+    document.getElementById('lb-views-count').textContent = p.views;
+  }
+}
+
+async function likePhoto(forceLike = false) {
+  const filtered = window._c3dFiltered || photos;
+  const p = filtered[lbIdx];
+  if (!p) return;
+
+  const likeKey = `liked_gallery_photo_${p.cat}_${p.id}`;
+  const isLiked = localStorage.getItem(likeKey) === 'true';
+
+  if (forceLike && isLiked) {
+    showHeartPop();
+    return; // Already liked, show animation and return
+  }
+
+  const nextLiked = forceLike ? true : !isLiked;
+
+  localStorage.setItem(likeKey, nextLiked ? 'true' : 'false');
+  if (nextLiked) {
+    showHeartPop();
+  }
+
+  // Optimistic UI update
+  p.likes = Math.max(0, (p.likes || 0) + (nextLiked ? 1 : -1));
+  document.getElementById('lb-likes-count').textContent = p.likes;
+  document.getElementById('lb-like-btn').classList.toggle('liked', nextLiked);
+
+  // Sync to database
+  const finalLikes = await window.portfolioDb.toggleLike('gallery_photo', p.cat, p.id, nextLiked);
+  p.likes = finalLikes;
+  document.getElementById('lb-likes-count').textContent = p.likes;
+}
+
+function showHeartPop() {
+  const overlay = document.getElementById('pop-heart-overlay');
+  if (!overlay) return;
+  overlay.classList.remove('animate');
+  void overlay.offsetWidth; // Force reflow
+  overlay.classList.add('animate');
+}
+
+async function submitComment(event) {
+  event.preventDefault();
+  const filtered = window._c3dFiltered || photos;
+  const p = filtered[lbIdx];
+  if (!p) return;
+
+  const nameInput = document.getElementById('lb-comment-name');
+  const textInput = document.getElementById('lb-comment-text');
+
+  const name = nameInput.value.trim() || 'Anonymous';
+  const text = textInput.value.trim();
+  if (!text) return;
+
+  const newComment = await window.portfolioDb.addComment('gallery_photo', p.cat, p.id, name, text);
+  if (newComment) {
+    nameInput.value = '';
+    textInput.value = '';
+    const postedMsg = document.getElementById('comment-posted-message');
+    if (postedMsg) {
+      postedMsg.style.display = 'block';
+      setTimeout(() => {
+        postedMsg.style.display = 'none';
+      }, 4000);
+    }
+  }
 }
 
 /* keyboard for lightbox */
@@ -335,6 +511,21 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft')   lbNav(-1);
 });
 lbEl.addEventListener('click', e => { if (e.target === lbEl) closeLb(); });
+
+// Double tap/click to like
+let lastTap = 0;
+document.getElementById('lb-image-container').addEventListener('click', e => {
+  const currentTime = new Date().getTime();
+  const tapLength = currentTime - lastTap;
+  if (tapLength < 300 && tapLength > 0) {
+    likePhoto(true);
+    e.preventDefault();
+  }
+  lastTap = currentTime;
+});
+document.getElementById('lb-image-container').addEventListener('dblclick', () => {
+  likePhoto(true);
+});
 </script>
 
 </body>
