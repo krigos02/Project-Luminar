@@ -355,6 +355,25 @@ window.resetSiteData = async function() {
 
 // ── SOCIAL INTERACTIONS & ANALYTICS DATABASE HELPERS ── //
 window.portfolioDb = {
+  // FIX: single write queue serializing every read-modify-write cycle against
+  // the shared 'portfolio_data' row. Without this, two overlapping calls
+  // (e.g. a like toggle and a view increment, or two rapid like/unlike
+  // presses) can each fetch the row, modify their own field, and save the
+  // whole row back — whichever save finishes last overwrites the other's
+  // change, silently dropping it ("lost update"). Queuing forces every
+  // operation to fully finish (fetch + save) before the next one starts,
+  // so each one always modifies the true latest state.
+  _writeQueue: Promise.resolve(),
+
+  _enqueueWrite(task) {
+    const result = this._writeQueue.then(() => task());
+    // Swallow errors here so a failed write doesn't permanently jam the queue
+    // for subsequent operations; the original error still propagates to the
+    // caller via the returned (unmodified) `result` promise.
+    this._writeQueue = result.catch(() => {});
+    return result;
+  },
+
   findItem(type, itemId, subId) {
     if (!window.siteData) return null;
     if (type === 'home_photo') {
@@ -411,67 +430,96 @@ window.portfolioDb = {
   },
 
   async incrementView(type, itemId, subId) {
-    const data = await this.fetchLatestData();
-    const item = this.findItemOnData(data, type, itemId, subId);
-    if (item) {
-      item.views = (item.views || 0) + 1;
-      await window.saveSiteData(data);
-    }
+    return this._enqueueWrite(async () => {
+      const data = await this.fetchLatestData();
+      const item = this.findItemOnData(data, type, itemId, subId);
+      if (item) {
+        item.views = (item.views || 0) + 1;
+        await window.saveSiteData(data);
+      }
+    });
   },
 
   async incrementShare(type, itemId, subId) {
-    const data = await this.fetchLatestData();
-    const item = this.findItemOnData(data, type, itemId, subId);
-    if (item) {
-      item.shares = (item.shares || 0) + 1;
-      await window.saveSiteData(data);
-      return item.shares;
-    }
-    return 0;
+    return this._enqueueWrite(async () => {
+      const data = await this.fetchLatestData();
+      const item = this.findItemOnData(data, type, itemId, subId);
+      if (item) {
+        item.shares = (item.shares || 0) + 1;
+        await window.saveSiteData(data);
+        return item.shares;
+      }
+      return 0;
+    });
   },
 
+  _likeDebounceTimers: {},
+
   async toggleLike(type, itemId, subId, isLike) {
-    const data = await this.fetchLatestData();
-    const item = this.findItemOnData(data, type, itemId, subId);
-    if (item) {
-      const current = item.likes || 0;
-      item.likes = Math.max(0, current + (isLike ? 1 : -1));
-      await window.saveSiteData(data);
-      return item.likes;
+    const key = `${type}_${itemId}_${subId}`;
+    
+    // Update local memory state immediately for instant feedback
+    const memItem = this.findItemOnData(window.siteData, type, itemId, subId);
+    if (memItem) {
+      const current = memItem.likes || 0;
+      memItem.likes = Math.max(0, current + (isLike ? 1 : -1));
     }
-    return 0;
+
+    if (this._likeDebounceTimers[key]) {
+      clearTimeout(this._likeDebounceTimers[key]);
+    }
+
+    return new Promise((resolve) => {
+      // Resolve immediately to keep UI updates responsive
+      resolve(memItem ? memItem.likes : 0);
+
+      // Debounce the actual database write by 1 second to avoid spamming transactions
+      this._likeDebounceTimers[key] = setTimeout(() => {
+        delete this._likeDebounceTimers[key];
+        
+        this._enqueueWrite(async () => {
+          // Directly save the updated memory state to avoid overwriting it with stale data
+          await window.saveSiteData(window.siteData);
+          return memItem ? memItem.likes : 0;
+        });
+      }, 1000);
+    });
   },
 
   async addComment(type, itemId, subId, name, text) {
-    const data = await this.fetchLatestData();
-    const item = this.findItemOnData(data, type, itemId, subId);
-    if (item) {
-      if (!item.comments) item.comments = [];
-      const newComment = {
-        id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-        name: name || 'Anonymous',
-        text: text,
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        timestamp: Date.now()
-      };
-      item.comments.push(newComment);
-      await window.saveSiteData(data);
-      return newComment;
-    }
-    return null;
+    return this._enqueueWrite(async () => {
+      const data = await this.fetchLatestData();
+      const item = this.findItemOnData(data, type, itemId, subId);
+      if (item) {
+        if (!item.comments) item.comments = [];
+        const newComment = {
+          id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          name: name || 'Anonymous',
+          text: text,
+          date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          timestamp: Date.now()
+        };
+        item.comments.push(newComment);
+        await window.saveSiteData(data);
+        return newComment;
+      }
+      return null;
+    });
   },
 
   async deleteComment(type, itemId, subId, commentId) {
-    const data = await this.fetchLatestData();
-    const item = this.findItemOnData(data, type, itemId, subId);
-    if (item && item.comments) {
-      const initialLength = item.comments.length;
-      item.comments = item.comments.filter(c => c.id !== commentId);
-      if (item.comments.length !== initialLength) {
-        await window.saveSiteData(data);
-        return true;
+    return this._enqueueWrite(async () => {
+      const data = await this.fetchLatestData();
+      const item = this.findItemOnData(data, type, itemId, subId);
+      if (item && item.comments) {
+        const initialLength = item.comments.length;
+        item.comments = item.comments.filter(c => c.id !== commentId);
+        if (item.comments.length !== initialLength) {
+          await window.saveSiteData(data);
+          return true;
+        }
       }
-    }
-    return false;
+      return false;
+    });
   }
 };
