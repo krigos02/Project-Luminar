@@ -1607,25 +1607,14 @@
           <button type="button" id="btn-blog-choice-upload" class="cms-card-btn active" onclick="setBlogImageSourceMode('upload')">Upload File</button>
           <button type="button" id="btn-blog-choice-url" class="cms-card-btn" onclick="setBlogImageSourceMode('url')">Image URL</button>
         </div>
-        <div id="blog-source-mode-upload" class="uploader-wrap">
-          <div class="uploader-text">Drag &amp; drop or <span>Browse</span> thumbnail image</div>
-          <input type="file" id="blog-file" accept="image/*" onchange="previewBlogImageFile(this)">
+        <div id="blog-source-mode-upload">
+          <div class="uploader-wrap">
+            <div class="uploader-text">Drag &amp; drop or <span>Browse</span> thumbnail image</div>
+            <input type="file" id="blog-file" accept="image/*" onchange="previewBlogImageFile(this)">
+          </div>
           
           <div id="blog-preview-wrapper" style="display:none; position:relative; margin-top: 10px; border: 1px solid var(--border); padding: 4px; border-radius: 2px; background: var(--bg2); display: flex; justify-content: center; align-items: center; overflow: hidden; min-height: 150px; max-height: 250px;">
-            <img id="blog-upload-preview" style="max-height: 200px; object-fit: contain; width: auto; max-width: 100%; border-radius: 2px; transition: transform 0.1s ease-out; transform: translateY(0px) scale(1); position: relative; display: block;">
-          </div>
-          
-          <!-- Size reducer slider -->
-          <div id="blog-size-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
-            <span style="font-size:11px; color:var(--text3);">Thumbnail Width:</span>
-            <input type="range" id="blog-size-slider" min="30" max="100" value="100" style="flex:1; cursor:pointer;" oninput="updateBlogPreviewTransform()">
-            <span id="blog-size-val" style="font-size:11px; color:var(--text2);">100%</span>
-          </div>
-          
-          <!-- Scroll Y slider -->
-          <div id="blog-scroll-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
-            <span style="font-size:11px; color:var(--text3);">Scroll Y:</span>
-            <input type="range" id="blog-scroll-slider" min="-250" max="250" value="0" style="flex:1; cursor:pointer;" oninput="updateBlogPreviewTransform()">
+            <img id="blog-upload-preview" style="max-height: 200px; object-fit: contain; width: auto; max-width: 100%; border-radius: 2px; position: relative; display: block;">
           </div>
 
           <!-- WebP Conversion Options -->
@@ -1704,25 +1693,14 @@
           <button type="button" id="btn-story-choice-upload" class="cms-card-btn active" onclick="setStoryImageSourceMode('upload')">Upload File</button>
           <button type="button" id="btn-story-choice-url" class="cms-card-btn" onclick="setStoryImageSourceMode('url')">Image URL</button>
         </div>
-        <div id="story-source-mode-upload" class="uploader-wrap">
-          <div class="uploader-text">Drag &amp; drop or <span>Browse</span> cover image</div>
-          <input type="file" id="story-file" accept="image/*" onchange="previewStoryImageFile(this)">
+        <div id="story-source-mode-upload">
+          <div class="uploader-wrap">
+            <div class="uploader-text">Drag &amp; drop or <span>Browse</span> cover image</div>
+            <input type="file" id="story-file" accept="image/*" onchange="previewStoryImageFile(this)">
+          </div>
           
           <div id="story-preview-wrapper" style="display:none; position:relative; margin-top: 10px; border: 1px solid var(--border); padding: 4px; border-radius: 2px; background: var(--bg2); display: flex; justify-content: center; align-items: center; overflow: hidden; min-height: 150px; max-height: 250px;">
-            <img id="story-upload-preview" style="max-height: 200px; object-fit: contain; width: auto; max-width: 100%; border-radius: 2px; transition: transform 0.1s ease-out; transform: translateY(0px) scale(1); position: relative; display: block;">
-          </div>
-          
-          <!-- Size reducer slider -->
-          <div id="story-size-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
-            <span style="font-size:11px; color:var(--text3);">Cover Width:</span>
-            <input type="range" id="story-size-slider" min="30" max="100" value="100" style="flex:1; cursor:pointer;" oninput="updateStoryPreviewTransform()">
-            <span id="story-size-val" style="font-size:11px; color:var(--text2);">100%</span>
-          </div>
-          
-          <!-- Scroll Y slider -->
-          <div id="story-scroll-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
-            <span style="font-size:11px; color:var(--text3);">Scroll Y:</span>
-            <input type="range" id="story-scroll-slider" min="-250" max="250" value="0" style="flex:1; cursor:pointer;" oninput="updateStoryPreviewTransform()">
+            <img id="story-upload-preview" style="max-height: 200px; object-fit: contain; width: auto; max-width: 100%; border-radius: 2px; position: relative; display: block;">
           </div>
 
           <!-- WebP Conversion Options -->
@@ -1839,30 +1817,8 @@
     });
   }
 
-  function updateBlogPreviewTransform() {
-    const size = document.getElementById('blog-size-slider').value;
-    const scrollY = document.getElementById('blog-scroll-slider').value;
-    document.getElementById('blog-size-val').textContent = size + '%';
-    const preview = document.getElementById('blog-upload-preview');
-    if (preview) {
-      preview.style.transform = `translateY(${scrollY}px) scale(${size / 100})`;
-    }
-  }
-
-  function updateStoryPreviewTransform() {
-    const size = document.getElementById('story-size-slider').value;
-    const scrollY = document.getElementById('story-scroll-slider').value;
-    document.getElementById('story-size-val').textContent = size + '%';
-    const preview = document.getElementById('story-upload-preview');
-    if (preview) {
-      preview.style.transform = `translateY(${scrollY}px) scale(${size / 100})`;
-    }
-  }
-
   window.setBlogImageSourceMode = setBlogImageSourceMode;
   window.previewBlogImageFile = previewBlogImageFile;
-  window.updateBlogPreviewTransform = updateBlogPreviewTransform;
-  window.updateStoryPreviewTransform = updateStoryPreviewTransform;
   
   // WebP compression state variables
   let originalFileBlob = null;
@@ -4082,8 +4038,6 @@
         preview.src = URL.createObjectURL(blob);
         preview.style.display = 'block';
         document.getElementById('blog-preview-wrapper').style.display = 'flex';
-        document.getElementById('blog-size-slider-container').style.display = 'flex';
-        document.getElementById('blog-scroll-slider-container').style.display = 'flex';
         
         if (oldUrl && oldUrl.startsWith('blob:')) {
           URL.revokeObjectURL(oldUrl);
@@ -4103,8 +4057,6 @@
     preview.src = originalBlogImage.src;
     preview.style.display = 'block';
     document.getElementById('blog-preview-wrapper').style.display = 'flex';
-    document.getElementById('blog-size-slider-container').style.display = 'flex';
-    document.getElementById('blog-scroll-slider-container').style.display = 'flex';
   }
 
   function handleBlogWebPToggle() {
@@ -4129,8 +4081,6 @@
         preview.src = currentUploadedBlogBase64;
         preview.style.display = 'block';
         document.getElementById('blog-preview-wrapper').style.display = 'flex';
-        document.getElementById('blog-size-slider-container').style.display = 'flex';
-        document.getElementById('blog-scroll-slider-container').style.display = 'flex';
         
         if (oldUrl && oldUrl.startsWith('blob:')) {
           URL.revokeObjectURL(oldUrl);
@@ -4190,8 +4140,6 @@
         preview.src = URL.createObjectURL(blob);
         preview.style.display = 'block';
         document.getElementById('story-preview-wrapper').style.display = 'flex';
-        document.getElementById('story-size-slider-container').style.display = 'flex';
-        document.getElementById('story-scroll-slider-container').style.display = 'flex';
         
         if (oldUrl && oldUrl.startsWith('blob:')) {
           URL.revokeObjectURL(oldUrl);
@@ -4211,8 +4159,6 @@
     preview.src = originalStoryImage.src;
     preview.style.display = 'block';
     document.getElementById('story-preview-wrapper').style.display = 'flex';
-    document.getElementById('story-size-slider-container').style.display = 'flex';
-    document.getElementById('story-scroll-slider-container').style.display = 'flex';
   }
 
   function handleStoryWebPToggle() {
@@ -4237,8 +4183,6 @@
         preview.src = currentUploadedStoryBase64;
         preview.style.display = 'block';
         document.getElementById('story-preview-wrapper').style.display = 'flex';
-        document.getElementById('story-size-slider-container').style.display = 'flex';
-        document.getElementById('story-scroll-slider-container').style.display = 'flex';
         
         if (oldUrl && oldUrl.startsWith('blob:')) {
           URL.revokeObjectURL(oldUrl);
@@ -5013,11 +4957,11 @@
     // Reset blog image state & draft
     currentUploadedBlogBase64 = "";
     document.getElementById('blog-preview-wrapper').style.display = 'none';
-    document.getElementById('blog-size-slider-container').style.display = 'none';
-    document.getElementById('blog-scroll-slider-container').style.display = 'none';
-    document.getElementById('blog-size-slider').value = 100;
-    document.getElementById('blog-scroll-slider').value = 0;
-    document.getElementById('blog-upload-preview').style.transform = 'translateY(0px) scale(1)';
+    document.getElementById('blog-webp-options-container').style.display = 'none';
+    originalBlogFileBlob = null;
+    originalBlogImage = null;
+    optimizedBlogWebPBlob = null;
+    blogImageWasModified = false;
     document.getElementById('blog-draft').checked = false;
     setBlogImageSourceMode('upload');
     
@@ -5038,21 +4982,10 @@
         
         if (e.src) {
           const wrapper = document.getElementById('blog-preview-wrapper');
-          const sizeCont = document.getElementById('blog-size-slider-container');
-          const scrollCont = document.getElementById('blog-scroll-slider-container');
-          const sizeSlider = document.getElementById('blog-size-slider');
-          const scrollSlider = document.getElementById('blog-scroll-slider');
           const preview = document.getElementById('blog-upload-preview');
           
-          sizeSlider.value = e.scale || 100;
-          scrollSlider.value = e.offsetY || 0;
           preview.src = e.src;
-          
           wrapper.style.display = 'flex';
-          sizeCont.style.display = 'flex';
-          scrollCont.style.display = 'flex';
-          
-          updateBlogPreviewTransform();
           
           if (e.src.startsWith('data:image')) {
             setBlogImageSourceMode('upload');
@@ -5119,8 +5052,8 @@
       date: document.getElementById('blog-date').value,
       bg: document.getElementById('blog-bg').value,
       src: blogUrl,
-      scale: parseInt(document.getElementById('blog-size-slider').value) || 100,
-      offsetY: parseInt(document.getElementById('blog-scroll-slider').value) || 0,
+      scale: 100,
+      offsetY: 0,
       draft: document.getElementById('blog-draft').checked
     };
     
@@ -5239,11 +5172,11 @@
     // Reset story uploader state
     currentUploadedStoryBase64 = "";
     document.getElementById('story-preview-wrapper').style.display = 'none';
-    document.getElementById('story-size-slider-container').style.display = 'none';
-    document.getElementById('story-scroll-slider-container').style.display = 'none';
-    document.getElementById('story-size-slider').value = 100;
-    document.getElementById('story-scroll-slider').value = 0;
-    document.getElementById('story-upload-preview').style.transform = 'translateY(0px) scale(1)';
+    document.getElementById('story-webp-options-container').style.display = 'none';
+    originalStoryFileBlob = null;
+    originalStoryImage = null;
+    optimizedStoryWebPBlob = null;
+    storyImageWasModified = false;
     document.getElementById('story-draft').checked = false;
     setStoryImageSourceMode('upload');
     
@@ -5267,21 +5200,10 @@
         
         if (e.src) {
           const wrapper = document.getElementById('story-preview-wrapper');
-          const sizeCont = document.getElementById('story-size-slider-container');
-          const scrollCont = document.getElementById('story-scroll-slider-container');
-          const sizeSlider = document.getElementById('story-size-slider');
-          const scrollSlider = document.getElementById('story-scroll-slider');
           const preview = document.getElementById('story-upload-preview');
           
-          sizeSlider.value = e.scale || 100;
-          scrollSlider.value = e.offsetY || 0;
           preview.src = e.src;
-          
           wrapper.style.display = 'flex';
-          sizeCont.style.display = 'flex';
-          scrollCont.style.display = 'flex';
-          
-          updateStoryPreviewTransform();
           
           if (e.src.startsWith('data:image')) {
             setStoryImageSourceMode('upload');
@@ -5351,8 +5273,8 @@
       location: document.getElementById('story-loc').value,
       bg: document.getElementById('story-bg').value,
       src: storyUrl,
-      scale: parseInt(document.getElementById('story-size-slider').value) || 100,
-      offsetY: parseInt(document.getElementById('story-scroll-slider').value) || 0,
+      scale: 100,
+      offsetY: 0,
       draft: document.getElementById('story-draft').checked
     };
     
