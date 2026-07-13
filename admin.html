@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CMS Dashboard — Luminar</title>
+<title>CMS Dashboard — Krishnendu Goswami</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
@@ -889,7 +889,7 @@
 <div id="login-gate" class="admin-gate">
   <!-- Step 1: Email and Password Form -->
   <div id="login-step-1" class="gate-card">
-    <h2>LUMINAR CMS</h2>
+    <h2>KRISHNENDU GOSWAMI CMS</h2>
     <p>Admin Level Content Management System</p>
     
     <div style="text-align: left; width: 100%;">
@@ -944,7 +944,7 @@
   <!-- Navigation bar -->
   <nav class="admin-nav">
     <div class="container admin-nav-inner">
-      <div class="admin-logo">LUMINAR <span>CMS</span></div>
+      <div class="admin-logo">KRISHNENDU GOSWAMI <span>CMS</span></div>
       <div class="admin-actions">
         <a href="index.html" class="nav-back">View Site</a>
         <button onclick="resetMFA()" class="btn-outline" style="padding: 8px 18px; font-size: 11px; margin-right: 8px; border-color: rgba(220, 50, 50, 0.4); color: #ff6b6b;">Reset 2FA</button>
@@ -1950,8 +1950,8 @@
       // 2. Enroll the new factor
       const { data: enrollData, error: enrollError } = await supabaseClient.auth.mfa.enroll({
         factorType: 'totp',
-        issuer: 'Luminar Portfolio',
-        friendlyName: 'Luminar CMS'
+        issuer: 'Krishnendu Goswami Portfolio',
+        friendlyName: 'Krishnendu Goswami CMS'
       });
 
       if (enrollError) throw enrollError;
