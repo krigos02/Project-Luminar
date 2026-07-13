@@ -1852,7 +1852,7 @@
       } catch (mfaErr) {
         console.warn("MFA endpoints failed or are disabled in Supabase. Accessing dashboard directly:", mfaErr);
         document.getElementById('login-gate').style.display = 'none';
-        safePushState('/cms/dashboard');
+        safePushState('/admin.html#dashboard');
         await initDashboard();
         return;
       }
@@ -1910,7 +1910,7 @@
 
       // Redirect to dashboard page and initialize dashboard
       document.getElementById('login-gate').style.display = 'none';
-      safePushState('/cms/dashboard');
+      safePushState('/admin.html#dashboard');
       initDashboard();
     } catch (err) {
       console.error("MFA verification failed:", err);
@@ -1970,7 +1970,7 @@
       console.warn("MFA enrollment failed, logging in directly:", err);
       // Fallback: log in directly if MFA setup fails (e.g. if MFA is disabled in the Supabase project configuration)
       document.getElementById('login-gate').style.display = 'none';
-      safePushState('/cms/dashboard');
+      safePushState('/admin.html#dashboard');
       await initDashboard();
     }
   }
@@ -2005,7 +2005,7 @@
 
       // Success!
       document.getElementById('login-gate').style.display = 'none';
-      safePushState('/cms/dashboard');
+      safePushState('/admin.html#dashboard');
       initDashboard();
     } catch (err) {
       console.error("MFA enrollment verification failed:", err);
@@ -2112,8 +2112,8 @@
         } catch (mfaErr) {
           console.warn("MFA list factors failed, bypass directly to dashboard:", mfaErr);
           document.getElementById('login-gate').style.display = 'none';
-          if (window.location.pathname !== '/cms/dashboard') {
-            safePushState('/cms/dashboard');
+          if (window.location.hash !== '#dashboard') {
+            safePushState('/admin.html#dashboard');
           }
           await initDashboard();
           return;
@@ -2127,8 +2127,8 @@
           if (assuranceData && assuranceData.currentLevel === 'aal2') {
             // Logged in with MFA, auto-redirect/access
             document.getElementById('login-gate').style.display = 'none';
-            if (window.location.pathname !== '/cms/dashboard') {
-              safePushState('/cms/dashboard');
+            if (window.location.hash !== '#dashboard') {
+              safePushState('/admin.html#dashboard');
             }
             await initDashboard();
           } else {
@@ -2151,7 +2151,7 @@
         }
       } else {
         // If they navigate directly to /cms/dashboard without session, ensure they see login
-        if (window.location.pathname === '/cms/dashboard') {
+        if (window.location.hash === '#dashboard') {
           safePushState('/admin.html');
         }
       }
