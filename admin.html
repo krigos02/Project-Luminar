@@ -1634,14 +1634,14 @@
       </div>
 
       <!-- Save as Draft Checkbox -->
-      <div class="admin-form-group" style="display:flex; align-items:center; gap:8px; margin-top:15px; margin-bottom:15px;">
-        <input type="checkbox" id="blog-draft" style="width:16px; height:16px; cursor:pointer; margin:0;">
-        <label for="blog-draft" style="cursor:pointer; font-size:13px; font-weight:normal; margin:0; color:var(--text);">Save as Draft (will not be visible to public)</label>
+      <div class="admin-form-group" style="display:none;">
+        <input type="checkbox" id="blog-draft">
       </div>
 
       <div class="modal-actions">
         <button type="button" onclick="closeModal('blog-modal')" class="btn-outline">Cancel</button>
-        <button type="submit" class="btn-primary">Save Entry</button>
+        <button type="submit" onclick="document.getElementById('blog-draft').checked = true;" formnovalidate class="btn-outline" style="border-color: var(--gold); color: var(--gold);">Save Draft</button>
+        <button type="submit" onclick="document.getElementById('blog-draft').checked = false;" class="btn-primary">Save Entry</button>
       </div>
     </form>
   </div>
@@ -1728,13 +1728,13 @@
         <input type="text" id="story-bg" class="admin-form-control" placeholder="linear-gradient(...)">
       </div>
       <!-- Save as Draft Checkbox for Story -->
-      <div class="admin-form-group" style="display:flex; align-items:center; gap:8px; margin-top:15px; margin-bottom:15px;">
-        <input type="checkbox" id="story-draft" style="width:16px; height:16px; cursor:pointer; margin:0;">
-        <label for="story-draft" style="cursor:pointer; font-size:13px; font-weight:normal; margin:0; color:var(--text);">Save as Draft (will not be visible to public)</label>
+      <div class="admin-form-group" style="display:none;">
+        <input type="checkbox" id="story-draft">
       </div>
       <div class="modal-actions">
         <button type="button" onclick="closeModal('story-modal')" class="btn-outline">Cancel</button>
-        <button type="submit" class="btn-primary">Save Essay</button>
+        <button type="submit" onclick="document.getElementById('story-draft').checked = true;" formnovalidate class="btn-outline" style="border-color: var(--gold); color: var(--gold);">Save Draft</button>
+        <button type="submit" onclick="document.getElementById('story-draft').checked = false;" class="btn-primary">Save Essay</button>
       </div>
     </form>
   </div>
