@@ -1611,8 +1611,8 @@
           <div class="uploader-text">Drag &amp; drop or <span>Browse</span> thumbnail image</div>
           <input type="file" id="blog-file" accept="image/*" onchange="previewBlogImageFile(this)">
           
-          <div id="blog-preview-wrapper" style="display:none; position:relative; margin-top: 10px; height: 140px; overflow: hidden; border: 1px solid var(--border); padding: 4px; border-radius: 2px; background: var(--bg2); justify-content: center; align-items: flex-start;">
-            <img id="blog-upload-preview" style="width: 100%; height: auto; display: block; position: absolute; top: 0; left: 0; transition: transform 0.1s ease-out; transform: translateY(0px) scale(1);">
+          <div id="blog-preview-wrapper" style="display:none; position:relative; margin-top: 10px; border: 1px solid var(--border); padding: 4px; border-radius: 2px; background: var(--bg2); display: flex; justify-content: center; align-items: center; overflow: hidden; min-height: 150px; max-height: 250px;">
+            <img id="blog-upload-preview" style="max-height: 200px; object-fit: contain; width: auto; max-width: 100%; border-radius: 2px; transition: transform 0.1s ease-out; transform: translateY(0px) scale(1); position: relative; display: block;">
           </div>
           
           <!-- Size reducer slider -->
@@ -1626,6 +1626,27 @@
           <div id="blog-scroll-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
             <span style="font-size:11px; color:var(--text3);">Scroll Y:</span>
             <input type="range" id="blog-scroll-slider" min="-250" max="250" value="0" style="flex:1; cursor:pointer;" oninput="updateBlogPreviewTransform()">
+          </div>
+
+          <!-- WebP Conversion Options -->
+          <div id="blog-webp-options-container" style="display:none; margin-top: 15px; padding: 15px; border-radius: 4px; background: var(--bg2); border: 1px solid var(--border); box-sizing: border-box;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+              <input type="checkbox" id="blog-convert-webp-toggle" checked style="width: 16px; height: 16px; cursor: pointer; margin: 0;">
+              <label for="blog-convert-webp-toggle" style="cursor: pointer; font-size: 13.5px; font-weight: 500; margin: 0; color: var(--text);">Convert to WebP format before uploading</label>
+            </div>
+            
+            <div id="blog-webp-slider-group" style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label style="font-size: 12.5px; color: var(--text2); margin: 0;">WebP Export Quality</label>
+                <span id="blog-webp-quality-val" style="font-size: 12.5px; font-weight: 600; color: var(--gold);">85%</span>
+              </div>
+              <input type="range" id="blog-webp-quality" min="1" max="100" value="85" style="width: 100%; cursor: pointer; margin: 0; accent-color: var(--gold);">
+            </div>
+            
+            <div id="blog-webp-size-info" style="font-size: 12px; color: var(--text3); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px;">
+              Original Format Size: <strong id="blog-orig-size-display" style="color: var(--text);">-</strong><br>
+              Optimized WebP Size: <strong id="blog-webp-size-display" style="color: var(--text);">-</strong> <span id="blog-webp-savings-pct" style="color: #2e7d32; font-weight: 600; margin-left: 5px;"></span>
+            </div>
           </div>
         </div>
         <div id="blog-source-mode-url" class="admin-form-group" style="display:none;">
@@ -1687,8 +1708,8 @@
           <div class="uploader-text">Drag &amp; drop or <span>Browse</span> cover image</div>
           <input type="file" id="story-file" accept="image/*" onchange="previewStoryImageFile(this)">
           
-          <div id="story-preview-wrapper" style="display:none; position:relative; margin-top: 10px; height: 140px; overflow: hidden; border: 1px solid var(--border); padding: 4px; border-radius: 2px; background: var(--bg2); justify-content: center; align-items: flex-start;">
-            <img id="story-upload-preview" style="width: 100%; height: auto; display: block; position: absolute; top: 0; left: 0; transition: transform 0.1s ease-out; transform: translateY(0px) scale(1);">
+          <div id="story-preview-wrapper" style="display:none; position:relative; margin-top: 10px; border: 1px solid var(--border); padding: 4px; border-radius: 2px; background: var(--bg2); display: flex; justify-content: center; align-items: center; overflow: hidden; min-height: 150px; max-height: 250px;">
+            <img id="story-upload-preview" style="max-height: 200px; object-fit: contain; width: auto; max-width: 100%; border-radius: 2px; transition: transform 0.1s ease-out; transform: translateY(0px) scale(1); position: relative; display: block;">
           </div>
           
           <!-- Size reducer slider -->
@@ -1702,6 +1723,27 @@
           <div id="story-scroll-slider-container" style="display:none; align-items:center; gap:10px; margin-top:8px;">
             <span style="font-size:11px; color:var(--text3);">Scroll Y:</span>
             <input type="range" id="story-scroll-slider" min="-250" max="250" value="0" style="flex:1; cursor:pointer;" oninput="updateStoryPreviewTransform()">
+          </div>
+
+          <!-- WebP Conversion Options -->
+          <div id="story-webp-options-container" style="display:none; margin-top: 15px; padding: 15px; border-radius: 4px; background: var(--bg2); border: 1px solid var(--border); box-sizing: border-box;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+              <input type="checkbox" id="story-convert-webp-toggle" checked style="width: 16px; height: 16px; cursor: pointer; margin: 0;">
+              <label for="story-convert-webp-toggle" style="cursor: pointer; font-size: 13.5px; font-weight: 500; margin: 0; color: var(--text);">Convert to WebP format before uploading</label>
+            </div>
+            
+            <div id="story-webp-slider-group" style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label style="font-size: 12.5px; color: var(--text2); margin: 0;">WebP Export Quality</label>
+                <span id="story-webp-quality-val" style="font-size: 12.5px; font-weight: 600; color: var(--gold);">85%</span>
+              </div>
+              <input type="range" id="story-webp-quality" min="1" max="100" value="85" style="width: 100%; cursor: pointer; margin: 0; accent-color: var(--gold);">
+            </div>
+            
+            <div id="story-webp-size-info" style="font-size: 12px; color: var(--text3); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px;">
+              Original Format Size: <strong id="story-orig-size-display" style="color: var(--text);">-</strong><br>
+              Optimized WebP Size: <strong id="story-webp-size-display" style="color: var(--text);">-</strong> <span id="story-webp-savings-pct" style="color: #2e7d32; font-weight: 600; margin-left: 5px;"></span>
+            </div>
           </div>
         </div>
         <div id="story-source-mode-url" class="admin-form-group" style="display:none;">
@@ -1780,14 +1822,20 @@
   }
 
   function previewBlogImageFile(input) {
-    const preview = document.getElementById('blog-upload-preview');
+    const file = input.files[0];
+    if (!file) return;
+    originalBlogFileBlob = file;
+    document.getElementById('blog-webp-options-container').style.display = 'block';
+    blogImageWasModified = true;
+
     handleImageUpload(input, base64 => {
       currentUploadedBlogBase64 = base64;
-      preview.src = base64;
-      document.getElementById('blog-preview-wrapper').style.display = 'flex';
-      document.getElementById('blog-size-slider-container').style.display = 'flex';
-      document.getElementById('blog-scroll-slider-container').style.display = 'flex';
-      updateBlogPreviewTransform();
+      const img = new Image();
+      img.onload = function() {
+        originalBlogImage = img;
+        handleBlogWebPToggle();
+      };
+      img.src = base64;
     });
   }
 
@@ -1821,6 +1869,18 @@
   let originalImage = null;
   let optimizedWebPBlob = null;
   let imageWasModified = false;
+
+  // Blog WebP variables
+  let originalBlogFileBlob = null;
+  let originalBlogImage = null;
+  let optimizedBlogWebPBlob = null;
+  let blogImageWasModified = false;
+
+  // Story WebP variables
+  let originalStoryFileBlob = null;
+  let originalStoryImage = null;
+  let optimizedStoryWebPBlob = null;
+  let storyImageWasModified = false;
 
   // Handle step 1: Email and Password verification
   async function handleLoginStep1() {
@@ -3971,6 +4031,222 @@
     }
   }
 
+  // Blog WebP Helpers
+  function convertBlogImageToWebP() {
+    if (!originalBlogImage) return;
+    
+    const qualityVal = parseInt(document.getElementById('blog-webp-quality').value, 10);
+    document.getElementById('blog-webp-quality-val').textContent = qualityVal + '%';
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = originalBlogImage.naturalWidth;
+    canvas.height = originalBlogImage.naturalHeight;
+    
+    const ctx = canvas.getContext('2d');
+    try {
+      ctx.drawImage(originalBlogImage, 0, 0);
+      
+      const quality = qualityVal / 100;
+      
+      canvas.toBlob(blob => {
+        if (!blob) {
+          fallbackBlogNoCompression();
+          return;
+        }
+        optimizedBlogWebPBlob = blob;
+        
+        // Update sizes display
+        const origSize = originalBlogFileBlob ? (originalBlogFileBlob.size / 1024).toFixed(1) : 0;
+        const webpSize = (blob.size / 1024).toFixed(1);
+        
+        let origSizeStr = originalBlogFileBlob ? (origSize >= 1024 ? (origSize / 1024).toFixed(2) + ' MB' : origSize + ' KB') : 'Unknown';
+        let webpSizeStr = webpSize >= 1024 ? (webpSize / 1024).toFixed(2) + ' MB' : webpSize + ' KB';
+        
+        document.getElementById('blog-orig-size-display').textContent = origSizeStr;
+        document.getElementById('blog-webp-size-display').textContent = webpSizeStr;
+        
+        if (originalBlogFileBlob) {
+          const savings = ((originalBlogFileBlob.size - blob.size) / originalBlogFileBlob.size * 100).toFixed(0);
+          if (savings > 0) {
+            document.getElementById('blog-webp-savings-pct').textContent = `(Saved ${savings}%)`;
+          } else {
+            document.getElementById('blog-webp-savings-pct').textContent = `(${Math.abs(savings)}% larger)`;
+          }
+        } else {
+          document.getElementById('blog-webp-savings-pct').textContent = '';
+        }
+        
+        // Update live preview to show compressed WebP image
+        const preview = document.getElementById('blog-upload-preview');
+        const oldUrl = preview.src;
+        preview.src = URL.createObjectURL(blob);
+        preview.style.display = 'block';
+        document.getElementById('blog-preview-wrapper').style.display = 'flex';
+        document.getElementById('blog-size-slider-container').style.display = 'flex';
+        document.getElementById('blog-scroll-slider-container').style.display = 'flex';
+        
+        if (oldUrl && oldUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(oldUrl);
+        }
+      }, 'image/webp', quality);
+    } catch (e) {
+      console.warn("Blog WebP compression failed due to CORS security constraint:", e);
+      fallbackBlogNoCompression();
+    }
+  }
+
+  function fallbackBlogNoCompression() {
+    optimizedBlogWebPBlob = null;
+    document.getElementById('blog-webp-size-display').textContent = 'Blocked (CORS)';
+    document.getElementById('blog-webp-savings-pct').textContent = '';
+    const preview = document.getElementById('blog-upload-preview');
+    preview.src = originalBlogImage.src;
+    preview.style.display = 'block';
+    document.getElementById('blog-preview-wrapper').style.display = 'flex';
+    document.getElementById('blog-size-slider-container').style.display = 'flex';
+    document.getElementById('blog-scroll-slider-container').style.display = 'flex';
+  }
+
+  function handleBlogWebPToggle() {
+    const isChecked = document.getElementById('blog-convert-webp-toggle').checked;
+    document.getElementById('blog-webp-slider-group').style.display = isChecked ? 'block' : 'none';
+    
+    if (isChecked) {
+      if (originalBlogImage) {
+        convertBlogImageToWebP();
+      }
+    } else {
+      if (originalBlogFileBlob) {
+        const origSize = (originalBlogFileBlob.size / 1024).toFixed(1);
+        let origSizeStr = origSize >= 1024 ? (origSize / 1024).toFixed(2) + ' MB' : origSize + ' KB';
+        
+        document.getElementById('blog-orig-size-display').textContent = origSizeStr;
+        document.getElementById('blog-webp-size-display').textContent = 'Disabled';
+        document.getElementById('blog-webp-savings-pct').textContent = '';
+        
+        const preview = document.getElementById('blog-upload-preview');
+        const oldUrl = preview.src;
+        preview.src = currentUploadedBlogBase64;
+        preview.style.display = 'block';
+        document.getElementById('blog-preview-wrapper').style.display = 'flex';
+        document.getElementById('blog-size-slider-container').style.display = 'flex';
+        document.getElementById('blog-scroll-slider-container').style.display = 'flex';
+        
+        if (oldUrl && oldUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(oldUrl);
+        }
+      }
+    }
+  }
+
+  // Story WebP Helpers
+  function convertStoryImageToWebP() {
+    if (!originalStoryImage) return;
+    
+    const qualityVal = parseInt(document.getElementById('story-webp-quality').value, 10);
+    document.getElementById('story-webp-quality-val').textContent = qualityVal + '%';
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = originalStoryImage.naturalWidth;
+    canvas.height = originalStoryImage.naturalHeight;
+    
+    const ctx = canvas.getContext('2d');
+    try {
+      ctx.drawImage(originalStoryImage, 0, 0);
+      
+      const quality = qualityVal / 100;
+      
+      canvas.toBlob(blob => {
+        if (!blob) {
+          fallbackStoryNoCompression();
+          return;
+        }
+        optimizedStoryWebPBlob = blob;
+        
+        // Update sizes display
+        const origSize = originalStoryFileBlob ? (originalStoryFileBlob.size / 1024).toFixed(1) : 0;
+        const webpSize = (blob.size / 1024).toFixed(1);
+        
+        let origSizeStr = originalStoryFileBlob ? (origSize >= 1024 ? (origSize / 1024).toFixed(2) + ' MB' : origSize + ' KB') : 'Unknown';
+        let webpSizeStr = webpSize >= 1024 ? (webpSize / 1024).toFixed(2) + ' MB' : webpSize + ' KB';
+        
+        document.getElementById('story-orig-size-display').textContent = origSizeStr;
+        document.getElementById('story-webp-size-display').textContent = webpSizeStr;
+        
+        if (originalStoryFileBlob) {
+          const savings = ((originalStoryFileBlob.size - blob.size) / originalStoryFileBlob.size * 100).toFixed(0);
+          if (savings > 0) {
+            document.getElementById('story-webp-savings-pct').textContent = `(Saved ${savings}%)`;
+          } else {
+            document.getElementById('story-webp-savings-pct').textContent = `(${Math.abs(savings)}% larger)`;
+          }
+        } else {
+          document.getElementById('story-webp-savings-pct').textContent = '';
+        }
+        
+        // Update live preview to show compressed WebP image
+        const preview = document.getElementById('story-upload-preview');
+        const oldUrl = preview.src;
+        preview.src = URL.createObjectURL(blob);
+        preview.style.display = 'block';
+        document.getElementById('story-preview-wrapper').style.display = 'flex';
+        document.getElementById('story-size-slider-container').style.display = 'flex';
+        document.getElementById('story-scroll-slider-container').style.display = 'flex';
+        
+        if (oldUrl && oldUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(oldUrl);
+        }
+      }, 'image/webp', quality);
+    } catch (e) {
+      console.warn("Story WebP compression failed due to CORS security constraint:", e);
+      fallbackStoryNoCompression();
+    }
+  }
+
+  function fallbackStoryNoCompression() {
+    optimizedStoryWebPBlob = null;
+    document.getElementById('story-webp-size-display').textContent = 'Blocked (CORS)';
+    document.getElementById('story-webp-savings-pct').textContent = '';
+    const preview = document.getElementById('story-upload-preview');
+    preview.src = originalStoryImage.src;
+    preview.style.display = 'block';
+    document.getElementById('story-preview-wrapper').style.display = 'flex';
+    document.getElementById('story-size-slider-container').style.display = 'flex';
+    document.getElementById('story-scroll-slider-container').style.display = 'flex';
+  }
+
+  function handleStoryWebPToggle() {
+    const isChecked = document.getElementById('story-convert-webp-toggle').checked;
+    document.getElementById('story-webp-slider-group').style.display = isChecked ? 'block' : 'none';
+    
+    if (isChecked) {
+      if (originalStoryImage) {
+        convertStoryImageToWebP();
+      }
+    } else {
+      if (originalStoryFileBlob) {
+        const origSize = (originalStoryFileBlob.size / 1024).toFixed(1);
+        let origSizeStr = origSize >= 1024 ? (origSize / 1024).toFixed(2) + ' MB' : origSize + ' KB';
+        
+        document.getElementById('story-orig-size-display').textContent = origSizeStr;
+        document.getElementById('story-webp-size-display').textContent = 'Disabled';
+        document.getElementById('story-webp-savings-pct').textContent = '';
+        
+        const preview = document.getElementById('story-upload-preview');
+        const oldUrl = preview.src;
+        preview.src = currentUploadedStoryBase64;
+        preview.style.display = 'block';
+        document.getElementById('story-preview-wrapper').style.display = 'flex';
+        document.getElementById('story-size-slider-container').style.display = 'flex';
+        document.getElementById('story-scroll-slider-container').style.display = 'flex';
+        
+        if (oldUrl && oldUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(oldUrl);
+        }
+      }
+    }
+  }
+
   // Bind WebP control listeners
   document.addEventListener('DOMContentLoaded', () => {
     const webpQual = document.getElementById('webp-quality');
@@ -3987,6 +4263,39 @@
         handleWebPToggle();
       });
     }
+
+    // Blog WebP Listeners
+    const blogWebpQual = document.getElementById('blog-webp-quality');
+    const blogWebpToggle = document.getElementById('blog-convert-webp-toggle');
+    if (blogWebpQual) {
+      blogWebpQual.addEventListener('input', () => {
+        blogImageWasModified = true;
+        convertBlogImageToWebP();
+      });
+    }
+    if (blogWebpToggle) {
+      blogWebpToggle.addEventListener('change', () => {
+        blogImageWasModified = true;
+        handleBlogWebPToggle();
+      });
+    }
+
+    // Story WebP Listeners
+    const storyWebpQual = document.getElementById('story-webp-quality');
+    const storyWebpToggle = document.getElementById('story-convert-webp-toggle');
+    if (storyWebpQual) {
+      storyWebpQual.addEventListener('input', () => {
+        storyImageWasModified = true;
+        convertStoryImageToWebP();
+      });
+    }
+    if (storyWebpToggle) {
+      storyWebpToggle.addEventListener('change', () => {
+        storyImageWasModified = true;
+        handleStoryWebPToggle();
+      });
+    }
+
     const photoSrcInput = document.getElementById('photo-src');
     if (photoSrcInput) {
       photoSrcInput.addEventListener('input', (e) => {
@@ -4776,7 +5085,18 @@
     
     let blogUrl = getDirectImageUrl(document.getElementById('blog-src').value.trim());
     if (blogImageSourceMode === 'upload' && currentUploadedBlogBase64) {
-      if (currentUploadedBlogBase64.startsWith('data:image')) {
+      const convertWebP = document.getElementById('blog-convert-webp-toggle').checked;
+      if (convertWebP && optimizedBlogWebPBlob) {
+        const uploadedUrl = await uploadToCloudinary(optimizedBlogWebPBlob);
+        if (!uploadedUrl) {
+          if (saveBtn) {
+            saveBtn.textContent = origBtnText;
+            saveBtn.disabled = false;
+          }
+          return;
+        }
+        blogUrl = uploadedUrl;
+      } else if (currentUploadedBlogBase64.startsWith('data:image')) {
         const uploadedUrl = await uploadToCloudinary(currentUploadedBlogBase64);
         if (!uploadedUrl) {
           if (saveBtn) {
@@ -4894,14 +5214,20 @@
   }
 
   function previewStoryImageFile(input) {
-    const preview = document.getElementById('story-upload-preview');
+    const file = input.files[0];
+    if (!file) return;
+    originalStoryFileBlob = file;
+    document.getElementById('story-webp-options-container').style.display = 'block';
+    storyImageWasModified = true;
+
     handleImageUpload(input, base64 => {
       currentUploadedStoryBase64 = base64;
-      preview.src = base64;
-      document.getElementById('story-preview-wrapper').style.display = 'flex';
-      document.getElementById('story-size-slider-container').style.display = 'flex';
-      document.getElementById('story-scroll-slider-container').style.display = 'flex';
-      updateStoryPreviewTransform();
+      const img = new Image();
+      img.onload = function() {
+        originalStoryImage = img;
+        handleStoryWebPToggle();
+      };
+      img.src = base64;
     });
   }
 
@@ -4989,7 +5315,18 @@
     
     let storyUrl = getDirectImageUrl(document.getElementById('story-src').value.trim());
     if (storyImageSourceMode === 'upload' && currentUploadedStoryBase64) {
-      if (currentUploadedStoryBase64.startsWith('data:image')) {
+      const convertWebP = document.getElementById('story-convert-webp-toggle').checked;
+      if (convertWebP && optimizedStoryWebPBlob) {
+        const uploadedUrl = await uploadToCloudinary(optimizedStoryWebPBlob);
+        if (!uploadedUrl) {
+          if (saveBtn) {
+            saveBtn.textContent = origBtnText;
+            saveBtn.disabled = false;
+          }
+          return;
+        }
+        storyUrl = uploadedUrl;
+      } else if (currentUploadedStoryBase64.startsWith('data:image')) {
         const uploadedUrl = await uploadToCloudinary(currentUploadedStoryBase64);
         if (!uploadedUrl) {
           if (saveBtn) {
