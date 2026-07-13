@@ -488,6 +488,16 @@ function closeBlogView() {
   document.body.style.overflow = '';
 }
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function renderBlogComments(comments) {
   const list = document.getElementById('blog-comments-list');
   const countEl = document.getElementById('blog-comments-count');
@@ -502,10 +512,10 @@ function renderBlogComments(comments) {
   list.innerHTML = comments.map(c => `
     <div style="background: var(--bg2); padding: 8px 10px; border-radius: 4px; text-align: left;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-        <span style="font-weight:600;font-size:11px;color:var(--gold)">${c.name}</span>
+        <span style="font-weight:600;font-size:11px;color:var(--gold)">${escapeHtml(c.name)}</span>
         <span style="font-size:9px;color:var(--text3)">${c.date || new Date(c.timestamp).toLocaleDateString()}</span>
       </div>
-      <p style="font-size:12px;color:var(--text2);margin:0;white-space:pre-wrap;">${c.text}</p>
+      <p style="font-size:12px;color:var(--text2);margin:0;white-space:pre-wrap;">${escapeHtml(c.text)}</p>
     </div>
   `).join('');
   list.scrollTop = list.scrollHeight;

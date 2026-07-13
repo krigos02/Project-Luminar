@@ -877,10 +877,6 @@
   }
 
   /* Cyber Ledger Rows */
-  .cyber-ledger-row:hover {
-    background: rgba(255, 255, 255, 0.02) !important;
-    border-bottom-color: rgba(201, 169, 110, 0.25) !important;
-  }
   .cyber-ledger-row:last-child {
     border-bottom: none !important;
   }
@@ -2389,7 +2385,7 @@
       const sharesPct = (p.shares / total) * 100;
 
       return `
-        <div class="cyber-ledger-row" style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.04); transition:all 0.2s; position:relative; overflow:hidden;">
+        <div class="cyber-ledger-row" style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.04); position:relative; overflow:hidden;">
           <div style="display:flex; align-items:center; gap:0.75rem; min-width:0; flex:1;">
             <span style="font-family:monospace; font-weight:700; font-size:11px; color:${idx === 0 ? 'var(--gold)' : idx === 1 ? '#cbd5e1' : idx === 2 ? '#d97706' : 'var(--text3)'}; width:16px; text-align:left;">
               #${idx + 1}
@@ -2434,7 +2430,7 @@
       const sharesPct = (e.shares / total) * 100;
 
       return `
-        <div class="cyber-ledger-row" style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.04); transition:all 0.2s; position:relative; overflow:hidden;">
+        <div class="cyber-ledger-row" style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.04); position:relative; overflow:hidden;">
           <div style="display:flex; align-items:center; gap:0.75rem; min-width:0; flex:1;">
             <span style="font-family:monospace; font-weight:700; font-size:11px; color:${idx === 0 ? 'var(--gold)' : idx === 1 ? '#cbd5e1' : idx === 2 ? '#d97706' : 'var(--text3)'}; width:16px; text-align:left;">
               #${idx + 1}
@@ -2474,6 +2470,16 @@
       return;
     }
 
+    const escapeHtml = (str) => {
+      if (!str) return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    };
+
     // Sort by timestamp desc
     allComments.sort((a, b) => b.comment.timestamp - a.comment.timestamp);
 
@@ -2484,9 +2490,9 @@
       card.style.textAlign = 'left';
       card.innerHTML = `
         <div style="flex:1; min-width:0;">
-          <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); margin-bottom:4px">${item.itemTitle}</div>
-          <div style="font-weight:600; font-size:13px; color:white; margin-bottom:4px">${item.comment.name} <span style="font-weight:400; font-size:10px; color:var(--text3); margin-left:10px">${item.comment.date || new Date(item.comment.timestamp).toLocaleDateString()}</span></div>
-          <p style="font-size:12.5px; color:var(--text2); line-height:1.5; margin:0; white-space:pre-wrap;">${item.comment.text}</p>
+          <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); margin-bottom:4px">${escapeHtml(item.itemTitle)}</div>
+          <div style="font-weight:600; font-size:13px; color:white; margin-bottom:4px">${escapeHtml(item.comment.name)} <span style="font-weight:400; font-size:10px; color:var(--text3); margin-left:10px">${item.comment.date || new Date(item.comment.timestamp).toLocaleDateString()}</span></div>
+          <p style="font-size:12.5px; color:var(--text2); line-height:1.5; margin:0; white-space:pre-wrap;">${escapeHtml(item.comment.text)}</p>
         </div>
         <div class="cms-card-actions">
           <button class="cms-card-btn btn-danger" onclick="deleteCommentByAdmin('${item.type}', '${item.itemId}', '${item.subId}', '${item.comment.id}')">Remove</button>
