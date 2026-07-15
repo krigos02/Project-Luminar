@@ -1,10 +1,10 @@
-// Dynamic Content Management System (CMS) Database
+﻿// Dynamic Content Management System (CMS) Database
 // Consolidates all website data, making it dynamic and editable.
 
 const DEFAULT_SITE_DATA = {
   profile: {
     name: "Krishnendu Goswami",
-    title: "Luminar — Photography",
+    title: "Krishnendu Goswami — Photography",
     bioTitle: "Vision shaped by",
     bioTitleEm: "a thousand sunrises",
     bioExcerpt: "Krishnendu Goswami is an internationally exhibited photographer whose work navigates the quiet intersection of the natural world and human presence.",
@@ -45,56 +45,31 @@ const DEFAULT_SITE_DATA = {
       title: "Wild",
       em: "life",
       desc: "Intimate encounters with creatures in their natural habitat — patience rendered visible, silence translated into light.",
-      photosCount: "42 Photographs",
+      photosCount: "0 Photographs",
       location: "India, Nepal, Bhutan",
       years: "2018 — 2024",
-      filters: ["all", "mammals", "birds", "reptiles", "macro", "featured"],
-      photos: [
-        {id:0,tag:'mammals',title:'Snow Leopard at Dawn, Spiti',caption:'Kibber, Himachal Pradesh · 2022',story:'After fourteen days at 4,600 metres, this sub-adult male walked out of the boulder field at first light. I had three minutes before he disappeared back into the mountain.',cam:'Canon EOS R5',lens:'500mm f/4L IS',exp:'1/320s · f/5.6 · ISO 3200',loc:'Kibber, HP',date:'Feb 14, 2022',bg:'linear-gradient(145deg,#0f1a0f,#1a2e1a)',featured:true},
-        {id:1,tag:'birds',title:'Indian Roller in Flight',caption:'Kanha National Park · 2023',story:'The Indian Roller always waits on the highest perch. The challenge is anticipating which direction it will launch. After four hours of watching one bird, I began to read its intention.',cam:'Canon EOS R5',lens:'600mm f/4L IS',exp:'1/2000s · f/5 · ISO 1600',loc:'Kanha, MP',date:'Apr 3, 2023',bg:'linear-gradient(145deg,#0a1520,#152030)',featured:false},
-        {id:2,tag:'mammals',title:'Bengal Tiger, Bandhavgarh',caption:'Madhya Pradesh · 2023',story:'Tala gate, 0600h. The tiger came down the dry nala and stopped exactly where the light found a gap in the canopy. Sometimes the forest arranges itself.',cam:'Canon EOS R5',lens:'500mm f/4L IS',exp:'1/500s · f/4.5 · ISO 800',loc:'Bandhavgarh, MP',date:'Mar 18, 2023',bg:'linear-gradient(145deg,#1a1205,#2a1e0a)',featured:false},
-        {id:3,tag:'birds',title:'Great Hornbill Pair',caption:'Kaziranga, Assam · 2021',story:'I had been watching a nest hollow in a fig tree for three days. On the fourth morning both birds arrived together. The male held a fig in his bill for forty seconds before passing it to the female.',cam:'Canon EOS 5D IV',lens:'600mm f/4L IS',exp:'1/640s · f/5.6 · ISO 1250',loc:'Kaziranga, Assam',date:'Jan 22, 2021',bg:'linear-gradient(145deg,#100a1a,#1e1228)',featured:false},
-        {id:4,tag:'mammals',title:'Leopard at Sunset, Ranthambore',caption:'Rajasthan · 2022',story:'Zone 4, Rajbagh Lake. The leopard draped itself over the branch of an ancient banyan — the same tree it had used every evening for three seasons.',cam:'Canon EOS R5',lens:'400mm f/2.8L IS',exp:'1/250s · f/3.5 · ISO 4000',loc:'Ranthambore, RJ',date:'Nov 5, 2022',bg:'linear-gradient(145deg,#0a1a10,#142814)',featured:true},
-        {id:5,tag:'reptiles',title:'King Cobra, Agumbe',caption:'Karnataka · 2020',story:'The longest venomous snake in the world builds a nest and guards it — an unusual behaviour among serpents. This individual was photographed near its nesting site in the Western Ghats.',cam:'Canon EOS 5D IV',lens:'100mm f/2.8L Macro',exp:'1/160s · f/8 · ISO 400',loc:'Agumbe, KA',date:'Jun 8, 2020',bg:'linear-gradient(145deg,#1a0a0a,#2a1212)',featured:false},
-        {id:6,tag:'mammals',title:'Wild Elephant, Kabini',caption:'Karnataka · 2023',story:'The Kabini reservoir at dusk brings every species in the forest to the same shoreline. This elephant stood in the water for nearly twenty minutes, completely still.',cam:'Canon EOS R5',lens:'500mm f/4L IS',exp:'1/800s · f/4 · ISO 640',loc:'Kabini, KA',date:'Oct 14, 2023',bg:'linear-gradient(145deg,#121a0a,#1e2a10)',featured:false},
-        {id:7,tag:'macro',title:'Orchid Mantis, Silent Valley',caption:'Kerala · 2021',story:'The orchid mantis is perhaps the most compelling example of aggressive mimicry in the insect world. Finding one takes patience. Photographing it requires a different kind of stillness.',cam:'Canon EOS 5D IV',lens:'180mm f/3.5L Macro',exp:'1/200s · f/11 · ISO 200',loc:'Silent Valley, KL',date:'Aug 30, 2021',bg:'linear-gradient(145deg,#0a1510,#122010)',featured:false},
-        {id:8,tag:'birds',title:'Himalayan Monal, Chopta',caption:'Uttarakhand · 2022',story:'At 3,500m in the Tungnath oak forest in March, the Himalayan Monal males are displaying. The iridescent plumage catches and refracts light like a living prism.',cam:'Canon EOS R5',lens:'600mm f/4L IS',exp:'1/1000s · f/4.5 · ISO 2000',loc:'Chopta, UK',date:'Mar 4, 2022',bg:'linear-gradient(145deg,#0a0f1a,#101828)',featured:false},
-        {id:9,tag:'mammals',title:'One-Horned Rhino, Kaziranga',caption:'Assam · 2022',story:'The Indian one-horned rhino is a conservation success story measured in decades of ground-level work. Photographing them in the tall elephant grass requires getting low.',cam:'Canon EOS R5',lens:'400mm f/2.8L IS',exp:'1/400s · f/4 · ISO 800',loc:'Kaziranga, Assam',date:'Feb 10, 2022',bg:'linear-gradient(145deg,#101a14,#1a2a1e)',featured:false},
-        {id:10,tag:'macro',title:'Jewel Beetle, Coorg',caption:'Karnataka · 2023',story:'The Buprestid beetles of the Western Ghats are among the most spectacular insects in India. This individual was resting on a leaf after rain, the surface droplets acting as miniature lenses.',cam:'Canon EOS 5D IV',lens:'180mm f/3.5L Macro',exp:'1/160s · f/16 · ISO 320',loc:'Coorg, KA',date:'Jul 22, 2023',bg:'linear-gradient(145deg,#1a1508,#2a2010)',featured:false},
-        {id:11,tag:'mammals',title:'Wolf Pack at Dusk, Kibber',caption:'Himachal Pradesh · 2023',story:'The last light hit the ridge for eleven minutes. The pack moved through it in single file, the alpha ahead, two juveniles at the rear. I made 40 frames. This was the one.',cam:'Canon EOS R5',lens:'500mm f/4L IS',exp:'1/125s · f/4 · ISO 12800',loc:'Kibber, HP',date:'Oct 28, 2023',bg:'linear-gradient(145deg,#0f0f0f,#1e1e18)',featured:true}
-      ]
+      filters: ["all", "featured"],
+      photos: []
     },
     landscape: {
       title: "Land",
       em: "scape",
       desc: "The earth at its most eloquent — mountains, valleys, and the horizons between them, captured in moments of transient light.",
-      photosCount: "58 Photographs",
+      photosCount: "0 Photographs",
       location: "Himalayas, Western Ghats, Kutch",
       years: "2015 — 2024",
-      filters: ["all", "mountains", "valleys", "coastal", "astrophotography", "featured"],
-      photos: [
-        {id:0,tag:'mountains',title:'Misty Peak, Nun Kun',caption:'Zanskar Range, Ladakh · 2023',story:'Taken from a basecamp at 4,800m. The clouds split for exactly 45 seconds at sunrise, illuminating the dual peaks.',cam:'Sony A7R V',lens:'70-200mm f/2.8 GM',exp:'1/125s · f/8 · ISO 100',loc:'Nun Kun, Ladakh',date:'Sep 12, 2023',bg:'linear-gradient(145deg,#0d1624,#1a2b42)',featured:true},
-        {id:1,tag:'astrophotography',title:'Milky Way over Pangong Tso',caption:'Pangong Lake, Ladakh · 2022',story:'A single 20-second exposure at 14mm. The high altitude air (4,250m) provides extreme atmospheric transparency and no light pollution.',cam:'Sony A7R IV',lens:'14mm f/1.8 GM',exp:'20s · f/1.8 · ISO 3200',loc:'Pangong, Ladakh',date:'Jun 24, 2022',bg:'linear-gradient(145deg,#05051a,#101030)',featured:true},
-        {id:2,tag:'valleys',title:'Monsoon Clouds, Coorg Valley',caption:'Western Ghats, Karnataka · 2023',story:'Looking down from Raja Seat as the rain swept through. The forest canopy acts like a giant atmospheric pump.',cam:'Sony A7R V',lens:'24-70mm f/2.8 GM',exp:'1/250s · f/5.6 · ISO 200',loc:'Coorg, KA',date:'Jul 18, 2023',bg:'linear-gradient(145deg,#121b10,#223320)',featured:false},
-        {id:3,tag:'coastal',title:'Sunset at Kaup Beach',caption:'Udupi, Karnataka · 2021',story:'The iconic lighthouse standing tall against a dramatic monsoon sunset. A 5-second long exposure smoothened the wild ocean waves.',cam:'Sony A7R III',lens:'16-35mm f/4',exp:'5s · f/11 · ISO 100',loc:'Udupi, KA',date:'Oct 5, 2021',bg:'linear-gradient(145deg,#1f0a1f,#301030)',featured:false},
-        {id:4,tag:'mountains',title:'Sunset over Kanchenjunga',caption:'Sikkim, India · 2022',story:'The world\'s third highest peak glowing pink in the last light of a freezing December evening, viewed from Tiger Hill.',cam:'Sony A7R IV',lens:'100-400mm GM',exp:'1/80s · f/6.3 · ISO 100',loc:'Tiger Hill, WB',date:'Dec 15, 2022',bg:'linear-gradient(145deg,#1f0a0a,#3b1a1a)',featured:true},
-        {id:5,tag:'astrophotography',title:'Star Trails, Rann of Kutch',caption:'Gujarat, India · 2023',story:'A composite of 120 exposures of 30 seconds each, capturing the rotation of the Earth over the vast white salt flats.',cam:'Sony A7R V',lens:'24mm f/1.4 GM',exp:'30s (x120) · f/2.8 · ISO 800',loc:'Kutch, GJ',date:'Jan 10, 2023',bg:'linear-gradient(145deg,#030815,#0c152a)',featured:false}
-      ]
+      filters: ["all", "featured"],
+      photos: []
     },
     travel: {
       title: "Tra",
       em: "vel",
       desc: "Journeys documented with curiosity — cultures, borders, and the roads that connect them.",
-      photosCount: "35 Photographs",
+      photosCount: "0 Photographs",
       location: "Rajasthan, Ladakh, Northeast India",
       years: "2017 — 2023",
-      filters: ["all", "people", "architecture", "landscapes", "festivals", "featured"],
-      photos: [
-        {id:0,tag:'people',title:'Nomad Elder, Pushkar',caption:'Rajasthan, India · 2022',story:'A portrait of a camel herder. The deep creases on his face tell a story of a lifetime spent under the harsh Thar desert sun.',cam:'Fujifilm GFX 100S',lens:'110mm f/2',exp:'1/125s · f/2.2 · ISO 400',loc:'Pushkar, RJ',date:'Nov 8, 2022',bg:'linear-gradient(145deg,#1c120a,#332010)',featured:true},
-        {id:1,tag:'architecture',title:'Thiksey Monastery at Dusk',caption:'Leh, Ladakh · 2023',story:'Built on a hill-slope, this twelve-story monastery resembles the Potala Palace. Photographed as the monks lit the evening oil lamps.',cam:'Sony A7R V',lens:'24-70mm GM II',exp:'1/15s · f/4 · ISO 1600',loc:'Thiksey, Ladakh',date:'Sep 15, 2023',bg:'linear-gradient(145deg,#0d101a,#171c2f)',featured:true},
-        {id:2,tag:'festivals',title:'Hornbill Festival Dancer',caption:'Kohima, Nagaland · 2021',story:'A Naga warrior in traditional headgear during the opening ceremony. The motion of the dance was captured with a slow panning shutter.',cam:'Sony A7R IV',lens:'70-200mm GM',exp:'1/30s · f/5.6 · ISO 200',loc:'Kisama, Nagaland',date:'Dec 1, 2021',bg:'linear-gradient(145deg,#1f0a0a,#331010)',featured:false},
-        {id:3,tag:'landscapes',title:'Bridges of Cherrapunji',caption:'Meghalaya, India · 2022',story:'The double-decker living root bridge in Nongriat village, hand-guided by the Khasi people across generations.',cam:'Sony A7R IV',lens:'16-35mm f/4',exp:'1/4s · f/8 · ISO 400',loc:'Nongriat, Meghalaya',date:'Oct 22, 2022',bg:'linear-gradient(145deg,#0f1c12,#1a3320)',featured:false}
-      ]
+      filters: ["all", "featured"],
+      photos: []
     },
     street: {
       title: "Str",
@@ -172,7 +147,9 @@ const DEFAULT_SITE_DATA = {
       excerpt: "Three weeks at 4,800 metres — what I learned about waiting, altitude, and the moment a wild cat decides you're not a threat.",
       date: "March 2024",
       readTime: "8 min read",
-      bg: "linear-gradient(135deg,#0a1a0a,#0f2010)"
+      bg: "linear-gradient(135deg,#0a1a0a,#0f2010)",
+      template: "classic",
+      content: "<h2>The High Altitude Ghost</h2><p>Three weeks in the Spiti Valley during the absolute depth of winter changes your relationship with time. In sub-zero temperatures, where the air is thin and dry, breathing is a conscious act. You do not move fast. You do not search impatiently. You learn to wait.</p><blockquote>\"The snow leopard does not reveal itself to the seeker; it reveals itself to the patient.\"<cite>— Spiti Field Diary</cite></blockquote><h2>Discipline of the Cold</h2><p>We set up our cameras at 4,800 metres. Tracking a leopard requires tracking its prey, observing the movements of blue sheep, and listening to the alarm calls of Himalayan griffons. In these extreme heights, your gear is pushed to the limit. Batteries lose charge in minutes, and focus rings freeze stiff. But the ultimate constraint is human willpower.</p>"
     },
     {
       id: 1,
@@ -181,7 +158,9 @@ const DEFAULT_SITE_DATA = {
       excerpt: "Star charts, local guides, and the irreplaceable value of arriving the night before — a guide to planning astrophotography expeditions.",
       date: "January 2024",
       readTime: "6 min read",
-      bg: "linear-gradient(135deg,#0d101a,#171c2f)"
+      bg: "linear-gradient(135deg,#0d101a,#171c2f)",
+      template: "magazine",
+      content: "<h2>Celestial Navigation</h2><p>Before GPS coordinates and satellite tracking made remote locations easily chartable, astrophotography was an exercise in celestial navigation and local storytelling. Arriving a day early to meet village elders and understand how they navigate by the stars is not just backup planning—it is the soul of wilderness photography.</p><h2>Finding the Horizon</h2><p>In total darkness, the digital viewfinder is of little help. Understanding the exact path of the Milky Way across the meridian using star charts requires pre-visualization. I rely on analog calculations to determine exposure times, alignment, and composition, ensuring that the light of stars is captured in its purest, most authentic state.</p>"
     },
     {
       id: 2,
@@ -190,7 +169,9 @@ const DEFAULT_SITE_DATA = {
       excerpt: "The slow, deliberate economy of 36 exposures per roll is not a limitation — it's a form of discipline that digital abundance quietly erodes.",
       date: "November 2023",
       readTime: "5 min read",
-      bg: "linear-gradient(135deg,#1c120a,#332010)"
+      bg: "linear-gradient(135deg,#1c120a,#332010)",
+      template: "photo_essay",
+      content: "<h2>The Discipline of 36 Frames</h2><p>To shoot film today is not to retreat into nostalgia, but to actively choose constraint. In a digital world of infinite captures, the cost of taking a photo is effectively zero. This leads to a lazy eye. When every click has a material cost—the cost of the frame, the chemical development, and the time—you begin to look differently.</p><h2>Economy of Looking</h2><p>A roll of film forces you to ask: <i>Is this frame worth existing?</i> You wait for the light to settle. You wait for the gesture to complete. You compose, re-check, and only then do you press the shutter. That hesitation is where art happens.</p>"
     }
   ]
 };
@@ -199,6 +180,7 @@ const DEFAULT_SITE_DATA = {
 const supabaseUrl = 'https://wxqwjxmcllfcmtwrspmz.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4cXdqeG1jbGxmY210d3JzcG16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NDYzMzUsImV4cCI6MjA5NzUyMjMzNX0.VX6r0mMm_zrdUKIjg7vt4kEikHxqLy-_mNRdYYWeoto';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+window.supabaseClient = supabaseClient;
 
 // Global Store Management
 let siteData = DEFAULT_SITE_DATA;
@@ -240,6 +222,22 @@ async function initDatabase() {
     }
   }
 
+  // Clean up broken image clutter (missing or empty src)
+  if (siteData.homepagePhotos) {
+    const origHomeLen = siteData.homepagePhotos.length;
+    siteData.homepagePhotos = siteData.homepagePhotos.filter(p => p && p.src && p.src.trim() !== '');
+    if (siteData.homepagePhotos.length !== origHomeLen) { needsSave = true; }
+  }
+  if (siteData.galleryCategories) {
+    for (const catKey in siteData.galleryCategories) {
+      const cat = siteData.galleryCategories[catKey];
+      if (cat && cat.photos) {
+        const origCatLen = cat.photos.length;
+        cat.photos = cat.photos.filter(p => p && p.src && p.src.trim() !== '');
+        if (cat.photos.length !== origCatLen) { needsSave = true; }
+      }
+    }
+  }
   // Clean up default seeded unsplash images from loaded siteData
   let needsSave = false;
   if (siteData.homepagePhotos) {

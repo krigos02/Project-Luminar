@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gallery — Luminar</title>
+<title>Gallery — Krishnendu Goswami</title>
 <meta name="description" content="Photography portfolio categories and galleries.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -840,12 +840,14 @@
   .view-controls { display: none; }
 }
 </style>
+
+  <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="no-select">
 
 <!-- Loader -->
 <div id="loader" role="status" aria-live="polite">
-  <div class="loader-logo">Luminar</div>
+  <div class="loader-logo">Krishnendu Goswami</div>
   <div class="loader-bar"><div class="loader-fill"></div></div>
 </div>
 
@@ -860,9 +862,7 @@
       <a href="portfolio.html" class="nav-back">← <span>All Categories</span></a>
     </div>
     <div class="brand-header">
-      <a href="index.html" class="brand-logo">
-        Krishnendu Goswami
-      </a>
+      <a href="index.html" class="brand-logo" style="display: inline-flex; align-items: center; gap: 8px;"><img src="logo.png" alt="KG Logo" style="height: 28px; width: auto; object-fit: contain;">Krishnendu Goswami</a>
     </div>
     <nav class="site-nav" role="navigation" aria-label="Main navigation">
       <ul class="nav-menu">
@@ -1165,7 +1165,7 @@ function initPage() {
   if (!data) return;
   
   // 1. Update Head title
-  document.title = `${data.title}${data.em} — Portfolio · Luminary`;
+  document.title = `${data.title}${data.em} — Portfolio · Krishnendu Goswami`;
   
   // 2. Update Header elements
   document.getElementById('breadcrumb-current').textContent = data.title + data.em;
@@ -1411,6 +1411,25 @@ function lbNav(dir) {
   lbGoTo((lbIdx + dir + filteredPhotos.length) % filteredPhotos.length);
 }
 
+function toggleStoryFold(btn) {
+  const parent = btn.parentElement;
+  const collapsedSpan = parent.querySelector('.story-collapsed-text');
+  const expandedSpan = parent.querySelector('.story-expanded-text');
+  if (collapsedSpan && expandedSpan) {
+    const isExpanded = expandedSpan.style.display !== 'none';
+    if (isExpanded) {
+      expandedSpan.style.display = 'none';
+      collapsedSpan.style.display = 'inline';
+      btn.textContent = '[...show more]';
+    } else {
+      expandedSpan.style.display = 'inline';
+      collapsedSpan.style.display = 'none';
+      btn.textContent = ' [...show less]';
+    }
+  }
+}
+window.toggleStoryFold = toggleStoryFold;
+
 function updateLb() {
   const p = filteredPhotos[lbIdx];
   if (!p) return;
@@ -1425,11 +1444,32 @@ function updateLb() {
   document.getElementById('lb-title').textContent = p.title;
   document.getElementById('lb-caption').textContent = p.caption;
   
-  // Render Behind-the-Lens Story with HTML and layout toggling
+  // Render Behind-the-Lens Story with HTML and layout toggling (with fold/unfold)
   const storyEl = document.getElementById('lb-story');
   const storyDiv = document.getElementById('lb-story-divider');
   if (p.story && p.story.trim() !== '' && p.story !== '-') {
-    storyEl.innerHTML = p.story;
+    const origStoryText = p.story;
+    // Strip HTML tags for word counting, or count simple text characters
+    const cleanText = origStoryText.replace(/<[^>]*>/g, '').trim();
+    
+    if (cleanText.length > 250) {
+      // Find a safe cutting spot near 220 characters
+      let cutIdx = 220;
+      const spaceIdx = cleanText.indexOf(' ', 220);
+      if (spaceIdx !== -1 && spaceIdx < 280) {
+        cutIdx = spaceIdx;
+      }
+      
+      const snippet = cleanText.substring(0, cutIdx) + '...';
+      
+      storyEl.innerHTML = `
+        <span class="story-collapsed-text">${snippet}</span>
+        <span class="story-expanded-text" style="display:none;">${origStoryText}</span>
+        <button class="story-toggle-btn" onclick="toggleStoryFold(this)" style="display:inline; border:none; background:none; color:var(--gold); font-size:12.5px; padding:0; margin-left:4px; cursor:pointer; font-weight:600; text-transform:none;">[...show more]</button>
+      `;
+    } else {
+      storyEl.innerHTML = origStoryText;
+    }
     storyEl.style.display = '';
     if (storyDiv) storyDiv.style.display = '';
   } else {

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Last Snow Leopard Corridors — Luminar</title>
+<title>The Last Snow Leopard Corridors — Krishnendu Goswami</title>
 <meta name="description" content="A four-year journey documenting the fragile survival of snow leopards in Spiti and Ladakh.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -616,6 +616,8 @@ a {
   stroke: #ff3b30;
 }
 </style>
+
+  <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="no-select">
 
@@ -624,7 +626,7 @@ a {
 
 <!-- Loader -->
 <div id="loader" role="status" aria-live="polite">
-  <div class="loader-logo">Luminar</div>
+  <div class="loader-logo">Krishnendu Goswami</div>
   <div class="loader-bar"><div class="loader-fill"></div></div>
 </div>
 
@@ -639,9 +641,7 @@ a {
       <a href="stories.html" class="nav-back">← <span>All Stories</span></a>
     </div>
     <div class="brand-header">
-      <a href="index.html" class="brand-logo">
-        Krishnendu Goswami
-      </a>
+      <a href="index.html" class="brand-logo" style="display: inline-flex; align-items: center; gap: 8px;"><img src="logo.png" alt="KG Logo" style="height: 28px; width: auto; object-fit: contain;">Krishnendu Goswami</a>
     </div>
     <div class="header-actions">
       <!-- Theme toggle will be injected here -->
@@ -962,7 +962,7 @@ function loadStoryDetails() {
       const story = window.siteData.stories.find(s => s.slug === storySlug);
       if (story) {
         currentStory = story;
-        document.title = `${story.title} — Stories · Luminar`;
+        document.title = `${story.title} — Stories · Krishnendu Goswami`;
         
         const tagEl = document.querySelector('.story-tag');
         if (tagEl) tagEl.textContent = story.tag;

@@ -267,10 +267,17 @@ function updateDynamicLayout() {
         <a href="admin.html" class="footer-admin-link" style="opacity: 0.4; transition: opacity 0.2s; text-decoration: none; font-size: 11.5px; letter-spacing: 0.05em; display: inline-block; margin-top: 5px;">CMS Dashboard</a>`;
     });
 
-    // Replace Luminary with Luminar in texts and loaders
+    // Replace Luminary/Luminar with Krishnendu Goswami in texts, footers and loaders
     document.querySelectorAll('.loader-logo, .nav-logo, .footer-brand .nav-logo, title, h2').forEach(el => {
-      if (el.textContent.includes('Luminary')) {
-        el.innerHTML = el.innerHTML.replace(/Luminary/g, 'Luminar');
+      if (el.textContent.includes('Luminary') || el.textContent.includes('Luminar')) {
+        if (el.classList.contains('nav-logo')) {
+          el.innerHTML = `<img src="logo.png" alt="KG Logo" style="height: 24px; width: auto; object-fit: contain; margin-right: 8px;"> Krishnendu Goswami`;
+          el.style.display = 'inline-flex';
+          el.style.alignItems = 'center';
+          el.style.textTransform = 'none';
+        } else {
+          el.innerHTML = el.innerHTML.replace(/Luminary/g, 'Krishnendu Goswami').replace(/Luminar/g, 'Krishnendu Goswami');
+        }
       }
     });
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -18,6 +18,195 @@
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
+  }
+
+  /* ── TIPTAP RICH EDITOR MODERN DESIGN SYSTEM ── */
+  .tiptap-editor-wrapper {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .tb-btn {
+    background: none;
+    border: 1px solid transparent;
+    color: var(--text2);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 11.5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    font-weight: 500;
+    line-height: 1.2;
+    text-transform: none !important;
+  }
+  .tb-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    border-color: var(--border);
+  }
+  .tb-btn.active {
+    background: rgba(201, 169, 110, 0.15);
+    color: var(--gold);
+    border-color: var(--gold2);
+  }
+  .tb-divider {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    margin: 0 4px;
+  }
+  .tb-btn-primary {
+    background: var(--gold);
+    border: none;
+    color: #000000;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .tb-btn-primary:hover {
+    background: var(--gold2);
+  }
+  
+  /* Light theme overrides for Tiptap toolbar buttons */
+  html[data-theme="light"] .tb-btn {
+    color: #333333 !important;
+  }
+  html[data-theme="light"] .tb-btn:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: #000000 !important;
+  }
+  html[data-theme="light"] .tb-btn.active {
+    background: rgba(201, 169, 110, 0.15) !important;
+    color: #a48148 !important;
+    border-color: #c9a96e !important;
+  }
+  html[data-theme="light"] .tb-btn-primary {
+    background: #c9a96e !important;
+    color: #ffffff !important;
+    border: none !important;
+  }
+  html[data-theme="light"] .tb-btn-primary:hover {
+    background: #a48148 !important;
+  }
+
+  /* Tiptap content editable frame */
+  .ProseMirror {
+    min-height: 380px;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: var(--text3);
+    pointer-events: none;
+    height: 0;
+    font-style: italic;
+  }
+  .ProseMirror p {
+    margin-bottom: 1.25rem;
+    line-height: 1.7;
+    font-size: 14px;
+    color: var(--text2);
+  }
+  .ProseMirror h1, .ProseMirror h2, .ProseMirror h3 {
+    color: #ffffff;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+  .ProseMirror h1 { font-size: 2.2rem; }
+  .ProseMirror h2 { font-size: 1.7rem; }
+  .ProseMirror h3 { font-size: 1.35rem; }
+  .ProseMirror blockquote {
+    border-left: 3px solid var(--gold);
+    padding: 0.5rem 1.25rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    background: rgba(201, 169, 110, 0.02);
+    color: var(--text);
+  }
+  .ProseMirror ul, .ProseMirror ol {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+  .ProseMirror li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+  /* Task List Styles */
+  .ProseMirror ul[data-type="taskList"] {
+    list-style: none;
+    padding: 0;
+  }
+  .ProseMirror ul[data-type="taskList"] li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+  }
+  .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
+    margin-top: 4px;
+    cursor: pointer;
+    accent-color: var(--gold);
+  }
+  /* Table Styles */
+  .ProseMirror table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    margin: 2rem 0;
+    overflow: hidden;
+  }
+  .ProseMirror td, .ProseMirror th {
+    border: 1px solid var(--border);
+    box-sizing: border-box;
+    min-width: 1em;
+    padding: 10px;
+    position: relative;
+    vertical-align: top;
+    font-size: 13px;
+  }
+  .ProseMirror th {
+    background: var(--bg2);
+    font-weight: 600;
+    text-align: left;
+    color: #ffffff;
+  }
+  .ProseMirror img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+  .ProseMirror hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+  .ProseMirror pre {
+    background: #0f172a;
+    border: 1px solid var(--border);
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: monospace;
+    margin: 1.5rem 0;
+  }
+  .ProseMirror pre code {
+    color: #f1f5f9;
+    font-size: 12px;
   }
 
   /* Admin Gates and Login UI */
@@ -882,6 +1071,8 @@
   }
 </style>
 <div class="bg-blob-3"></div>
+
+  <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
 
@@ -1093,7 +1284,7 @@
           </div>
         </div>
 
-        <div style="border-top: 1px solid var(--border); margin-top: 3rem; padding-top: 2rem;">
+        <div style="display:none; border-top: 1px solid var(--border); margin-top: 3rem; padding-top: 2rem;">
           <div class="panel-header" style="padding: 0; margin-bottom: 1rem; border-bottom: none;">
             <div>
               <h2 class="panel-title" style="margin-bottom: 0.5rem;">Portfolio Filter Tabs (portfolio.html Groups)</h2>
@@ -1519,43 +1710,82 @@
 </div>
 
 <!-- MODAL: RICH STORY EDITOR -->
-<div id="story-editor-modal" class="admin-modal" style="z-index: 100000;">
-  <div class="modal-content" style="max-width: 800px; width: 90%;">
-    <h3 class="panel-title" style="margin-bottom:1rem">Behind-the-Lens Story Editor</h3>
+<div id="story-editor-modal" class="admin-modal" style="z-index: 100000; padding: 0;">
+  <div class="modal-content" style="max-width: 100%; width: 100%; height: 100vh; display: flex; flex-direction: column; border: none; border-radius: 0; padding: 0; background: var(--bg); margin: 0; box-shadow: none;">
     
-    <!-- Toolbar -->
-    <div class="editor-toolbar" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; padding: 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;">
-      <button type="button" class="btn-outline" onclick="insertStoryFormat('<b>', '</b>')" style="padding: 4px 8px; font-size: 11px; font-weight: bold; text-transform: none !important;">B</button>
-      <button type="button" class="btn-outline" onclick="insertStoryFormat('<i>', '</i>')" style="padding: 4px 8px; font-size: 11px; font-style: italic; text-transform: none !important;">I</button>
-      <button type="button" class="btn-outline" onclick="insertStoryFormat('<u>', '</u>')" style="padding: 4px 8px; font-size: 11px; text-decoration: underline; text-transform: none !important;">U</button>
-      <div style="width: 1px; background: var(--border); margin: 0 4px;"></div>
-      <!-- Greek Symbols & Special Characters -->
-      <button type="button" class="btn-outline" onclick="insertStoryChar('α')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">α</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('β')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">β</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('γ')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">γ</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('δ')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">δ</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('λ')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">λ</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('θ')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">θ</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('π')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">π</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('Σ')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">Σ</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('Ω')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">Ω</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('°')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">°</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('′')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">′</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('″')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">″</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('×')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">×</button>
-      <button type="button" class="btn-outline" onclick="insertStoryChar('±')" style="padding: 4px 8px; font-size: 11px; text-transform: none !important;">±</button>
-    </div>
-    <div style="font-size: 11px; color: var(--text3); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-      <span>Or copy/paste directly (click to copy):</span>
-      <input type="text" value="α β γ δ λ θ π Σ Ω ° ′ ″ × ±" readonly onclick="this.select(); document.execCommand('copy');" style="background: rgba(255,255,255,0.05); border: 1px dashed var(--border); color: var(--gold); font-size: 11px; padding: 2px 6px; border-radius: 2px; width: 220px; cursor: pointer; text-align: center;" title="Click to copy all">
+    <!-- Tiptap Editor & Toolbar Wrapper -->
+    <div class="tiptap-editor-wrapper" style="border: none; border-radius: 0; overflow: hidden; background: var(--bg); display: flex; flex-direction: column; flex: 1; min-height: 0; position: relative;">
+      
+      <!-- Sticky Toolbar -->
+      <div id="tiptap-toolbar" style="position: sticky; top: 0; z-index: 10; display: flex; gap: 4px; flex-wrap: wrap; padding: 8px 12px; background: var(--bg2); border-bottom: 1px solid var(--border); align-items: center; justify-content: flex-start;">
+        
+        <!-- Text Formatting -->
+        <button type="button" class="tb-btn" data-action="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+        <button type="button" class="tb-btn" data-action="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+        <button type="button" class="tb-btn" data-action="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+        <button type="button" class="tb-btn" data-action="strike" title="Strike (Ctrl+Shift+X)"><s>S</s></button>
+        <button type="button" class="tb-btn" data-action="highlight" title="Highlight text">Highlight</button>
+        
+        <div class="tb-divider"></div>
+        
+        <!-- Headings -->
+        <button type="button" class="tb-btn" data-action="paragraph" title="Normal text">P</button>
+        <button type="button" class="tb-btn" data-action="h1" title="Heading 1">H1</button>
+        <button type="button" class="tb-btn" data-action="h2" title="Heading 2">H2</button>
+        <button type="button" class="tb-btn" data-action="h3" title="Heading 3">H3</button>
+        
+        <div class="tb-divider"></div>
+        
+        <!-- Lists -->
+        <button type="button" class="tb-btn" data-action="bulletList" title="Bullet List">List</button>
+        <button type="button" class="tb-btn" data-action="orderedList" title="Numbered List">Num</button>
+        <button type="button" class="tb-btn" data-action="taskList" title="Task List">Tasks</button>
+        
+        <div class="tb-divider"></div>
+        
+        <!-- Alignment -->
+        <button type="button" class="tb-btn" data-action="alignLeft" title="Align Left">Left</button>
+        <button type="button" class="tb-btn" data-action="alignCenter" title="Align Center">Center</button>
+        <button type="button" class="tb-btn" data-action="alignRight" title="Align Right">Right</button>
+        <button type="button" class="tb-btn" data-action="alignJustify" title="Justify">Justify</button>
+        
+        <div class="tb-divider"></div>
+        
+        <!-- Insert -->
+        <button type="button" class="tb-btn" data-action="link" title="Insert Link">Link</button>
+        <button type="button" class="tb-btn" data-action="image" title="Upload Image">+ Photo</button>
+        <button type="button" class="tb-btn" data-action="table" title="Insert Table">Table</button>
+        <button type="button" class="tb-btn" data-action="horizontalRule" title="Horizontal Rule">Line</button>
+        <button type="button" class="tb-btn" data-action="codeBlock" title="Code Block">Code</button>
+        <button type="button" class="tb-btn" data-action="blockquote" title="Blockquote">Quote</button>
+        
+        <div class="tb-divider"></div>
+        
+        <!-- History -->
+        <button type="button" class="tb-btn" data-action="undo" title="Undo (Ctrl+Z)">Undo</button>
+        <button type="button" class="tb-btn" data-action="redo" title="Redo (Ctrl+Shift+Z)">Redo</button>
+        
+        <!-- Actions (Right side of toolbar) -->
+        <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+          <button type="button" class="tb-btn-primary" id="btn-editor-preview" onclick="window.openEditorLivePreview()" style="display: flex; align-items: center; gap: 4px; text-transform: none !important;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:12px; height:12px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Preview
+          </button>
+          <button type="button" class="tb-btn" onclick="window.closeModal('story-editor-modal')" style="border: 1px solid var(--border); padding: 6px 12px;">Cancel</button>
+          <button type="button" class="tb-btn-primary" onclick="window.saveStoryEditorContent()" style="background: var(--gold); color: #000; font-weight: 600; padding: 6px 14px;">Apply Changes</button>
+        </div>
+      </div>
+      
+      <!-- Uploading Image status -->
+      <div id="editor-upload-status" style="display: none; position: absolute; top: 55px; left: 50%; transform: translateX(-50%); background: var(--gold3); border: 1px solid var(--gold2); color: var(--gold); padding: 6px 16px; border-radius: 20px; font-size: 11.5px; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.5); font-weight: 500;">
+        Uploading...
+      </div>
+      
+      <!-- Scrollable editor context area -->
+      <div id="tiptap-editor-content" style="flex: 1; padding: 30px 40px; overflow-y: auto; outline: none; box-sizing: border-box; text-align: left;"></div>
     </div>
     
-    <textarea id="story-editor-textarea" style="width: 100%; height: 350px; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px; font-family: inherit; font-size: 13px; line-height: 1.6; border-radius: 4px; resize: vertical; outline: none;"></textarea>
-    
-    <div class="modal-actions" style="margin-top: 15px;">
-      <button type="button" id="btn-story-cancel" class="btn-outline" onclick="window.closeModal('story-editor-modal')">Cancel</button>
-      <button type="button" id="btn-story-apply" class="btn-primary" onclick="window.saveStoryEditorContent()">Apply Changes</button>
-    </div>
+    <input type="file" id="tiptap-image-file-input" style="display:none;" accept="image/*" onchange="window.uploadTiptapEditorImageFile(this)">
   </div>
 </div>
 
@@ -1597,6 +1827,25 @@
         <div class="admin-form-group">
           <label>Card Background Gradient (CSS style)</label>
           <input type="text" id="blog-bg" class="admin-form-control" placeholder="linear-gradient(...)">
+        </div>
+      </div>
+      
+      <div class="form-row-2" style="margin-top: 15px;">
+        <div class="admin-form-group">
+          <label>Presentation Template</label>
+          <select id="blog-template" class="admin-form-control" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);">
+            <option value="classic">Classic Editorial (Clean Serif Diary)</option>
+            <option value="magazine">Modern Magazine (Overlaid Header & Sidebar)</option>
+            <option value="photo_essay">Visual Photo Essay (Dark-bleed Full width Showcase)</option>
+          </select>
+        </div>
+        <div class="admin-form-group" style="display:flex; flex-direction:column; justify-content:flex-end;">
+          <label>Full Blog Content</label>
+          <button type="button" class="btn-primary" onclick="window.openStoryEditor('blog-content')" style="width: 100%; padding: 10px; font-size:11.5px; height: 38px; border-radius: 4px; display:flex; align-items:center; justify-content:center; gap:6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Write / Edit Full Article Content
+          </button>
+          <textarea id="blog-content" style="display:none;"></textarea>
         </div>
       </div>
       
@@ -4979,6 +5228,9 @@
         document.getElementById('blog-date').value = e.date;
         document.getElementById('blog-bg').value = e.bg || '';
         document.getElementById('blog-draft').checked = !!e.draft;
+        document.getElementById('blog-template').value = e.template || 'classic';
+        document.getElementById('blog-content').value = e.content || '';
+        window.latestTiptapHtmlContent = e.contentHtml || '';
         
         if (e.src) {
           const wrapper = document.getElementById('blog-preview-wrapper');
@@ -5000,6 +5252,9 @@
       document.getElementById('blog-modal-title').textContent = "Create Journal Entry";
       document.getElementById('blog-id').value = "-1";
       document.getElementById('blog-bg').value = "linear-gradient(135deg,#151515,#2a2a2a)";
+      document.getElementById('blog-template').value = 'classic';
+      document.getElementById('blog-content').value = '';
+      window.latestTiptapHtmlContent = '';
     }
     modal.classList.add('open');
   }
@@ -5054,7 +5309,10 @@
       src: blogUrl,
       scale: 100,
       offsetY: 0,
-      draft: document.getElementById('blog-draft').checked
+      draft: document.getElementById('blog-draft').checked,
+      template: document.getElementById('blog-template').value || 'classic',
+      content: document.getElementById('blog-content').value || '',
+      contentHtml: window.latestTiptapHtmlContent || ''
     };
     
     const list = [ ...window.siteData.journalEntries ];
@@ -5192,6 +5450,7 @@
         document.getElementById('story-tag').value = e.tag;
         document.getElementById('story-title').value = e.title;
         document.getElementById('story-desc').value = e.desc;
+        window.latestTiptapHtmlStory = e.descHtml || '';
         document.getElementById('story-years').value = e.years;
         document.getElementById('story-duration').value = e.duration;
         document.getElementById('story-loc').value = e.location;
@@ -5219,6 +5478,7 @@
       document.getElementById('story-id').value = "-1";
       document.getElementById('story-slug').disabled = false;
       document.getElementById('story-bg').value = "linear-gradient(145deg,#151515,#2a2a2a)";
+      window.latestTiptapHtmlStory = '';
     }
     modal.classList.add('open');
   }
@@ -5268,6 +5528,7 @@
       tag: document.getElementById('story-tag').value,
       title: document.getElementById('story-title').value,
       desc: document.getElementById('story-desc').value,
+      descHtml: window.latestTiptapHtmlStory || '',
       years: document.getElementById('story-years').value,
       duration: document.getElementById('story-duration').value,
       location: document.getElementById('story-loc').value,
@@ -5413,65 +5674,540 @@
   }
 
   let activeTextareaId = 'photo-story';
+  let autosaveTimer = null;
+  window.editorHasUnsavedChanges = false;
+  window.latestTiptapHtmlContent = '';
+  window.latestTiptapHtmlStory = '';
 
-  function openStoryEditor(targetId = 'photo-story') {
+  // Tiptap module loader & builder
+  let tiptapLoading = false;
+  async function initTiptapEditor() {
+    if (window.tiptapEditor) return window.tiptapEditor;
+    if (tiptapLoading) {
+      return new Promise(resolve => {
+        const interval = setInterval(() => {
+          if (window.tiptapEditor) {
+            clearInterval(interval);
+            resolve(window.tiptapEditor);
+          }
+        }, 100);
+      });
+    }
+    tiptapLoading = true;
+    
+    const container = document.getElementById('tiptap-editor-content');
+    if (container) {
+      container.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:260px; color:var(--text3); font-size:13px; gap:12px; font-family:var(--font-sans);">
+          <svg style="width:28px; height:28px; color:var(--gold); animation:spin 1s linear infinite;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.05)"></circle>
+            <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
+          </svg>
+          <span>Initializing Notion-grade Editor...</span>
+        </div>
+      `;
+    }
+    
+    try {
+      // Dynamic imports from esm.sh CDN
+      const [
+        { Editor },
+        { StarterKit },
+        { Underline },
+        { Link },
+        { Image },
+        { TextAlign },
+        { Highlight },
+        { Typography },
+        { Placeholder },
+        { Table },
+        { TableRow },
+        { TableCell },
+        { TableHeader },
+        { TaskList },
+        { TaskItem }
+      ] = await Promise.all([
+        import('https://esm.sh/@tiptap/core@2.2.4'),
+        import('https://esm.sh/@tiptap/starter-kit@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-underline@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-link@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-image@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-text-align@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-highlight@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-typography@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-placeholder@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-table@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-table-row@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-table-cell@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-table-header@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-task-list@2.2.4'),
+        import('https://esm.sh/@tiptap/extension-task-item@2.2.4')
+      ]);
+      
+      container.innerHTML = '';
+      
+      const ResizableImage = Image.extend({
+        addAttributes() {
+          return {
+            ...this.parent?.(),
+            width: {
+              default: '100%',
+              renderHTML: attributes => {
+                return {
+                  width: attributes.width,
+                  style: `width: ${attributes.width}; max-width: 100%; height: auto; display: block; margin: 1.5rem 0;`
+                }
+              },
+              parseHTML: element => element.getAttribute('width') || element.style.width,
+            }
+          }
+        },
+        addNodeView() {
+          return ({ node, HTMLAttributes, getPos, editor }) => {
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'relative';
+            wrapper.style.display = 'inline-block';
+            wrapper.style.maxWidth = '100%';
+            wrapper.className = 'resizable-image-wrapper';
+            
+            const img = document.createElement('img');
+            img.src = node.attrs.src;
+            img.alt = node.attrs.alt || '';
+            img.style.width = node.attrs.width || '100%';
+            img.style.display = 'block';
+            img.style.borderRadius = '4px';
+            img.style.border = '1px solid var(--border)';
+            
+            const resizeHandle = document.createElement('div');
+            resizeHandle.style.position = 'absolute';
+            resizeHandle.style.bottom = '6px';
+            resizeHandle.style.right = '6px';
+            resizeHandle.style.width = '14px';
+            resizeHandle.style.height = '14px';
+            resizeHandle.style.background = 'var(--gold)';
+            resizeHandle.style.cursor = 'se-resize';
+            resizeHandle.style.borderRadius = '3px';
+            resizeHandle.style.zIndex = '20';
+            resizeHandle.style.border = '1px solid #000000';
+            
+            wrapper.appendChild(img);
+            
+            if (editor.isEditable) {
+              wrapper.appendChild(resizeHandle);
+              
+              let startX, startWidth;
+              
+              const onMouseDown = (e) => {
+                e.preventDefault();
+                startX = e.clientX;
+                startWidth = img.offsetWidth;
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+              };
+              
+              const onMouseMove = (e) => {
+                const dx = e.clientX - startX;
+                const newWidth = Math.max(50, startWidth + dx);
+                const parentWidth = wrapper.parentElement ? wrapper.parentElement.offsetWidth : window.innerWidth;
+                const pct = Math.min(100, Math.round((newWidth / parentWidth) * 100)) + '%';
+                img.style.width = pct;
+              };
+              
+              const onMouseUp = () => {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+                
+                if (typeof getPos === 'function') {
+                  editor.view.dispatch(
+                    editor.view.state.tr.setNodeAttribute(getPos(), 'width', img.style.width)
+                  );
+                }
+              };
+              
+              resizeHandle.addEventListener('mousedown', onMouseDown);
+            }
+            
+            return {
+              dom: wrapper,
+              contentDOM: null,
+              update: (updatedNode) => {
+                if (updatedNode.type.name !== 'image') return false;
+                img.src = updatedNode.attrs.src;
+                img.alt = updatedNode.attrs.alt || '';
+                img.style.width = updatedNode.attrs.width || '100%';
+                return true;
+              }
+            };
+          };
+        }
+      });
+
+      const editor = new Editor({
+        element: container,
+        extensions: [
+          StarterKit.configure({
+            history: true,
+          }),
+          Underline,
+          Link.configure({
+            openOnClick: false,
+            HTMLAttributes: {
+              class: 'editor-link'
+            }
+          }),
+          ResizableImage,
+          TextAlign.configure({
+            types: ['heading', 'paragraph']
+          }),
+          Highlight,
+          Typography,
+          Placeholder.configure({
+            placeholder: 'Start writing something beautiful...'
+          }),
+          Table.configure({
+            resizable: true
+          }),
+          TableRow,
+          TableHeader,
+          TableCell,
+          TaskList,
+          TaskItem.configure({
+            nested: true
+          })
+        ],
+        editorProps: {
+          handleDrop(view, event, slice, moved) {
+            if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+              const file = event.dataTransfer.files[0];
+              if (file.type.startsWith('image/')) {
+                event.preventDefault();
+                uploadTiptapEditorImageFile(file);
+                return true;
+              }
+            }
+            return false;
+          },
+          handlePaste(view, event, slice) {
+            const items = (event.clipboardData || event.originalEvent.clipboardData || window.clipboardData).items;
+            if (items) {
+              for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                  const file = item.getAsFile();
+                  uploadTiptapEditorImageFile(file);
+                  return true;
+                }
+              }
+            }
+            return false;
+          }
+        },
+        onUpdate() {
+          window.editorHasUnsavedChanges = true;
+          updateToolbarButtonStates(editor);
+        },
+        onSelectionUpdate() {
+          updateToolbarButtonStates(editor);
+        }
+      });
+      
+      window.tiptapEditor = editor;
+      bindTiptapToolbarEvents(editor);
+      return editor;
+      
+    } catch (err) {
+      console.error('Failed loading Tiptap Editor:', err);
+      container.innerHTML = `<div style="color:var(--danger); padding:2rem; text-align:center; font-size:12.5px;">Failed to start Tiptap editor: ${err.message}. Please refresh and try again.</div>`;
+      tiptapLoading = false;
+      throw err;
+    }
+  }
+
+  function updateToolbarButtonStates(editor) {
+    const toolbar = document.getElementById('tiptap-toolbar');
+    if (!toolbar) return;
+    
+    toolbar.querySelectorAll('.tb-btn').forEach(btn => {
+      const act = btn.dataset.action;
+      if (!act) return;
+      
+      let isAct = false;
+      switch (act) {
+        case 'bold': isAct = editor.isActive('bold'); break;
+        case 'italic': isAct = editor.isActive('italic'); break;
+        case 'underline': isAct = editor.isActive('underline'); break;
+        case 'strike': isAct = editor.isActive('strike'); break;
+        case 'highlight': isAct = editor.isActive('highlight'); break;
+        case 'paragraph': isAct = editor.isActive('paragraph'); break;
+        case 'h1': isAct = editor.isActive('heading', { level: 1 }); break;
+        case 'h2': isAct = editor.isActive('heading', { level: 2 }); break;
+        case 'h3': isAct = editor.isActive('heading', { level: 3 }); break;
+        case 'bulletList': isAct = editor.isActive('bulletList'); break;
+        case 'orderedList': isAct = editor.isActive('orderedList'); break;
+        case 'taskList': isAct = editor.isActive('taskList'); break;
+        case 'alignLeft': isAct = editor.isActive({ textAlign: 'left' }); break;
+        case 'alignCenter': isAct = editor.isActive({ textAlign: 'center' }); break;
+        case 'alignRight': isAct = editor.isActive({ textAlign: 'right' }); break;
+        case 'alignJustify': isAct = editor.isActive({ textAlign: 'justify' }); break;
+      }
+      
+      btn.classList.toggle('active', isAct);
+    });
+  }
+
+  function bindTiptapToolbarEvents(editor) {
+    const toolbar = document.getElementById('tiptap-toolbar');
+    if (!toolbar) return;
+    
+    toolbar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.tb-btn');
+      if (!btn) return;
+      
+      e.preventDefault();
+      const action = btn.dataset.action;
+      
+      switch (action) {
+        case 'bold': editor.chain().focus().toggleBold().run(); break;
+        case 'italic': editor.chain().focus().toggleItalic().run(); break;
+        case 'underline': editor.chain().focus().toggleUnderline().run(); break;
+        case 'strike': editor.chain().focus().toggleStrike().run(); break;
+        case 'highlight': editor.chain().focus().toggleHighlight().run(); break;
+        case 'paragraph': editor.chain().focus().setParagraph().run(); break;
+        case 'h1': editor.chain().focus().toggleHeading({ level: 1 }).run(); break;
+        case 'h2': editor.chain().focus().toggleHeading({ level: 2 }).run(); break;
+        case 'h3': editor.chain().focus().toggleHeading({ level: 3 }).run(); break;
+        case 'bulletList': editor.chain().focus().toggleBulletList().run(); break;
+        case 'orderedList': editor.chain().focus().toggleOrderedList().run(); break;
+        case 'taskList': editor.chain().focus().toggleTaskList().run(); break;
+        case 'alignLeft': editor.chain().focus().setTextAlign('left').run(); break;
+        case 'alignCenter': editor.chain().focus().setTextAlign('center').run(); break;
+        case 'alignRight': editor.chain().focus().setTextAlign('right').run(); break;
+        case 'alignJustify': editor.chain().focus().setTextAlign('justify').run(); break;
+        case 'link':
+          const oldUrl = editor.getAttributes('link').href;
+          const url = prompt('Enter website link:', oldUrl || '');
+          if (url === null) return;
+          if (url.trim() === '') {
+            editor.chain().focus().extendMarkRange('link').unsetLink().run();
+          } else {
+            editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+          }
+          break;
+        case 'image':
+          document.getElementById('tiptap-image-file-input').click();
+          break;
+        case 'table':
+          editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+          break;
+        case 'horizontalRule':
+          editor.chain().focus().setHorizontalRule().run(); break;
+        case 'codeBlock':
+          editor.chain().focus().toggleCodeBlock().run(); break;
+        case 'blockquote':
+          editor.chain().focus().toggleBlockquote().run(); break;
+        case 'undo': editor.chain().focus().undo().run(); break;
+        case 'redo': editor.chain().focus().redo().run(); break;
+      }
+    });
+  }
+
+  async function uploadToSupabaseStorage(file) {
+    const fileName = `editor_${Date.now()}_${Math.random().toString(36).substring(2, 9)}_${file.name || 'img.png'}`;
+    const bucket = 'portfolio-images';
+    
+    try {
+      // 1. Attempt upload to primary Supabase bucket 'portfolio-images'
+      const { data, error } = await window.supabaseClient.storage
+        .from(bucket)
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+        
+      if (error) throw error;
+      
+      const { data: publicUrl } = window.supabaseClient.storage.from(bucket).getPublicUrl(fileName);
+      return publicUrl.publicUrl;
+    } catch (err) {
+      console.warn('Supabase portfolio-images failed, trying fallback bucket images...', err);
+      
+      try {
+        // 2. Attempt upload to fallback Supabase bucket 'images'
+        const fallbackBucket = 'images';
+        const { data: fbData, error: fbError } = await window.supabaseClient.storage
+          .from(fallbackBucket)
+          .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+        if (fbError) throw fbError;
+        
+        const { data: fbUrl } = window.supabaseClient.storage.from(fallbackBucket).getPublicUrl(fileName);
+        return fbUrl.publicUrl;
+      } catch (fbErr) {
+        console.warn('Supabase storage upload failed completely. Falling back to Cloudinary...', fbErr);
+        
+        // 3. Fallback to Cloudinary upload preset which is pre-configured and working
+        const cloudUrl = await uploadToCloudinary(file);
+        if (cloudUrl) {
+          return cloudUrl;
+        }
+        throw new Error("Supabase Storage bucket not found and Cloudinary fallback failed: " + fbErr.message);
+      }
+    }
+  }
+
+  async function uploadTiptapEditorImageFile(fileOrInput) {
+    const file = fileOrInput instanceof File ? fileOrInput : fileOrInput.files[0];
+    if (!file) return;
+    
+    const editor = window.tiptapEditor;
+    if (!editor) return;
+    
+    const status = document.getElementById('editor-upload-status');
+    if (status) {
+      status.textContent = 'Uploading image...';
+      status.style.display = 'block';
+    }
+    
+    try {
+      const url = await uploadToSupabaseStorage(file);
+      if (url) {
+        editor.chain().focus().setImage({ src: url, alt: file.name || 'Image' }).run();
+      } else {
+        alert('Could not get public URL from Supabase Storage.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Upload failed: ' + err.message);
+    } finally {
+      if (status) status.style.display = 'none';
+      if (fileOrInput instanceof HTMLInputElement) fileOrInput.value = '';
+    }
+  }
+  window.uploadTiptapEditorImageFile = uploadTiptapEditorImageFile;
+
+  async function openStoryEditor(targetId = 'photo-story') {
     activeTextareaId = targetId;
-    const mainVal = document.getElementById(targetId).value;
-    document.getElementById('story-editor-textarea').value = mainVal;
+    
+    const mainVal = document.getElementById(targetId).value.trim();
     
     // Update modal title depending on target textarea
     const titleEl = document.querySelector('#story-editor-modal .panel-title');
     if (titleEl) {
       if (targetId === 'blog-excerpt') {
         titleEl.textContent = 'Journal Entry Excerpt Editor';
+      } else if (targetId === 'blog-content') {
+        titleEl.textContent = 'Rich Blog Content Editor';
       } else if (targetId === 'story-desc') {
         titleEl.textContent = 'Narrative Essay Summary Editor';
       } else {
         titleEl.textContent = 'Behind-the-Lens Story Editor';
       }
     }
+    
     document.getElementById('story-editor-modal').classList.add('open');
+    
+    // Lazy-load Tiptap
+    const editor = await initTiptapEditor();
+    
+    // Parse content as JSON if valid, else fallback to text/HTML
+    let contentToSet = '';
+    if (mainVal.startsWith('{') || mainVal.startsWith('[')) {
+      try {
+        contentToSet = JSON.parse(mainVal);
+      } catch (e) {
+        contentToSet = mainVal;
+      }
+    } else {
+      contentToSet = mainVal;
+    }
+    
+    editor.commands.setContent(contentToSet);
+    window.editorHasUnsavedChanges = false;
+    
+    // Start Autosave Timer (every 30 seconds)
+    if (autosaveTimer) clearInterval(autosaveTimer);
+    autosaveTimer = setInterval(triggerAutosave, 30000);
   }
 
-  function insertStoryFormat(startTag, endTag) {
-    const tx = document.getElementById('story-editor-textarea');
-    const start = tx.selectionStart;
-    const end = tx.selectionEnd;
-    const val = tx.value;
+  async function triggerAutosave() {
+    if (!window.editorHasUnsavedChanges || !window.tiptapEditor) return;
     
-    const selected = val.substring(start, end);
-    const replacement = startTag + selected + endTag;
+    // Silent apply of changes
+    saveStoryEditorContent(true);
     
-    tx.value = val.substring(0, start) + replacement + val.substring(end);
-    tx.focus();
-    tx.setSelectionRange(start + startTag.length, start + startTag.length + selected.length);
+    // Show temporary status toast
+    const status = document.getElementById('editor-upload-status');
+    if (status) {
+      status.textContent = 'Draft autosaved';
+      status.style.display = 'block';
+      setTimeout(() => {
+        status.style.display = 'none';
+      }, 2000);
+    }
   }
 
-  // Symbol helper
-  function insertStoryChar(char) {
-    const tx = document.getElementById('story-editor-textarea');
-    const start = tx.selectionStart;
-    const end = tx.selectionEnd;
-    const val = tx.value;
+  function saveStoryEditorContent(silent = false) {
+    const editor = window.tiptapEditor;
+    if (!editor) return;
     
-    tx.value = val.substring(0, start) + char + val.substring(end);
-    tx.focus();
-    tx.setSelectionRange(start + char.length, start + char.length);
-  }
-
-  function saveStoryEditorContent() {
-    const editorVal = document.getElementById('story-editor-textarea').value;
+    const jsonStr = JSON.stringify(editor.getJSON());
+    const htmlStr = editor.getHTML();
+    
     const target = document.getElementById(activeTextareaId);
     if (target) {
-      target.value = editorVal;
+      target.value = jsonStr;
       target.dispatchEvent(new Event('input'));
     }
-    closeModal('story-editor-modal');
+    
+    // Also save HTML string to dynamic storage mapping if relevant
+    if (activeTextareaId === 'blog-content') {
+      window.latestTiptapHtmlContent = htmlStr;
+    } else if (activeTextareaId === 'story-desc') {
+      window.latestTiptapHtmlStory = htmlStr;
+    }
+    
+    window.editorHasUnsavedChanges = false;
+    
+    if (!silent) {
+      if (autosaveTimer) {
+        clearInterval(autosaveTimer);
+        autosaveTimer = null;
+      }
+      closeModal('story-editor-modal');
+    }
   }
 
+  function openEditorLivePreview() {
+    const editor = window.tiptapEditor;
+    if (!editor) return;
+    
+    // Save draft data to localStorage
+    const previewData = {
+      isBlog: activeTextareaId === 'blog-content',
+      title: document.getElementById('blog-title') ? document.getElementById('blog-title').value : 'Untitled',
+      excerpt: document.getElementById('blog-excerpt') ? document.getElementById('blog-excerpt').value : '',
+      cat: document.getElementById('blog-cat') ? document.getElementById('blog-cat').value : 'Uncategorized',
+      date: document.getElementById('blog-date') ? document.getElementById('blog-date').value : 'Today',
+      readTime: document.getElementById('blog-readtime') ? document.getElementById('blog-readtime').value : '5 min read',
+      template: document.getElementById('blog-template') ? document.getElementById('blog-template').value : 'classic',
+      contentHtml: editor.getHTML(),
+      src: ''
+    };
+    
+    const previewImg = document.getElementById('blog-upload-preview');
+    if (previewImg && previewImg.style.display !== 'none' && previewImg.src) {
+      previewData.src = previewImg.src;
+    }
+    
+    localStorage.setItem('tiptap_preview_draft', JSON.stringify(previewData));
+    
+    // Open blog-post.html in preview mode in a new tab/window
+    window.open('blog-post.html?preview=true', '_blank');
+  }
+  window.openEditorLivePreview = openEditorLivePreview;
+
   window.openStoryEditor = openStoryEditor;
-  window.insertStoryFormat = insertStoryFormat;
-  window.insertStoryChar = insertStoryChar;
   window.saveStoryEditorContent = saveStoryEditorContent;
   window.closeModal = closeModal;
 

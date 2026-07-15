@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio Categories — Luminar</title>
+<title>Portfolio Categories — Krishnendu Goswami</title>
 <meta name="description" content="Explore photography series across wildlife, landscape, travel, street, portrait, and commercial categories.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -450,12 +450,14 @@
   .slider-3d-btn.next { right: 8px; }
 }
 </style>
+
+  <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="no-select">
 
 <!-- Loader -->
 <div id="loader" role="status" aria-live="polite">
-  <div class="loader-logo">Luminar</div>
+  <div class="loader-logo">Krishnendu Goswami</div>
   <div class="loader-bar"><div class="loader-fill"></div></div>
 </div>
 
@@ -465,11 +467,10 @@
 
 <!-- NAVIGATION -->
 <header id="header" class="site-header" role="banner">
-  <div class="container">
+  <div class="container" style="position: relative;">
+    <a href="index.html" class="header-left-logo" style="position: absolute; left: 0; top: calc(4.5rem + (2.2rem - 64px) / 2); display: flex; align-items: center; z-index: 10;"><img src="logo.png" alt="KG Logo" style="height: 64px; width: auto; object-fit: contain;"></a>
     <div class="brand-header">
-      <a href="index.html" class="brand-logo">
-        Krishnendu Goswami
-      </a>
+      <a href="index.html" class="brand-logo">Krishnendu Goswami</a>
     </div>
     <nav class="site-nav" role="navigation" aria-label="Main navigation">
       <ul class="nav-menu">
@@ -574,9 +575,7 @@
   <div class="container">
     <div class="footer-top">
       <div class="footer-brand">
-        <a href="index.html" class="nav-logo">
-          Luminar
-        </a>
+        <a href="index.html" class="nav-logo" style="display: inline-flex; align-items: center; gap: 8px; text-transform: none;"><img src="logo.png" alt="KG Logo" style="height: 24px; width: auto; object-fit: contain; font-weight: normal;">Krishnendu Goswami</a>
         <p>A visual archive of light, wilderness, and the human story — built over two decades of patient observation across India and beyond.</p>
       </div>
       <div class="footer-col">
@@ -635,15 +634,17 @@ let startX = 0;
 let startY = 0;
 let activeFilter = 'all';
 
-const defaultFilterTabs = [
-  { id: 'all', label: 'All Genres', categories: ['wildlife', 'landscape', 'travel', 'street', 'portrait', 'commercial'] },
-  { id: 'outdoors', label: 'Outdoors', categories: ['wildlife', 'landscape', 'travel'] },
-  { id: 'humanity', label: 'Humanity', categories: ['portrait', 'street'] },
-  { id: 'creative', label: 'Creative', categories: ['commercial'] }
-];
-
 function getPortfolioFilterTabs() {
-  return (window.siteData && window.siteData.portfolioFilterTabs) || defaultFilterTabs;
+  const cats = window.siteData && window.siteData.galleryCategories ? (window.siteData.categoriesOrder || Object.keys(window.siteData.galleryCategories)) : [];
+  const tabs = [
+    { id: 'all', label: 'ALL GENRES', categories: cats }
+  ];
+  cats.forEach(key => {
+    const cat = window.siteData.galleryCategories[key];
+    const labelName = cat.title + cat.em;
+    tabs.push({ id: key, label: labelName.toUpperCase(), categories: [key] });
+  });
+  return tabs;
 }
 
 function renderFilterChips() {
