@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1431,8 +1431,16 @@ function toggleStoryFold(btn) {
 window.toggleStoryFold = toggleStoryFold;
 
 function updateLb() {
-  const p = filteredPhotos[lbIdx];
+  let p = filteredPhotos[lbIdx];
   if (!p) return;
+
+  if (currentCategory && window.siteData && window.siteData.galleryCategories) {
+    const catObj = window.siteData.galleryCategories[currentCategory];
+    if (catObj && catObj.photos) {
+      const live = catObj.photos.find(x => x.id === p.id);
+      if (live) p = live;
+    }
+  }
   
   document.getElementById('lb-counter').textContent = `${lbIdx + 1} / ${filteredPhotos.length}`;
   document.getElementById('lb-topbar-title').textContent = p.title;
@@ -1594,8 +1602,16 @@ let isLikingLock = false;
 
 async function likePhoto(forceLike = false) {
   if (isLikingLock) return;
-  const p = filteredPhotos[lbIdx];
+  let p = filteredPhotos[lbIdx];
   if (!p) return;
+
+  if (currentCategory && window.siteData && window.siteData.galleryCategories) {
+    const catObj = window.siteData.galleryCategories[currentCategory];
+    if (catObj && catObj.photos) {
+      const live = catObj.photos.find(x => x.id === p.id);
+      if (live) p = live;
+    }
+  }
 
   isLikingLock = true;
   const likeKey = `liked_gallery_photo_${currentCategory}_${p.id}`;
@@ -1653,7 +1669,15 @@ async function submitComment(event) {
 
   const newComment = await window.portfolioDb.addComment('gallery_photo', currentCategory, p.id, name, text);
   if (newComment) {
-    renderLbComments(p.comments || []);
+    let liveP = p;
+    if (window.siteData && window.siteData.galleryCategories) {
+      const catObj = window.siteData.galleryCategories[currentCategory];
+      if (catObj && catObj.photos) {
+        const live = catObj.photos.find(x => x.id === p.id);
+        if (live) liveP = live;
+      }
+    }
+    renderLbComments(liveP.comments || []);
     textInput.value = '';
   }
 }

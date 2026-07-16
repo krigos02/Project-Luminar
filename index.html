@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -601,29 +601,35 @@ async function updateCommentsList(cat, id) {
   const list = document.getElementById('lb-comments-list');
   if (!list) return;
   list.innerHTML = '<div style="font-size:11px;color:var(--text3);text-align:center;padding:0.5rem 0;">Loading...</div>';
-  try {
-    const comments = await window.portfolioDb.getComments('gallery_photo', cat, id);
-    if (!comments || comments.length === 0) {
-      list.innerHTML = '<div style="font-size:11px;color:var(--text3);text-align:center;padding:0.5rem 0;">No comments yet.</div>';
-      return;
+  
+  let p = null;
+  if (cat && window.siteData && window.siteData.galleryCategories) {
+    const catObj = window.siteData.galleryCategories[cat];
+    if (catObj && catObj.photos) {
+      p = catObj.photos.find(x => x.id === id);
     }
-    list.innerHTML = comments.map(c => {
-      const name = c.user_name || 'Anonymous';
-      const text = c.comment_text || '';
-      const date = c.created_at ? new Date(c.created_at).toLocaleDateString() : '';
-      return `
-        <div class="lb-comment-item" style="font-size:11px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:4px; padding:6px 8px; margin-bottom:4px;">
-          <div style="display:flex; justify-content:space-between; font-weight:600; font-size:10px; margin-bottom:2px; color:var(--text);">
-            <span>${name}</span>
-            <span style="color:var(--text3); font-weight:normal;">${date}</span>
-          </div>
-          <div style="color:var(--text2); line-height:1.3; word-break:break-word;">${text}</div>
-        </div>
-      `;
-    }).join('');
-  } catch (e) {
-    list.innerHTML = '<div style="font-size:11px;color:var(--text3);text-align:center;padding:0.5rem 0;">No comments yet.</div>';
   }
+
+  const comments = p ? (p.comments || []) : [];
+  if (comments.length === 0) {
+    list.innerHTML = '<div style="font-size:11px;color:var(--text3);text-align:center;padding:0.5rem 0;">No comments yet.</div>';
+    return;
+  }
+
+  list.innerHTML = comments.map(c => {
+    const name = c.name || 'Anonymous';
+    const text = c.text || '';
+    const date = c.date || '';
+    return `
+      <div class="lb-comment-item" style="font-size:11px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:4px; padding:6px 8px; margin-bottom:4px;">
+        <div style="display:flex; justify-content:space-between; font-weight:600; font-size:10px; margin-bottom:2px; color:var(--text);">
+          <span>${name}</span>
+          <span style="color:var(--text3); font-weight:normal;">${date}</span>
+        </div>
+        <div style="color:var(--text2); line-height:1.3; word-break:break-word;">${text}</div>
+      </div>
+    `;
+  }).join('');
 }
 
 async function likePhoto(forceLike = false) {
@@ -715,6 +721,7 @@ async function submitComment(event) {
   if (newComment) {
     nameInput.value = '';
     textInput.value = '';
+    updateCommentsList(p.cat, p.id);
     const postedMsg = document.getElementById('comment-posted-message');
     if (postedMsg) {
       postedMsg.style.display = 'block';
