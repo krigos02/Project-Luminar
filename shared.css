@@ -2019,4 +2019,7 @@ body.cursor-hover #cursor-ring {
   .header-left-actions {
     left: 86px !important; /* Move back button closer to the scaled down logo on mobile */
   }
+  .nav-back span {
+    display: none !important; /* Hide 'All Categories' text on mobile to prevent overlapping with brand name */
+  }
 }

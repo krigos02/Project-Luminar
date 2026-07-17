@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -741,6 +741,39 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft')   lbNav(-1);
 });
 lbEl.addEventListener('click', e => { if (e.target === lbEl) closeLb(); });
+
+/* Touch swipe support for homepage lightbox mobile view */
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
+lbEl.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX;
+  touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+lbEl.addEventListener('touchend', e => {
+  touchEndX = e.changedTouches[0].screenX;
+  touchEndY = e.changedTouches[0].screenY;
+  handleSwipeGesture();
+}, { passive: true });
+
+function handleSwipeGesture() {
+  const diffX = touchEndX - touchStartX;
+  const diffY = touchEndY - touchStartY;
+  
+  // Require minimum 50px swipe threshold and verify it's horizontal
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+    if (diffX > 0) {
+      // Swiped Right -> Previous Photo
+      lbNav(-1);
+    } else {
+      // Swiped Left -> Next Photo
+      lbNav(1);
+    }
+  }
+}
 
 // Double tap/click to like
 let lastTap = 0;
