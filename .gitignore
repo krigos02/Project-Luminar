@@ -1,0 +1,17 @@
+# Database Backups & sensitive data dumps (CRITICAL)
+supabase_all_rows.json
+supabase_backup.json
+supabase/
+
+# Local environment settings
+.env
+.env.local
+*.log
+
+# IDE & Editor folders
+.vscode/
+.idea/
+
+# Operating System artifacts
+.DS_Store
+Thumbs.db
