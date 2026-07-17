@@ -1808,10 +1808,26 @@ document.getElementById('lb-image-container').addEventListener('dblclick', () =>
 // Auto-open photo if requested in query parameter
 function checkUrlParams() {
   const params = new URLSearchParams(window.location.search);
-  const photoId = parseInt(params.get('photo'));
-  if (!isNaN(photoId) && filteredPhotos) {
-    const idx = filteredPhotos.findIndex(p => p.id == photoId);
+  const photoId = params.get('photo');
+  if (photoId && currentPhotos) {
+    const idx = currentPhotos.findIndex(p => String(p.id) == String(photoId));
     if (idx !== -1) {
+      // Reset filter tabs to 'All' to ensure the photo is visible in the array
+      const filterTabs = document.querySelectorAll('.filter-tab');
+      if (filterTabs.length > 0) {
+        filterTabs.forEach((tab, index) => {
+          if (index === 0) {
+            tab.classList.add('active');
+            tab.setAttribute('aria-selected', 'true');
+          } else {
+            tab.classList.remove('active');
+            tab.setAttribute('aria-selected', 'false');
+          }
+        });
+      }
+      filteredPhotos = [...currentPhotos];
+      renderGallery();
+      updateLoadMore();
       openLb(idx);
     }
   }
