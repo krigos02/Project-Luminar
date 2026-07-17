@@ -591,12 +591,22 @@ async function initDatabase() {
       .single();
       
     if (error) {
-      console.warn("Supabase row query failed, attempting to write baseline row.", error);
-      // If no row exists, initialize it with baseline
-      await supabaseClient
-        .from('portfolio_data')
-        .upsert({ id: 1, data: DEFAULT_SITE_DATA });
-      siteData = DEFAULT_SITE_DATA;
+      console.warn("Supabase row query failed.", error);
+      // Only insert baseline data if the row explicitly does not exist
+      if (error.code === 'PGRST116') {
+        await supabaseClient
+          .from('portfolio_data')
+          .insert({ id: 1, data: DEFAULT_SITE_DATA });
+        siteData = DEFAULT_SITE_DATA;
+      } else {
+        // Fall back to local storage for other errors (like network/RLS issues)
+        const rawData = localStorage.getItem(DB_KEY);
+        if (rawData) {
+          siteData = JSON.parse(rawData);
+        } else {
+          siteData = DEFAULT_SITE_DATA;
+        }
+      }
     } else if (data && data.data) {
       siteData = data.data;
     }
