@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared.css?v=2.6">
+<link rel="stylesheet" href="shared.css?v=2.4">
 <style>
   #masonry {
     column-count: 4;
@@ -314,8 +314,8 @@
 
 <!-- Scripts — order matters -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="data.js?v=2.2"></script>
-<script src="shared.js?v=2.1"></script>
+<script src="data.js"></script>
+<script src="shared.js"></script>
 
 <script>
 /* ─── HOME PAGE — filter, lightbox ─────────────────────────────────────── */
@@ -365,23 +365,6 @@ function getAllPhotos() {
   // Return a maximum of 10 featured photos
   return featuredPhotos.slice(0, 10);
 }
-
-function renderMasonry(filtered) {
-  const container = document.getElementById('masonry');
-  if (!container) return;
-  
-  const countLabel = document.getElementById('count-label');
-  if (countLabel) {
-    countLabel.textContent = `Showing ${filtered.length} photograph${filtered.length === 1 ? '' : 's'}`;
-  }
-  
-  if (filtered.length === 0) {
-    container.innerHTML = `<div style="text-align: center; width: 100%; padding: 3rem; color: var(--text3); font-size: 13px; font-family: monospace;">No photographs found.</div>`;
-    return;
-  }
-  
-// Global cache to store image brightness calculations
-window._brightnessCache = window._brightnessCache || {};
 
 function renderMasonry(filtered) {
   const container = document.getElementById('masonry');
@@ -481,7 +464,7 @@ function analyzeImageBrightness(imgEl) {
       const r = data[i];
       const g = data[i+1];
       const b = data[i+2];
-      const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+      const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
       totalLuminance += luminance;
       count++;
     }

@@ -503,6 +503,7 @@
         const cat = window.siteData.galleryCategories[catKey];
         if (cat && Array.isArray(cat.photos)) {
           cat.photos.forEach(p => {
+            if (!p || p.hidden) return;
             all.push({
               ...p,
               cat: catKey
@@ -511,6 +512,14 @@
         }
       });
     }
+
+    // Sort descending by ID to keep consistent
+    all.sort((a, b) => {
+      const idA = a && a.id !== undefined && a.id !== null ? String(a.id) : '';
+      const idB = b && b.id !== undefined && b.id !== null ? String(b.id) : '';
+      return idB.localeCompare(idA, undefined, { numeric: true, sensitivity: 'base' });
+    });
+
     state.photos   = all;
     state.filtered = [...state.photos];
     window._c3dFiltered = state.filtered;
