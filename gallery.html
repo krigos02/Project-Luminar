@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -826,6 +826,8 @@
     right: 0;
     bottom: 0;
     width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
     max-height: 50vh;
     border-radius: 12px 12px 0 0;
     border: none;
@@ -833,6 +835,20 @@
     box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
   }
   .lb-topbar-title { display: none; }
+  .lb-info-content {
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+  }
+  .lb-social-stats {
+    justify-content: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .lb-info-caption {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    word-break: break-word;
+  }
 }
 @media(max-width: 600px) {
   .gallery-masonry { columns: 1; }
@@ -1740,6 +1756,39 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') lbNav(1);
   if (e.key === 'ArrowLeft') lbNav(-1);
 });
+
+/* Touch swipe support for lightbox mobile view */
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
+lb.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX;
+  touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+lb.addEventListener('touchend', e => {
+  touchEndX = e.changedTouches[0].screenX;
+  touchEndY = e.changedTouches[0].screenY;
+  handleSwipeGesture();
+}, { passive: true });
+
+function handleSwipeGesture() {
+  const diffX = touchEndX - touchStartX;
+  const diffY = touchEndY - touchStartY;
+  
+  // Require minimum 50px swipe threshold and verify it's horizontal
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+    if (diffX > 0) {
+      // Swiped Right -> Previous Photo
+      lbNav(-1);
+    } else {
+      // Swiped Left -> Next Photo
+      lbNav(1);
+    }
+  }
+}
 
 // Double tap/click to like
 let lastTap = 0;
