@@ -321,6 +321,7 @@
 /* ─── HOME PAGE — filter, lightbox ─────────────────────────────────────── */
 
 let photos = [];
+window._brightnessCache = window._brightnessCache || {};
 
 function renderFilterBar() {
   const bar = document.getElementById('homepage-filter-bar');
