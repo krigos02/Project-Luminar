@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -343,7 +343,7 @@ function getAllPhotos() {
     const cat = window.siteData.galleryCategories[catKey];
     if (cat && Array.isArray(cat.photos)) {
       cat.photos.forEach(p => {
-        if (p.hidden) return;
+        if (!p || p.hidden) return;
         all.push({
           ...p,
           cat: catKey
@@ -353,10 +353,14 @@ function getAllPhotos() {
   });
 
   // Filter to keep only featured images
-  const featuredPhotos = all.filter(p => p.featured === true || p.featured === 'true');
+  const featuredPhotos = all.filter(p => p && (p.featured === true || p.featured === 'true'));
 
   // Sort the featured photos consistently (newest first, based on ID descending)
-  featuredPhotos.sort((a, b) => String(b.id).localeCompare(String(a.id), undefined, { numeric: true, sensitivity: 'base' }));
+  featuredPhotos.sort((a, b) => {
+    const idA = a && a.id !== undefined && a.id !== null ? String(a.id) : '';
+    const idB = b && b.id !== undefined && b.id !== null ? String(b.id) : '';
+    return idB.localeCompare(idA, undefined, { numeric: true, sensitivity: 'base' });
+  });
 
   // Return a maximum of 10 featured photos
   return featuredPhotos.slice(0, 10);
