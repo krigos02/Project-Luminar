@@ -556,6 +556,14 @@ const DEFAULT_SITE_DATA = {
       label: "Creative",
       categories: ["commercial"]
     }
+  ],
+  recognitionLogos: [
+    { name: "Atverts", src: "websitelogos/Atverts.webp" },
+    { name: "Chandannagar College", src: "websitelogos/Chandannagar College.png" },
+    { name: "IIT Kharagpur", src: "websitelogos/IIT KGP.png" },
+    { name: "Jadavpur University", src: "websitelogos/Jadavpur University.png" },
+    { name: "National Students' Space Challenge", src: "websitelogos/NSSC 2022.png" },
+    { name: "Ramakrishna Mission College, Narendrapur", src: "websitelogos/Ramkrishna Mission College Narendrapur.png" }
   ]
 };
 
@@ -605,6 +613,8 @@ async function initDatabase() {
     }
   }
 
+  let needsSave = false;
+
   // Clean up broken image clutter (missing or empty src)
   if (siteData.homepagePhotos) {
     const origHomeLen = siteData.homepagePhotos.length;
@@ -622,7 +632,6 @@ async function initDatabase() {
     }
   }
   // Clean up default seeded unsplash images from loaded siteData
-  let needsSave = false;
   if (siteData.homepagePhotos) {
     const originalLength = siteData.homepagePhotos.length;
     siteData.homepagePhotos = siteData.homepagePhotos.filter(p => p && p.src && !p.src.includes('unsplash.com'));
@@ -652,6 +661,7 @@ async function initDatabase() {
   if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;
   if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;
   if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;
+  if (!siteData.recognitionLogos) siteData.recognitionLogos = DEFAULT_SITE_DATA.recognitionLogos;
   if (!siteData.categoriesOrder) siteData.categoriesOrder = Object.keys(siteData.galleryCategories);
 
   // Increment overall session views once per browser session

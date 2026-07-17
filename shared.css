@@ -463,9 +463,10 @@ button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: 0;
+  left: 120px;
   display: flex;
   align-items: center;
+  transition: left 0.3s ease;
 }
 .nav-back {
   font-family: var(--font-sans);
@@ -1995,4 +1996,27 @@ body.cursor-hover #cursor-ring {
   border: none;
   border-top: 1px solid var(--border);
   margin: 2rem 0;
+}
+
+/* Brand Logo Theme Inversion */
+.header-left-logo img, .nav-logo img {
+  transition: filter 0.3s ease;
+}
+[data-theme="dark"] .header-left-logo img,
+[data-theme="dark"] .nav-logo img {
+  filter: invert(1);
+}
+
+/* Responsive adjustment for header brand logo */
+@media (max-width: 768px) {
+  .header-left-logo {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+  .header-left-logo img {
+    height: 54px !important; /* Scale logo down beautifully on mobile! */
+  }
+  .header-left-actions {
+    left: 86px !important; /* Move back button closer to the scaled down logo on mobile */
+  }
 }

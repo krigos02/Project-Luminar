@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -203,6 +203,80 @@
 @media(max-width: 768px) {
   .awards-layout { grid-template-columns: 1fr; }
 }
+
+/* RECOGNITION LOGOS STYLES */
+.recognition-logos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3.5rem clamp(20px, 4vw, 60px);
+  margin-top: 2rem;
+  align-items: center;
+  justify-items: center;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.recognition-logo-item {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.recognition-logo-item::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 20;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  letter-spacing: 0.5px;
+}
+.recognition-logo-item:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.recognition-logo-item img {
+  max-height: 64px;
+  max-width: 180px;
+  object-fit: contain;
+  filter: grayscale(1) opacity(0.5) brightness(1.2);
+  transition: all 0.3s ease;
+}
+.recognition-logo-item:hover img {
+  filter: grayscale(0) opacity(1) brightness(1);
+}
+
+/* Specific styling for IIT KGP Logo (White in Dark mode, default color/black on hover) */
+[data-theme="dark"] .recognition-logo-item[data-tooltip="IIT Kharagpur"] img {
+  filter: brightness(0) invert(1) opacity(0.5);
+}
+[data-theme="dark"] .recognition-logo-item[data-tooltip="IIT Kharagpur"]:hover img {
+  filter: brightness(0) invert(1) opacity(1);
+}
+
+@media(max-width: 900px) {
+  .recognition-logos-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media(max-width: 600px) {
+  .recognition-logos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 </style>
 
   <link rel="icon" type="image/png" href="favicon.png">
@@ -222,7 +296,7 @@
 <!-- NAVIGATION -->
 <header id="header" class="site-header" role="banner">
   <div class="container" style="position: relative;">
-    <a href="index.html" class="header-left-logo" style="position: absolute; left: 0; top: calc(4.5rem + (2.2rem - 64px) / 2); display: flex; align-items: center; z-index: 10;"><img src="logo.png" alt="KG Logo" style="height: 96px; width: auto; object-fit: contain;"></a>
+    <a href="index.html" class="header-left-logo" style="position: absolute; left: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; align-items: center; z-index: 10;"><img src="logo.png" alt="KG Logo" style="height: 56px; width: auto; object-fit: contain;"></a>
     <div class="brand-header">
       <a href="index.html" class="brand-logo">Krishnendu Goswami</a>
     </div>
@@ -373,6 +447,31 @@
             <div class="award-name">Sony World Photography Awards — Shortlisted</div>
             <div class="award-org">World Photography Organisation</div>
           </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Organisation Recognition Logos Grid (Full Width) -->
+    <div class="recognition-logos-grid-container" style="border-top: 1px solid var(--border); margin-top: 5rem; padding-top: 4rem;">
+      <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--text3); text-align: center; margin-bottom: 3.5rem; letter-spacing: 2px; text-transform: uppercase;">Recognised By</h3>
+      <div class="recognition-logos-grid">
+        <div class="recognition-logo-item" data-tooltip="Atverts">
+          <img src="websitelogos/Atverts.webp" alt="Atverts">
+        </div>
+        <div class="recognition-logo-item" data-tooltip="Chandannagar College">
+          <img src="websitelogos/Chandannagar College.png" alt="Chandannagar College">
+        </div>
+        <div class="recognition-logo-item" data-tooltip="IIT Kharagpur">
+          <img src="websitelogos/IIT KGP.png" alt="IIT Kharagpur">
+        </div>
+        <div class="recognition-logo-item" data-tooltip="Jadavpur University">
+          <img src="websitelogos/Jadavpur University.png" alt="Jadavpur University">
+        </div>
+        <div class="recognition-logo-item" data-tooltip="National Students' Space Challenge">
+          <img src="websitelogos/NSSC 2022.png" alt="NSSC 2022">
+        </div>
+        <div class="recognition-logo-item" data-tooltip="Ramakrishna Mission College, Narendrapur">
+          <img src="websitelogos/Ramkrishna Mission College Narendrapur.png" alt="Ramakrishna Mission College, Narendrapur">
         </div>
       </div>
     </div>
@@ -544,6 +643,16 @@ function initAboutPage() {
               </div>
             ` : ''}
           </div>
+        </div>
+      `).join('');
+    }
+    
+    // 7. Recognition Logos
+    const logosGrid = document.querySelector('.recognition-logos-grid');
+    if (logosGrid && window.siteData && window.siteData.recognitionLogos) {
+      logosGrid.innerHTML = window.siteData.recognitionLogos.map(logo => `
+        <div class="recognition-logo-item" data-tooltip="${logo.name}">
+          <img src="${logo.src}" alt="${logo.name}">
         </div>
       `).join('');
     }
