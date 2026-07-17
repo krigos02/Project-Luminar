@@ -683,6 +683,7 @@ async function initDatabase() {
 
   // Export globally
   window.siteData = siteData;
+  window.siteDataLoaded = true;
 
   // Dispatch global custom event for UI updates
   document.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: siteData }));

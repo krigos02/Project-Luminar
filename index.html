@@ -513,7 +513,11 @@ function initHomepage() {
 }
 
 document.addEventListener('siteDataLoaded', initHomepage);
-document.addEventListener('DOMContentLoaded', initHomepage);
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.siteDataLoaded) {
+    initHomepage();
+  }
+});
 
 /* ── Filter tabs ── */
 function filterPhotos(cat, btn) {
