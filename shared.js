@@ -175,15 +175,13 @@ if (window.matchMedia('(pointer:fine)').matches) {
     document.addEventListener('mousemove', e => {
       cx = e.clientX;
       cy = e.clientY;
-      cursor.style.left = cx + 'px';
-      cursor.style.top = cy + 'px';
+      cursor.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%)`;
     });
     
     function animRing() {
-      rx += (cx - rx) * 0.12;
-      ry += (cy - ry) * 0.12;
-      ring.style.left = rx + 'px';
-      ring.style.top = ry + 'px';
+      rx += (cx - rx) * 0.15;
+      ry += (cy - ry) * 0.15;
+      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`;
       requestAnimationFrame(animRing);
     }
     animRing();

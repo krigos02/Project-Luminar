@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared.css?v=2.4">
+<link rel="stylesheet" href="shared.css?v=2.5">
 <style>
   #masonry {
     column-count: 4;
@@ -315,7 +315,7 @@
 <!-- Scripts — order matters -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="data.js"></script>
-<script src="shared.js"></script>
+<script src="shared.js?v=2.1"></script>
 
 <script>
 /* ─── HOME PAGE — filter, lightbox ─────────────────────────────────────── */
@@ -376,6 +376,23 @@ function renderMasonry(filtered) {
     return;
   }
   
+// Global cache to store image brightness calculations
+window._brightnessCache = window._brightnessCache || {};
+
+function renderMasonry(filtered) {
+  const container = document.getElementById('masonry');
+  if (!container) return;
+  
+  const countLabel = document.getElementById('count-label');
+  if (countLabel) {
+    countLabel.textContent = `Showing ${filtered.length} photograph${filtered.length === 1 ? '' : 's'}`;
+  }
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="text-align: center; width: 100%; padding: 3rem; color: var(--text3); font-size: 13px; font-family: monospace;">No photographs found.</div>`;
+    return;
+  }
+  
   container.innerHTML = filtered.map((p, idx) => {
     // Find index of this photo in the global photos array for lightbox nav
     const globalIdx = photos.findIndex(photo => photo.id === p.id);
@@ -384,12 +401,26 @@ function renderMasonry(filtered) {
       locText = locText.split(',')[0].trim();
     }
     locText = locText.toLowerCase();
+
+    // Pre-apply cached text color to avoid triggering canvas analysis again
+    let cachedStyle = '';
+    const cachedVal = window._brightnessCache[p.src];
+    if (cachedVal !== undefined) {
+      if (cachedVal === 'dark') {
+        cachedStyle = 'style="color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.5);"';
+      } else if (cachedVal === 'light') {
+        cachedStyle = 'style="color: #000000; text-shadow: 0 1px 3px rgba(255,255,255,0.4);"';
+      } else {
+        cachedStyle = 'style="color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.9);"';
+      }
+    }
+
     return `
       <div class="masonry-item" onclick="openLb(${idx})" role="button" aria-label="View ${p.title}">
-        <img src="${p.src}" alt="${p.title || ''}" loading="lazy" onload="analyzeImageBrightness(this)">
+        <img src="${p.src}" alt="${p.title || ''}" loading="lazy" ${cachedVal !== undefined ? '' : 'onload="analyzeImageBrightness(this)"'}>
         ${locText ? `
           <div class="masonry-item-overlay">
-            <span class="masonry-item-loc">${locText}</span>
+            <span class="masonry-item-loc" ${cachedStyle}>${locText}</span>
           </div>
         ` : ''}
       </div>
@@ -398,10 +429,27 @@ function renderMasonry(filtered) {
 }
 
 function analyzeImageBrightness(imgEl) {
+  const src = imgEl.getAttribute('src');
   const container = imgEl.closest('.masonry-item');
   if (!container) return;
   const textEl = container.querySelector('.masonry-item-loc');
   if (!textEl) return;
+
+  // Use cached result if available
+  if (window._brightnessCache[src]) {
+    const cachedVal = window._brightnessCache[src];
+    if (cachedVal === 'dark') {
+      textEl.style.color = '#ffffff';
+      textEl.style.textShadow = '0 1px 3px rgba(0,0,0,0.5)';
+    } else if (cachedVal === 'light') {
+      textEl.style.color = '#000000';
+      textEl.style.textShadow = '0 1px 3px rgba(255,255,255,0.4)';
+    } else {
+      textEl.style.color = '#ffffff';
+      textEl.style.textShadow = '0 1px 4px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.9)';
+    }
+    return;
+  }
 
   try {
     const canvas = document.createElement('canvas');
@@ -438,14 +486,17 @@ function analyzeImageBrightness(imgEl) {
 
     // Brightness threshold: < 128 (>=50% dark) -> White text, else -> Black text
     if (avgLuminance < 128) {
+      window._brightnessCache[src] = 'dark';
       textEl.style.color = '#ffffff';
       textEl.style.textShadow = '0 1px 3px rgba(0,0,0,0.5)';
     } else {
+      window._brightnessCache[src] = 'light';
       textEl.style.color = '#000000';
       textEl.style.textShadow = '0 1px 3px rgba(255,255,255,0.4)';
     }
   } catch (e) {
     // Graceful fallback for local files (CORS restrictions on canvas)
+    window._brightnessCache[src] = 'fallback';
     textEl.style.color = '#ffffff';
     textEl.style.textShadow = '0 1px 4px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.9)';
   }
