@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -1399,9 +1399,9 @@
             <div style="background: #121929; border: 1px solid rgba(255, 255, 255, 0.08); padding: 1.25rem; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; min-height: 100px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
               <div>
                 <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); margin-bottom: 6px; font-weight: 600;">Overall Site Views</div>
-                <div id="stats-site-views" style="font-size: 2rem; font-weight: 700; color: var(--gold); font-family: var(--font-sans); line-height: 1.1;">0</div>
+                <div id="stats-site-views" style="font-size: 2rem; font-weight: 700; color: #c9a96e; font-family: var(--font-sans); line-height: 1.1;">0</div>
               </div>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="position: absolute; right: 12px; bottom: 12px; width: 38px; height: 38px; color: var(--gold); opacity: 0.12; pointer-events: none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="position: absolute; right: 12px; bottom: 12px; width: 38px; height: 38px; color: #c9a96e; opacity: 0.12; pointer-events: none;">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                 <circle cx="12" cy="12" r="3"/>
               </svg>
@@ -1788,6 +1788,7 @@
         <!-- Insert -->
         <button type="button" class="tb-btn" data-action="link" title="Insert Link">Link</button>
         <button type="button" class="tb-btn" data-action="image" title="Upload Image">+ Photo</button>
+        <button type="button" class="tb-btn" data-action="rawHtml" title="Insert Raw HTML Block">{...}</button>
         <button type="button" class="tb-btn" data-action="table" title="Insert Table">Table</button>
         <button type="button" class="tb-btn" data-action="horizontalRule" title="Horizontal Rule">Line</button>
         <button type="button" class="tb-btn" data-action="codeBlock" title="Code Block">Code</button>
@@ -2681,8 +2682,8 @@
     document.getElementById('stats-comments-count').textContent = totalComments;
     document.getElementById('stats-shares-count').textContent = totalShares;
 
-    document.getElementById('stats-top-liked').innerHTML = topLikedAsset ? `${topLikedAsset.title} <strong style="color:var(--gold); margin-left:10px">${topLikedAsset.likes} Likes</strong>` : 'No likes recorded';
-    document.getElementById('stats-top-viewed').innerHTML = topViewedAsset ? `${topViewedAsset.title} <strong style="color:var(--gold); margin-left:10px">${topViewedAsset.views} Views</strong>` : 'No views recorded';
+    document.getElementById('stats-top-liked').innerHTML = topLikedAsset ? `${topLikedAsset.title} <strong style="color:#c9a96e; margin-left:10px">${topLikedAsset.likes} Likes</strong>` : 'No likes recorded';
+    document.getElementById('stats-top-viewed').innerHTML = topViewedAsset ? `${topViewedAsset.title} <strong style="color:#c9a96e; margin-left:10px">${topViewedAsset.views} Views</strong>` : 'No views recorded';
 
     // Render popular photo & essay tables
     allPhotosList.sort((a, b) => b.views - a.views);
@@ -5765,7 +5766,7 @@
     try {
       // Dynamic imports from esm.sh CDN
       const [
-        { Editor },
+        { Editor, Node, mergeAttributes },
         { StarterKit },
         { Underline },
         { Link },
@@ -5800,6 +5801,114 @@
       
       container.innerHTML = '';
       
+      const RawHtmlNode = Node.create({
+        name: 'rawHtml',
+        group: 'block',
+        atom: true,
+        addAttributes() {
+          return {
+            htmlCode: { default: '' }
+          };
+        },
+        parseHTML() {
+          return [
+            {
+              tag: 'div[data-raw-html="true"]',
+              getAttrs: dom => ({
+                htmlCode: dom.getAttribute('data-html-code') || ''
+              })
+            }
+          ];
+        },
+        renderHTML({ HTMLAttributes }) {
+          return ['div', mergeAttributes(HTMLAttributes, { 'data-raw-html': 'true', 'data-html-code': HTMLAttributes.htmlCode, class: 'raw-html-embed' })];
+        },
+        addNodeView() {
+          return ({ node, getPos, editor }) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'raw-html-editor-wrapper';
+            wrapper.style.border = '1px dashed var(--gold)';
+            wrapper.style.padding = '10px';
+            wrapper.style.background = 'var(--bg3)';
+            wrapper.style.borderRadius = '8px';
+            wrapper.style.margin = '1.5rem 0';
+            wrapper.style.fontFamily = 'monospace';
+            wrapper.style.position = 'relative';
+            
+            const label = document.createElement('div');
+            label.textContent = '</> Raw HTML Block';
+            label.style.fontSize = '10px';
+            label.style.textTransform = 'uppercase';
+            label.style.color = 'var(--gold)';
+            label.style.marginBottom = '8px';
+            label.style.fontWeight = 'bold';
+            
+            const textarea = document.createElement('textarea');
+            textarea.style.width = '100%';
+            textarea.style.minHeight = '100px';
+            textarea.style.background = 'rgba(0,0,0,0.1)';
+            textarea.style.color = 'var(--text)';
+            textarea.style.border = '1px solid var(--border)';
+            textarea.style.borderRadius = '4px';
+            textarea.style.padding = '8px';
+            textarea.style.fontSize = '12px';
+            textarea.style.resize = 'vertical';
+            textarea.style.boxSizing = 'border-box';
+            textarea.value = node.attrs.htmlCode;
+            textarea.placeholder = 'Paste custom HTML, SVG, or iframes here...';
+            
+            textarea.addEventListener('input', (e) => {
+              if (typeof getPos === 'function') {
+                const tr = editor.state.tr.setNodeAttribute(getPos(), 'htmlCode', e.target.value);
+                editor.view.dispatch(tr);
+              }
+            });
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.style.position = 'absolute';
+            deleteBtn.style.top = '6px';
+            deleteBtn.style.right = '6px';
+            deleteBtn.style.background = '#ff4444';
+            deleteBtn.style.color = 'white';
+            deleteBtn.style.border = 'none';
+            deleteBtn.style.borderRadius = '50%';
+            deleteBtn.style.width = '20px';
+            deleteBtn.style.height = '20px';
+            deleteBtn.style.cursor = 'pointer';
+            deleteBtn.style.display = 'flex';
+            deleteBtn.style.alignItems = 'center';
+            deleteBtn.style.justifyContent = 'center';
+            deleteBtn.title = "Delete block";
+            
+            deleteBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              if (typeof getPos === 'function') {
+                const tr = editor.state.tr.delete(getPos(), getPos() + node.nodeSize);
+                editor.view.dispatch(tr);
+              }
+            });
+            
+            wrapper.appendChild(label);
+            wrapper.appendChild(textarea);
+            wrapper.appendChild(deleteBtn);
+            
+            return {
+              dom: wrapper,
+              stopEvent: (e) => true,
+              ignoreMutation: () => true,
+              update: (updatedNode) => {
+                if (updatedNode.type.name !== 'rawHtml') return false;
+                if (textarea.value !== updatedNode.attrs.htmlCode) {
+                  textarea.value = updatedNode.attrs.htmlCode;
+                }
+                return true;
+              }
+            }
+          }
+        }
+      });
+      
       const ResizableImage = Image.extend({
         addAttributes() {
           return {
@@ -5822,12 +5931,13 @@
             wrapper.style.position = 'relative';
             wrapper.style.display = 'inline-block';
             wrapper.style.maxWidth = '100%';
+            wrapper.style.width = node.attrs.width || '100%';
             wrapper.className = 'resizable-image-wrapper';
             
             const img = document.createElement('img');
             img.src = node.attrs.src;
             img.alt = node.attrs.alt || '';
-            img.style.width = node.attrs.width || '100%';
+            img.style.width = '100%'; // Wrapper dictates width now
             img.style.display = 'block';
             img.style.borderRadius = '4px';
             img.style.border = '1px solid var(--border)';
@@ -5836,25 +5946,60 @@
             resizeHandle.style.position = 'absolute';
             resizeHandle.style.bottom = '6px';
             resizeHandle.style.right = '6px';
-            resizeHandle.style.width = '14px';
-            resizeHandle.style.height = '14px';
-            resizeHandle.style.background = 'var(--gold)';
+            resizeHandle.style.width = '24px';
+            resizeHandle.style.height = '24px';
+            resizeHandle.style.background = '#ffffff';
+            resizeHandle.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
             resizeHandle.style.cursor = 'se-resize';
-            resizeHandle.style.borderRadius = '3px';
+            resizeHandle.style.borderRadius = '50%';
             resizeHandle.style.zIndex = '20';
-            resizeHandle.style.border = '1px solid #000000';
+            resizeHandle.style.display = 'flex';
+            resizeHandle.style.alignItems = 'center';
+            resizeHandle.style.justifyContent = 'center';
+            resizeHandle.style.border = '1px solid rgba(0,0,0,0.1)';
+            
+            // Add resize arrow icon
+            resizeHandle.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 15 21 21 15 21"></polyline><line x1="21" y1="21" x2="13" y2="13"></line></svg>`;
+            
+            // Add delete button
+            const deleteBtn = document.createElement('div');
+            deleteBtn.style.position = 'absolute';
+            deleteBtn.style.top = '6px';
+            deleteBtn.style.right = '6px';
+            deleteBtn.style.width = '24px';
+            deleteBtn.style.height = '24px';
+            deleteBtn.style.background = '#ff4444';
+            deleteBtn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+            deleteBtn.style.cursor = 'pointer';
+            deleteBtn.style.borderRadius = '50%';
+            deleteBtn.style.zIndex = '20';
+            deleteBtn.style.display = 'flex';
+            deleteBtn.style.alignItems = 'center';
+            deleteBtn.style.justifyContent = 'center';
+            deleteBtn.style.border = '1px solid rgba(0,0,0,0.1)';
+            deleteBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
             
             wrapper.appendChild(img);
             
             if (editor.isEditable) {
               wrapper.appendChild(resizeHandle);
+              wrapper.appendChild(deleteBtn);
+              
+              deleteBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof getPos === 'function') {
+                  const tr = editor.view.state.tr.delete(getPos(), getPos() + node.nodeSize);
+                  editor.view.dispatch(tr);
+                }
+              });
               
               let startX, startWidth;
               
               const onMouseDown = (e) => {
                 e.preventDefault();
                 startX = e.clientX;
-                startWidth = img.offsetWidth;
+                startWidth = wrapper.offsetWidth;
                 document.addEventListener('mousemove', onMouseMove);
                 document.addEventListener('mouseup', onMouseUp);
               };
@@ -5864,7 +6009,7 @@
                 const newWidth = Math.max(50, startWidth + dx);
                 const parentWidth = wrapper.parentElement ? wrapper.parentElement.offsetWidth : window.innerWidth;
                 const pct = Math.min(100, Math.round((newWidth / parentWidth) * 100)) + '%';
-                img.style.width = pct;
+                wrapper.style.width = pct;
               };
               
               const onMouseUp = () => {
@@ -5873,7 +6018,7 @@
                 
                 if (typeof getPos === 'function') {
                   editor.view.dispatch(
-                    editor.view.state.tr.setNodeAttribute(getPos(), 'width', img.style.width)
+                    editor.view.state.tr.setNodeAttribute(getPos(), 'width', wrapper.style.width)
                   );
                 }
               };
@@ -5888,7 +6033,7 @@
                 if (updatedNode.type.name !== 'image') return false;
                 img.src = updatedNode.attrs.src;
                 img.alt = updatedNode.attrs.alt || '';
-                img.style.width = updatedNode.attrs.width || '100%';
+                wrapper.style.width = updatedNode.attrs.width || '100%';
                 return true;
               }
             };
@@ -5899,6 +6044,7 @@
       const editor = new Editor({
         element: container,
         extensions: [
+          RawHtmlNode,
           StarterKit.configure({
             history: true,
           }),
@@ -5942,7 +6088,10 @@
             return false;
           },
           handlePaste(view, event, slice) {
-            const items = (event.clipboardData || event.originalEvent.clipboardData || window.clipboardData).items;
+            const clipboardData = event.clipboardData || event.originalEvent.clipboardData || window.clipboardData;
+            
+            // 1. Check for actual copied image files (like copy-pasting from Photoshop or Snipping Tool)
+            const items = clipboardData ? clipboardData.items : null;
             if (items) {
               for (const item of items) {
                 if (item.type.startsWith('image/')) {
@@ -5952,6 +6101,33 @@
                 }
               }
             }
+
+            // 2. Check for pasted text codes (Base64 URIs or raw SVG code)
+            const pastedText = clipboardData ? clipboardData.getData('text/plain') : '';
+            if (pastedText) {
+              const text = pastedText.trim();
+              
+              // Handle base64 image codes (e.g. data:image/png;base64,...)
+              if (text.startsWith('data:image/')) {
+                event.preventDefault();
+                window.tiptapEditor.chain().focus().setImage({ src: text }).run();
+                return true;
+              }
+              
+              // Handle SVG code blocks (e.g. <svg>...</svg>)
+              if (text.startsWith('<svg') && text.endsWith('</svg>')) {
+                event.preventDefault();
+                try {
+                  // Encode SVG code to a base64 data URI so the image node can render it
+                  const encodedSvg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(text)));
+                  window.tiptapEditor.chain().focus().setImage({ src: encodedSvg }).run();
+                  return true;
+                } catch(e) {
+                  console.error("Failed to parse pasted SVG code", e);
+                }
+              }
+            }
+            
             return false;
           }
         },
@@ -6048,6 +6224,9 @@
           break;
         case 'image':
           document.getElementById('tiptap-image-file-input').click();
+          break;
+        case 'rawHtml':
+          editor.chain().focus().insertContent({ type: 'rawHtml', attrs: { htmlCode: '' } }).run();
           break;
         case 'table':
           editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();

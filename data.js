@@ -582,6 +582,7 @@ const DB_KEY = 'luminar_site_data';
 // ── ASYNC DB SYNCHRONIZATION ── //
 async function initDatabase() {
   window.initDatabase = initDatabase;
+  let loadedFromSupabase = false;
   try {
     // Attempt to load from Supabase portfolio_data (ID = 1)
     const { data, error } = await supabaseClient
@@ -598,6 +599,7 @@ async function initDatabase() {
           .from('portfolio_data')
           .insert({ id: 1, data: DEFAULT_SITE_DATA });
         siteData = DEFAULT_SITE_DATA;
+        loadedFromSupabase = true;
       } else {
         // Fall back to local storage for other errors (like network/RLS issues)
         const rawData = localStorage.getItem(DB_KEY);
@@ -609,6 +611,7 @@ async function initDatabase() {
       }
     } else if (data && data.data) {
       siteData = data.data;
+      loadedFromSupabase = true;
     }
   } catch (e) {
     console.error("Supabase network error, reverting to localStorage fallback.", e);
@@ -674,8 +677,8 @@ async function initDatabase() {
   if (!siteData.recognitionLogos) siteData.recognitionLogos = DEFAULT_SITE_DATA.recognitionLogos;
   if (!siteData.categoriesOrder) siteData.categoriesOrder = Object.keys(siteData.galleryCategories);
 
-  // Increment overall session views once per browser session
-  if (!sessionStorage.getItem('session_counted')) {
+  // Increment overall session views once per browser session (only if loaded from Supabase)
+  if (!sessionStorage.getItem('session_counted') && loadedFromSupabase) {
     siteData.views = (siteData.views || 0) + 1;
     sessionStorage.setItem('session_counted', 'true');
     needsSave = true;
@@ -688,9 +691,9 @@ async function initDatabase() {
   // Dispatch global custom event for UI updates
   document.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: siteData }));
 
-  // Save the cleaned database back to Supabase and LocalStorage if changes were made
-  if (needsSave) {
-    console.log("Seeded mock images detected in database. Cleaning up...");
+  // Save the cleaned database back to Supabase and LocalStorage if changes were made AND we loaded from Supabase
+  if (needsSave && loadedFromSupabase) {
+    console.log("Updating database state safely...");
     setTimeout(() => {
       window.saveSiteData(siteData);
     }, 1000);
