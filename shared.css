@@ -337,6 +337,22 @@ button {
 .brand-logo:hover {
   opacity: 1;
 }
+.brand-subtitle {
+  font-family: var(--font-sans);
+  font-size: clamp(8px, 1.2vw, 10px);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  margin-top: 0.75rem;
+  font-weight: 400;
+  display: block;
+  opacity: 0.85;
+}
+[data-theme="dark"] .brand-subtitle {
+  color: var(--gold);
+}
+[data-theme="light"] .brand-subtitle, :root:not([data-theme="dark"]) .brand-subtitle {
+  color: #000000;
+}
 .brand-bold {
   font-weight: 700;
 }

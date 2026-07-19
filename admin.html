@@ -6,7 +6,7 @@
 <title>CMS Dashboard — Krishnendu Goswami</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared.css?v=2.6">
+<link rel="stylesheet" href="shared.css?v=2.7">
 <style>
   /* ── ADMIN BOARD LIQUID GLASS STYLING ── */
   body {
@@ -1504,9 +1504,9 @@
             Because this portfolio runs fully client-side, your changes are currently saved directly inside your browser cache. Clearing your browser data will wipe out edits. 
           </p>
           <div style="margin-bottom:2rem; padding: 1.5rem; border:1px solid var(--border); background:var(--bg2)">
-            <h4 style="font-size:11px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px">1. Export to data.js?v=2.2 (Permanent Deployment)</h4>
-            <p style="font-size:12.5px;color:var(--text3);margin-bottom:1rem">Download the updated Javascript config file. Replace your local <strong>data.js?v=2.2</strong> file in your project directory with this file to make all edits permanent for all website users.</p>
-            <button onclick="exportConfig()" class="btn-primary" style="padding:10px 24px; font-size:11px">Download data.js?v=2.2</button>
+            <h4 style="font-size:11px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px">1. Export to data.js?v=3.0 (Permanent Deployment)</h4>
+            <p style="font-size:12.5px;color:var(--text3);margin-bottom:1rem">Download the updated Javascript config file. Replace your local <strong>data.js?v=3.0</strong> file in your project directory with this file to make all edits permanent for all website users.</p>
+            <button onclick="exportConfig()" class="btn-primary" style="padding:10px 24px; font-size:11px">Download data.js?v=3.0</button>
           </div>
           <div style="margin-bottom:2rem; padding: 1.5rem; border:1px solid var(--border); background:var(--bg2)">
             <h4 style="font-size:11px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px">2. Restore Defaults</h4>
@@ -2044,7 +2044,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="data.js?v=2.2"></script>
+<script src="data.js?v=3.0"></script>
 <script src="shared.js?v=2.1"></script>
 <script src="https://cdn.jsdelivr.net/npm/exifreader@4.23.0/dist/exif-reader.min.js"></script>
 <script>
@@ -6272,7 +6272,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'data.js?v=2.2';
+    a.download = 'data.js?v=3.0';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
