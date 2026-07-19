@@ -702,99 +702,6 @@ initDatabase();
 
 window.saveSiteData = async function(newData) {
   try {
-    // Merge live user-generated data (likes, comments, views) to prevent lost updates
-    try {
-      const { data: dbRow, error: dbErr } = await supabaseClient
-        .from('portfolio_data')
-        .select('data')
-        .eq('id', 1)
-        .single();
-      if (!dbErr && dbRow && dbRow.data) {
-        const liveData = dbRow.data;
-
-        // 1. Merge and restore missing journal entries (blog posts)
-        if (liveData.journalEntries) {
-          if (!newData.journalEntries) newData.journalEntries = [];
-          liveData.journalEntries.forEach(liveJ => {
-            const exists = newData.journalEntries.some(x => x.id === liveJ.id);
-            if (!exists) {
-              newData.journalEntries.push(liveJ);
-            }
-          });
-        }
-
-        // 2. Merge and restore missing stories
-        if (liveData.stories) {
-          if (!newData.stories) newData.stories = [];
-          liveData.stories.forEach(liveS => {
-            const exists = newData.stories.some(x => x.id === liveS.id);
-            if (!exists) {
-              newData.stories.push(liveS);
-            }
-          });
-        }
-
-        // 3. Merge and restore missing gallery photos in categories
-        if (liveData.galleryCategories && newData.galleryCategories) {
-          for (const catKey in liveData.galleryCategories) {
-            const liveCat = liveData.galleryCategories[catKey];
-            const targetCat = newData.galleryCategories[catKey];
-            if (liveCat && liveCat.photos && targetCat && targetCat.photos) {
-              liveCat.photos.forEach(liveP => {
-                const exists = targetCat.photos.some(x => x.id === liveP.id);
-                if (!exists) {
-                  targetCat.photos.push(liveP);
-                }
-              });
-            }
-          }
-        }
-
-        // 4. Merge likes, comments, and views for matching items
-        if (newData.homepagePhotos && liveData.homepagePhotos) {
-          newData.homepagePhotos.forEach(p => {
-            const liveP = liveData.homepagePhotos.find(x => x.id === p.id);
-            if (liveP) {
-              p.comments = liveP.comments || [];
-              p.likes = liveP.likes || 0;
-              p.views = Math.max(p.views || 0, liveP.views || 0);
-            }
-          });
-        }
-        if (newData.galleryCategories && liveData.galleryCategories) {
-          for (const catKey in newData.galleryCategories) {
-            const targetCat = newData.galleryCategories[catKey];
-            const liveCat = liveData.galleryCategories[catKey];
-            if (targetCat && targetCat.photos && liveCat && liveCat.photos) {
-              targetCat.photos.forEach(p => {
-                const liveP = liveCat.photos.find(x => x.id === p.id);
-                if (liveP) {
-                  p.comments = liveP.comments || [];
-                  p.likes = liveP.likes || 0;
-                  p.views = Math.max(p.views || 0, liveP.views || 0);
-                }
-              });
-            }
-          }
-        }
-        if (newData.stories && liveData.stories) {
-          newData.stories.forEach(s => {
-            const liveS = liveData.stories.find(x => x.id === s.id);
-            if (liveS) {
-              s.comments = liveS.comments || [];
-              s.likes = liveS.likes || 0;
-              s.views = Math.max(s.views || 0, liveS.views || 0);
-            }
-          });
-        }
-        if (newData.journalEntries && liveData.journalEntries) {
-          newData.journalEntries.forEach(j => {
-            const liveJ = liveData.journalEntries.find(x => x.id === j.id);
-            if (liveJ) {
-              j.comments = liveJ.comments || [];
-            }
-          });
-        }
       }
     } catch (mergeErr) {
       console.warn("Could not merge live visitor interactions, proceeding with direct save.", mergeErr);
@@ -901,8 +808,7 @@ window.portfolioDb = {
         .eq('id', 1)
         .single();
       if (!error && data && data.data) {
-        window.siteData = data.data;
-        return data.data;
+        return data.data; // Interactions are handled separately
       }
     } catch (e) {
       console.warn("Could not fetch latest database state, using memory fallback.", e);
@@ -931,11 +837,16 @@ window.portfolioDb = {
 
   async incrementView(type, itemId, subId) {
     return this._enqueueWrite(async () => {
-      const data = await this.fetchLatestData();
-      const item = this.findItemOnData(data, type, itemId, subId);
+      const item = this.findItemOnData(window.siteData, type, itemId, subId);
       if (item) {
         item.views = (item.views || 0) + 1;
-        await window.saveSiteData(data);
+        const actualType = (type === 'home_photo') ? 'gallery_photo' : type;
+        await supabaseClient.from('content_interactions').upsert({
+          item_id: String(item.id || itemId),
+          item_type: actualType,
+          likes: item.likes || 0,
+          views: item.views
+        }, { onConflict: 'item_id' });
       }
     });
   },
@@ -946,7 +857,7 @@ window.portfolioDb = {
       const item = this.findItemOnData(data, type, itemId, subId);
       if (item) {
         item.shares = (item.shares || 0) + 1;
-        await window.saveSiteData(data);
+        // Shares aren't in interactions table yet, just tracking locally for now
         return item.shares;
       }
       return 0;
@@ -970,16 +881,21 @@ window.portfolioDb = {
     }
 
     return new Promise((resolve) => {
-      // Resolve immediately to keep UI updates responsive
       resolve(memItem ? memItem.likes : 0);
 
-      // Debounce the actual database write by 1 second to avoid spamming transactions
       this._likeDebounceTimers[key] = setTimeout(() => {
         delete this._likeDebounceTimers[key];
         
         this._enqueueWrite(async () => {
-          // Directly save the updated memory state to avoid overwriting it with stale data
-          await window.saveSiteData(window.siteData);
+          if (memItem) {
+            const actualType = (type === 'home_photo') ? 'gallery_photo' : type;
+            await supabaseClient.from('content_interactions').upsert({
+              item_id: String(memItem.id || itemId),
+              item_type: actualType,
+              likes: memItem.likes,
+              views: memItem.views || 0
+            }, { onConflict: 'item_id' });
+          }
           return memItem ? memItem.likes : 0;
         });
       }, 1000);
@@ -988,8 +904,7 @@ window.portfolioDb = {
 
   async addComment(type, itemId, subId, name, text) {
     return this._enqueueWrite(async () => {
-      const data = await this.fetchLatestData();
-      const item = this.findItemOnData(data, type, itemId, subId);
+      const item = this.findItemOnData(window.siteData, type, itemId, subId);
       if (item) {
         if (!item.comments) item.comments = [];
         const newComment = {
@@ -1000,7 +915,18 @@ window.portfolioDb = {
           timestamp: Date.now()
         };
         item.comments.push(newComment);
-        await window.saveSiteData(data);
+        
+        const actualType = (type === 'home_photo') ? 'gallery_photo' : type;
+        await supabaseClient.from('content_comments').insert({
+          id: newComment.id,
+          item_id: String(item.id || itemId),
+          item_type: actualType,
+          name: newComment.name,
+          text: newComment.text,
+          date: newComment.date,
+          timestamp: newComment.timestamp
+        });
+        
         return newComment;
       }
       return null;
@@ -1009,13 +935,12 @@ window.portfolioDb = {
 
   async deleteComment(type, itemId, subId, commentId) {
     return this._enqueueWrite(async () => {
-      const data = await this.fetchLatestData();
-      const item = this.findItemOnData(data, type, itemId, subId);
+      const item = this.findItemOnData(window.siteData, type, itemId, subId);
       if (item && item.comments) {
         const initialLength = item.comments.length;
         item.comments = item.comments.filter(c => c.id !== commentId);
         if (item.comments.length !== initialLength) {
-          await window.saveSiteData(data);
+          await supabaseClient.from('content_comments').delete().eq('id', commentId);
           return true;
         }
       }
