@@ -702,10 +702,7 @@ initDatabase();
 
 window.saveSiteData = async function(newData) {
   try {
-      }
-    } catch (mergeErr) {
-      console.warn("Could not merge live visitor interactions, proceeding with direct save.", mergeErr);
-    }
+    if (!newData) newData = window.siteData;
 
     // 1. Save to Supabase Cloud
     const { error } = await supabaseClient
@@ -714,12 +711,13 @@ window.saveSiteData = async function(newData) {
 
     if (error) throw error;
 
-    // 2. Cache in LocalStorage as backup (handle quota errors gracefully)
+    // 2. Cache in LocalStorage as backup
     try {
       localStorage.setItem(DB_KEY, JSON.stringify(newData));
     } catch (lsError) {
-      console.warn("Failed to save backup copy to browser LocalStorage (quota exceeded), but data saved successfully to Supabase.", lsError);
+      console.warn("Failed to save backup copy to browser LocalStorage.", lsError);
     }
+    
     window.siteData = newData;
 
     // 3. Dispatch update event
