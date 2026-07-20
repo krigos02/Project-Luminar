@@ -579,6 +579,58 @@ window.siteData = siteData;
 
 const DB_KEY = 'luminar_site_data';
 
+// Helper to merge content interactions (likes/views) from separate table
+async function mergeInteractions(dataObj) {
+  try {
+    const { data: interactions, error } = await supabaseClient
+      .from('content_interactions')
+      .select('*');
+      
+    if (!error && interactions) {
+      interactions.forEach(row => {
+        const id = parseInt(row.item_id);
+        const type = row.item_type;
+        
+        if (type === 'journal' || type === 'deep_dive') {
+          const item = dataObj.journalEntries ? dataObj.journalEntries.find(j => j.id === id) : null;
+          if (item) {
+            item.likes = row.likes || 0;
+            item.views = row.views || 0;
+          }
+        } else if (type === 'story') {
+          const item = dataObj.stories ? dataObj.stories.find(s => s.id === id) : null;
+          if (item) {
+            item.likes = row.likes || 0;
+            item.views = row.views || 0;
+          }
+        } else if (type === 'gallery_photo') {
+          if (dataObj.galleryCategories) {
+            Object.keys(dataObj.galleryCategories).forEach(catKey => {
+              const cat = dataObj.galleryCategories[catKey];
+              if (cat && cat.photos) {
+                const item = cat.photos.find(p => p.id === id);
+                if (item) {
+                  item.likes = row.likes || 0;
+                  item.views = row.views || 0;
+                }
+              }
+            });
+          }
+          if (dataObj.homepagePhotos) {
+            const item = dataObj.homepagePhotos.find(p => p.id === id);
+            if (item) {
+              item.likes = row.likes || 0;
+              item.views = row.views || 0;
+            }
+          }
+        }
+      });
+    }
+  } catch (e) {
+    console.warn("Failed to merge content interactions", e);
+  }
+}
+
 // ── ASYNC DB SYNCHRONIZATION ── //
 async function initDatabase() {
   window.initDatabase = initDatabase;
@@ -683,6 +735,9 @@ async function initDatabase() {
     sessionStorage.setItem('session_counted', 'true');
     needsSave = true;
   }
+
+  // Merge interactions from separate table
+  await mergeInteractions(siteData);
 
   // Export globally
   window.siteData = siteData;
@@ -809,11 +864,14 @@ window.portfolioDb = {
         .eq('id', 1)
         .single();
       if (!error && data && data.data) {
-        return data.data; // Interactions are handled separately
+        const freshData = data.data;
+        await mergeInteractions(freshData);
+        return freshData;
       }
     } catch (e) {
       console.warn("Could not fetch latest database state, using memory fallback.", e);
     }
+    await mergeInteractions(window.siteData);
     return window.siteData;
   },
 
@@ -870,18 +928,14 @@ window.portfolioDb = {
   async toggleLike(type, itemId, subId, isLike) {
     const key = `${type}_${itemId}_${subId}`;
     
-    // Update local memory state immediately for instant feedback
     const memItem = this.findItemOnData(window.siteData, type, itemId, subId);
-    if (memItem) {
-      const current = memItem.likes || 0;
-      memItem.likes = Math.max(0, current + (isLike ? 1 : -1));
-    }
 
     if (this._likeDebounceTimers[key]) {
       clearTimeout(this._likeDebounceTimers[key]);
     }
 
     return new Promise((resolve) => {
+      // Immediately resolve with the caller's updated value
       resolve(memItem ? memItem.likes : 0);
 
       this._likeDebounceTimers[key] = setTimeout(() => {
@@ -893,7 +947,7 @@ window.portfolioDb = {
             await supabaseClient.from('content_interactions').upsert({
               item_id: String(memItem.id || itemId),
               item_type: actualType,
-              likes: memItem.likes,
+              likes: memItem.likes || 0,
               views: memItem.views || 0
             }, { onConflict: 'item_id' });
           }

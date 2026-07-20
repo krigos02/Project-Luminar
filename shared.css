@@ -1405,9 +1405,9 @@ body.cursor-hover #cursor-ring {
   color: #0d0d0d;
 }
 .lb-card-action-btn.liked {
-  color: #ff3b30 !important;
-  border-color: rgba(255, 59, 48, 0.3) !important;
-  background: rgba(255, 59, 48, 0.05) !important;
+  color: #ff4444 !important;
+  border-color: rgba(255, 68, 68, 0.3) !important;
+  background: rgba(255, 68, 68, 0.05) !important;
 }
 .lb-card-action-btn svg {
   width: 14px;
