@@ -118,15 +118,102 @@ document.addEventListener('keydown', e => {
   }
 });
 
-/* ── PAGE LOADER ── */
-window.addEventListener('load', () => {
+/* ── MINIMALIST 35MM FILM CANISTER PRELOADER ── */
+function initFilmPreloader() {
   const loader = document.getElementById('loader');
-  if (loader) {
-    setTimeout(() => {
-      loader.classList.add('hidden');
-    }, 1000);
+  if (!loader) return;
+
+  // Inject film canister preloader HTML into the loader container
+  if (!loader.querySelector('.film-loader-stage')) {
+    loader.innerHTML = `
+      <div class="loader-logo">Krishnendu Goswami</div>
+      <div class="film-loader-stage">
+        <div class="film-window">
+          <div class="film-track">
+            <div class="film-frame" data-word="LIGHTS">LIGHTS</div>
+            <div class="film-frame" data-word="CAMERA">CAMERA</div>
+            <div class="film-frame" data-word="PATIENCE">PATIENCE</div>
+          </div>
+        </div>
+        <div class="film-canister">
+          <div class="can-cap top"><span class="can-spool"></span></div>
+          <div class="can-body"></div>
+          <div class="can-lip"></div>
+          <div class="can-cap bottom"><span class="can-foot"></span></div>
+        </div>
+      </div>
+    `;
+  }
+
+  const win = loader.querySelector('.film-window');
+  const track = loader.querySelector('.film-track');
+  const frames = Array.from(loader.querySelectorAll('.film-frame'));
+  const canister = loader.querySelector('.film-canister');
+
+  if (!win || !track || !frames.length || !canister) return;
+
+  function runLayout() {
+    const frameW = frames[0].offsetWidth || 150;
+    const total = frameW * frames.length;
+    win.style.left = (canister.offsetLeft + canister.offsetWidth - 8) + 'px';
+    track.style.transform = 'translateX(' + -total + 'px)';
+
+    const UNWIND = 2000;
+    const HOLD = 600;
+    const REWIND = 800;
+    const RESET = 200;
+
+    function unwind() {
+      if (loader.classList.contains('hidden')) return;
+      track.style.transition = 'transform ' + UNWIND + 'ms cubic-bezier(0.25, 1, 0.5, 1)';
+      track.style.transform = 'translateX(0)';
+      setTimeout(rewind, UNWIND + HOLD);
+    }
+
+    function rewind() {
+      if (loader.classList.contains('hidden')) return;
+      track.style.transition = 'transform ' + REWIND + 'ms ease-in';
+      track.style.transform = 'translateX(' + -total + 'px)';
+      setTimeout(unwind, REWIND + RESET);
+    }
+
+    setTimeout(unwind, 150);
+  }
+
+  requestAnimationFrame(runLayout);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initFilmPreloader);
+} else {
+  initFilmPreloader();
+}
+
+let pageIsFullyLoaded = false;
+
+function dismissLoader() {
+  const loader = document.getElementById('loader');
+  if (loader && !loader.classList.contains('hidden')) {
+    loader.classList.add('hidden');
+  }
+}
+
+// Track actual page asset load event
+window.addEventListener('load', () => {
+  pageIsFullyLoaded = true;
+  // Ensure minimum aesthetic display time of 1200ms so animation is smooth, then dismiss
+  setTimeout(dismissLoader, 1200);
+});
+
+// Also dismiss if siteDataLoaded fires after page load
+document.addEventListener('siteDataLoaded', () => {
+  if (document.readyState === 'complete') {
+    setTimeout(dismissLoader, 800);
   }
 });
+
+// Absolute safety fallback (max 5s) in case network hangs or images stall
+setTimeout(dismissLoader, 5000);
 
 /* ── NAV BACKGROUND SCROLL TARIFF ── */
 const nav = document.getElementById('nav');
@@ -481,3 +568,35 @@ window.closeLegalModal = closeLegalModal;
 
 document.addEventListener('DOMContentLoaded', updateDynamicLayout);
 document.addEventListener('siteDataLoaded', updateDynamicLayout);
+
+/* ── UNIVERSAL MOBILE TOUCH SWIPE SUPPORT FOR LIGHTBOX ── */
+(function setupUniversalTouchSwipe() {
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', e => {
+    const lbEl = document.getElementById('lb') || document.getElementById('lightbox');
+    if (!lbEl || !lbEl.classList.contains('open')) return;
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const lbEl = document.getElementById('lb') || document.getElementById('lightbox');
+    if (!lbEl || !lbEl.classList.contains('open')) return;
+    const touchEndX = e.changedTouches[0].screenX;
+    const touchEndY = e.changedTouches[0].screenY;
+
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+
+    // Horizontally dominant swipe
+    if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX < 0) {
+        if (typeof window.lbNav === 'function') window.lbNav(1);
+      } else {
+        if (typeof window.lbNav === 'function') window.lbNav(-1);
+      }
+    }
+  }, { passive: true });
+})();
