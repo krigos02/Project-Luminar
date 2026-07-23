@@ -73,12 +73,15 @@ const DEFAULT_SITE_DATA = {
                                ],
                     "twitter":  "https://x.com/KRIGOS02?s=09",
                     "bioTitle":  "Vision shaped by",
-                    "location":  "West Bengal, India",
+                    "location":  "Baidyabati, West Bengal, India",
                     "instagram":  "https://www.instagram.com/goswami._krishnendu?igsh=ZmltdGk2OXM5aGUy",
-                    "bioExcerpt":  "",
+                    "bioExcerpt":  "Krishnendu Goswami is a nationally exhibited photographer whose work navigates the quiet intersection of the natural world and human presence.",
                     "bioTitleEm":  "a thousand sunrises",
                     "philosophy":  "I don\u0027t chase photographs. I wait for the world to reveal itself — one breath at a time. The camera is simply an extension of that patience.",
-                    "bioParagraphs":  [],
+                    "bioParagraphs":  [
+                        "Based in Baidyabati, West Bengal, India, their journey with the camera began with a deep curiosity for light, space, and living forms. What started as a personal quest to document vanishing landscapes became a lifelong dedication to the ethics and art of visual storytelling. Their images have been published and exhibited nationally across galleries and challenges.",
+                        "Every expedition is a partnership with time and light. By spending weeks in remote areas—from high-altitude mountain passes to quiet street corridors—they seek to capture not just a scene, but the silent atmosphere and emotional weight of a place."
+                    ],
                     "yearsExperience":  23
                 },
     "stories":  [

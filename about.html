@@ -378,15 +378,15 @@
       <div class="about-text reveal-right">
         <p class="section-label">About the Photographer</p>
         <h1 class="section-title">Vision shaped by<br><em>a thousand sunrises</em></h1>
-        <p class="about-bio">Krishnendu Goswami is an internationally exhibited photographer whose work navigates the quiet intersection of the natural world and human presence.</p>
-        
-        <p class="about-story">Based in India, their journey with the camera began over two decades ago. What started as a personal quest to document vanishing landscapes became a lifelong dedication to the ethics and art of visual storytelling. Their images have appeared in natural history magazines, and have been exhibited across galleries internationally.</p>
-        
+        <p class="about-bio">Krishnendu Goswami is a nationally exhibited photographer whose work navigates the quiet intersection of the natural world and human presence.</p>
+      
+        <p class="about-story">Based in Baidyabati, West Bengal, India, their journey with the camera began with a deep curiosity for light, space, and living forms. What started as a personal quest to document vanishing landscapes became a lifelong dedication to the ethics and art of visual storytelling. Their images have been published and exhibited nationally across galleries and challenges.</p>
+
         <div class="about-philosophy">
           <p>"I don't chase photographs. I wait for the world to reveal itself — one breath at a time. The camera is simply an extension of that patience."</p>
         </div>
 
-        <p class="about-story">Every expedition is a partnership with time and light. By spending weeks in remote areas—from the high altitudes of the Zanskar range to the dense jungles of the Western Ghats—they seek to capture not just a scene, but the silent atmosphere and emotional weight of a place. Their approach is marked by absolute respect for habitats, always prioritizing conservation ethics over capturing a shot.</p>
+        <p class="about-story">Every expedition is a partnership with time and light. By spending weeks in remote areas—from high-altitude mountain passes to quiet street corridors—they seek to capture not just a scene, but the silent atmosphere and emotional weight of a place.</p>
 
         <div class="about-stats">
           <div class="about-stat-item"><div class="about-stat-n">120+</div><div class="about-stat-l">Published Works</div></div>
@@ -599,7 +599,7 @@ function initAboutPage() {
     
     // 4. Bio Story & Philosophy
     const textContainer = document.querySelector('.about-text');
-    if (textContainer) {
+    if (textContainer && profile.bioParagraphs && profile.bioParagraphs.length > 0) {
       const storyEls = textContainer.querySelectorAll('.about-story');
       storyEls.forEach(el => el.remove());
       const philEl = textContainer.querySelector('.about-philosophy');
