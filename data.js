@@ -1,4 +1,4 @@
-﻿// Dynamic Content Management System (CMS) Database
+// Dynamic Content Management System (CMS) Database
 // Consolidates all website data, making it dynamic and editable.
 
 const DEFAULT_SITE_DATA = {
@@ -75,13 +75,10 @@ const DEFAULT_SITE_DATA = {
                     "bioTitle":  "Vision shaped by",
                     "location":  "West Bengal, India",
                     "instagram":  "https://www.instagram.com/goswami._krishnendu?igsh=ZmltdGk2OXM5aGUy",
-                    "bioExcerpt":  "Krishnendu Goswami is a nationally exhibited photographer whose work navigates the quiet intersection of the natural world and human presence.",
+                    "bioExcerpt":  "",
                     "bioTitleEm":  "a thousand sunrises",
                     "philosophy":  "I don\u0027t chase photographs. I wait for the world to reveal itself — one breath at a time. The camera is simply an extension of that patience.",
-                    "bioParagraphs":  [
-                                          "Based in India, their journey with the camera began over two decades ago. What started as a personal quest to document vanishing landscapes became a lifelong dedication to the ethics and art of visual storytelling. Their images have appeared in natural history magazines, and have been exhibited across galleries internationally.",
-                                          "Every expedition is a partnership with time and light. By spending weeks in remote areas—from the high altitudes of the Zanskar range to the dense jungles of the Western Ghats—they seek to capture not just a scene, but the silent atmosphere and emotional weight of a place. Their approach is marked by absolute respect for habitats, always prioritizing conservation ethics over capturing a shot."
-                                      ],
+                    "bioParagraphs":  [],
                     "yearsExperience":  23
                 },
     "stories":  [
@@ -989,14 +986,44 @@ window.saveSiteData = async function(newData) {
   try {
     if (!newData) newData = window.siteData;
 
+    const timestamp = new Date().toISOString();
+
     // 1. Save to Supabase Cloud
     const { error } = await supabaseClient
       .from('portfolio_data')
-      .upsert({ id: 1, data: newData, updated_at: new Date().toISOString() });
+      .upsert({ id: 1, data: newData, updated_at: timestamp });
 
     if (error) throw error;
 
-    // 2. Cache in LocalStorage as backup
+    // 2. Double-check live write verification directly from Supabase
+    let verifiedTimestamp = timestamp;
+    let isVerified = false;
+    try {
+      const { data: verifyData, error: verifyError } = await supabaseClient
+        .from('portfolio_data')
+        .select('updated_at')
+        .eq('id', 1)
+        .single();
+
+      if (!verifyError && verifyData) {
+        isVerified = true;
+        if (verifyData.updated_at) verifiedTimestamp = verifyData.updated_at;
+      }
+    } catch (vErr) {
+      console.warn("Live verification check warning:", vErr);
+    }
+
+    const timeObj = new Date(verifiedTimestamp);
+    const timeString = timeObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
+    window.lastSaveResult = {
+      success: true,
+      verified: isVerified,
+      timestamp: verifiedTimestamp,
+      timeString: timeString
+    };
+
+    // 3. Cache in LocalStorage as backup
     try {
       localStorage.setItem(DB_KEY, JSON.stringify(newData));
     } catch (lsError) {
@@ -1005,11 +1032,12 @@ window.saveSiteData = async function(newData) {
     
     window.siteData = newData;
 
-    // 3. Dispatch update event
+    // 4. Dispatch update event
     document.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: newData }));
-    return true;
+    return window.lastSaveResult;
   } catch (e) {
     console.error("Failed to save data to Supabase.", e);
+    window.lastSaveResult = { success: false, error: e.message };
     return false;
   }
 };

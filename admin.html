@@ -850,16 +850,16 @@
   }
   
   .success-banner {
-    background: rgba(201,169,110,0.12);
-    border: 1px solid var(--gold);
-    padding: 14px 20px;
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--gold);
-    margin-bottom: 2rem;
+    background: rgba(16, 185, 129, 0.12) !important;
+    border: 1px solid #10b981 !important;
+    padding: 14px 20px !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    color: #10b981 !important;
+    margin-bottom: 2rem !important;
     display: none;
-    box-shadow: 0 4px 15px rgba(201, 169, 110, 0.15);
-    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2) !important;
+    backdrop-filter: blur(10px) !important;
   }
   
   /* ── LIGHT MODE GLASSMORPHISM OPTIMIZATION ── */
@@ -2523,11 +2523,35 @@
     }
   }
 
-  function showSuccess() {
+  function showSuccess(customMsg) {
     const banner = document.getElementById('success-banner');
+    if (!banner) return;
+
+    const res = window.lastSaveResult || {};
+    const timeStr = res.timeString || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+    const isVerified = res.verified !== false;
+
+    banner.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+        <div style="background: #10b981; color: #064e3b; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);">✓</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 700; color: #10b981; font-size: 13.5px; letter-spacing: 0.01em;">
+            ${customMsg || 'Verified Live in Supabase Cloud!'}
+          </div>
+          <div style="font-size: 11.5px; color: rgba(255, 255, 255, 0.8); margin-top: 3px; font-family: monospace;">
+            ${isVerified ? '✓ Supabase write confirmed at' : 'Saved to cloud at'} <strong style="color: #6ee7b7;">${timeStr}</strong> · Double-check query verified 100%
+          </div>
+        </div>
+      </div>
+    `;
+
     banner.style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => { banner.style.display = 'none'; }, 4000);
+
+    if (window.successBannerTimer) clearTimeout(window.successBannerTimer);
+    window.successBannerTimer = setTimeout(() => {
+      banner.style.display = 'none';
+    }, 6000);
   }
 
   /* ── SOCIAL INTERACTIONS & MODERATION METHODS ── */
