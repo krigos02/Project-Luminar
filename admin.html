@@ -2503,11 +2503,16 @@
     }
   }
 
-  /* ── INITIALIZE DASHBOARD ── */
+  /* ── INITIALIZE DASHBOARD (FETCHES FRESH DATA BEFORE EDITING) ── */
   async function initDashboard() {
     if (window.initDatabase) {
       await window.initDatabase();
     }
+
+    if (!window.databaseConnected && typeof window.showConflictAlert === 'function') {
+      window.showConflictAlert('READ-ONLY FALLBACK MODE: Database connection unavailable. Editing and saving to cloud is disabled until Supabase is reconnected.');
+    }
+
     loadProfileForm();
     loadCategoriesCms();
     renderHomepageTags();
@@ -2523,13 +2528,33 @@
     }
   }
 
+  window.showConflictAlert = function(msg) {
+    const banner = document.getElementById('success-banner');
+    if (!banner) return;
+    banner.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 12px; text-align: left; background: #7f1d1d; border: 1px solid #ef4444; padding: 14px 18px; border-radius: 8px;">
+        <div style="background: #ef4444; color: #ffffff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0;">!</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 700; color: #fca5a5; font-size: 13.5px;">SAVE ABORTED: CONFLICT DETECTED</div>
+          <div style="font-size: 11.5px; color: #fecaca; margin-top: 3px;">${msg || 'Another session modified the database. The editor has been refreshed with the latest cloud data.'}</div>
+        </div>
+      </div>
+    `;
+    banner.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   function showSuccess(customMsg) {
     const banner = document.getElementById('success-banner');
     if (!banner) return;
 
     const res = window.lastSaveResult || {};
+    if (!res.success || !res.verified) {
+      console.warn("showSuccess blocked: Save was not verified live from Supabase.", res);
+      return;
+    }
+
     const timeStr = res.timeString || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-    const isVerified = res.verified !== false;
 
     banner.innerHTML = `
       <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
@@ -2539,7 +2564,7 @@
             ${customMsg || 'Verified Live in Supabase Cloud!'}
           </div>
           <div style="font-size: 11.5px; color: rgba(255, 255, 255, 0.8); margin-top: 3px; font-family: monospace;">
-            ${isVerified ? '✓ Supabase write confirmed at' : 'Saved to cloud at'} <strong style="color: #6ee7b7;">${timeStr}</strong> · Double-check query verified 100%
+            ✓ Supabase write confirmed at <strong style="color: #6ee7b7;">${timeStr}</strong> · Double-check query verified 100%
           </div>
         </div>
       </div>

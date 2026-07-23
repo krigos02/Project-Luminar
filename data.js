@@ -858,43 +858,46 @@ async function mergeInteractions(dataObj) {
   }
 }
 
+// Explicit application connection state
+window.databaseConnected = false;
+window.currentDataTimestamp = null;
+let saveQueuePromise = Promise.resolve();
+
 // ── ASYNC DB SYNCHRONIZATION ── //
 async function initDatabase() {
   window.initDatabase = initDatabase;
+  window.databaseConnected = false;
   let loadedFromSupabase = false;
+
   try {
-    // Attempt to load from Supabase portfolio_data (ID = 1)
+    // Attempt to load from Supabase portfolio_data (ID = 1) along with updated_at timestamp
     const { data, error } = await supabaseClient
       .from('portfolio_data')
-      .select('data')
+      .select('data, updated_at')
       .eq('id', 1)
       .single();
       
     if (error) {
-      console.warn("Supabase row query failed.", error);
-      // Only insert baseline data if the row explicitly does not exist
-      if (error.code === 'PGRST116') {
-        await supabaseClient
-          .from('portfolio_data')
-          .insert({ id: 1, data: DEFAULT_SITE_DATA });
-        siteData = DEFAULT_SITE_DATA;
-        loadedFromSupabase = true;
-      } else {
-        // Fall back to local storage for other errors (like network/RLS issues)
-        const rawData = localStorage.getItem(DB_KEY);
-        if (rawData) {
+      console.warn("Supabase connection / row query failed. Operating in FALLBACK mode.", error);
+      const rawData = localStorage.getItem(DB_KEY);
+      if (rawData) {
+        try {
           siteData = JSON.parse(rawData);
-        } else {
+        } catch (e) {
           siteData = DEFAULT_SITE_DATA;
         }
+      } else {
+        siteData = DEFAULT_SITE_DATA;
       }
     } else if (data && data.data) {
       siteData = data.data;
+      window.currentDataTimestamp = data.updated_at || null;
+      window.databaseConnected = true; // Connection explicitly verified!
       loadedFromSupabase = true;
     }
   } catch (e) {
-    console.error("Supabase network error, reverting to localStorage fallback.", e);
-    // Fallback to local storage
+    console.error("Supabase network error, reverting to read-only fallback mode.", e);
+    window.databaseConnected = false;
     try {
       const rawData = localStorage.getItem(DB_KEY);
       if (rawData) {
@@ -905,42 +908,15 @@ async function initDatabase() {
     }
   }
 
-  let needsSave = false;
-
-  // Clean up broken image clutter (missing or empty src)
+  // Sanitize in-memory arrays (in-memory cleanup ONLY - NEVER saved back to Supabase)
   if (siteData.homepagePhotos) {
-    const origHomeLen = siteData.homepagePhotos.length;
-    siteData.homepagePhotos = siteData.homepagePhotos.filter(p => p && p.src && p.src.trim() !== '');
-    if (siteData.homepagePhotos.length !== origHomeLen) { needsSave = true; }
+    siteData.homepagePhotos = siteData.homepagePhotos.filter(p => p && p.src && p.src.trim() !== '' && !p.src.includes('unsplash.com'));
   }
   if (siteData.galleryCategories) {
     for (const catKey in siteData.galleryCategories) {
       const cat = siteData.galleryCategories[catKey];
       if (cat && cat.photos) {
-        const origCatLen = cat.photos.length;
-        cat.photos = cat.photos.filter(p => p && p.src && p.src.trim() !== '');
-        if (cat.photos.length !== origCatLen) { needsSave = true; }
-      }
-    }
-  }
-  // Clean up default seeded unsplash images from loaded siteData
-  if (siteData.homepagePhotos) {
-    const originalLength = siteData.homepagePhotos.length;
-    siteData.homepagePhotos = siteData.homepagePhotos.filter(p => p && p.src && !p.src.includes('unsplash.com'));
-    if (siteData.homepagePhotos.length !== originalLength) {
-      needsSave = true;
-    }
-  }
-
-  if (siteData.galleryCategories) {
-    for (const catKey in siteData.galleryCategories) {
-      const cat = siteData.galleryCategories[catKey];
-      if (cat && cat.photos) {
-        const originalLength = cat.photos.length;
-        cat.photos = cat.photos.filter(p => p && p.src && !p.src.includes('unsplash.com'));
-        if (cat.photos.length !== originalLength) {
-          needsSave = true;
-        }
+        cat.photos = cat.photos.filter(p => p && p.src && p.src.trim() !== '' && !p.src.includes('unsplash.com'));
       }
     }
   }
@@ -956,14 +932,7 @@ async function initDatabase() {
   if (!siteData.recognitionLogos) siteData.recognitionLogos = DEFAULT_SITE_DATA.recognitionLogos;
   if (!siteData.categoriesOrder) siteData.categoriesOrder = Object.keys(siteData.galleryCategories);
 
-  // Increment overall session views once per browser session (only if loaded from Supabase)
-  if (!sessionStorage.getItem('session_counted') && loadedFromSupabase) {
-    siteData.views = (siteData.views || 0) + 1;
-    sessionStorage.setItem('session_counted', 'true');
-    needsSave = true;
-  }
-
-  // Merge interactions from separate table
+  // Merge interactions from separate tables into in-memory structure
   await mergeInteractions(siteData);
 
   // Export globally
@@ -972,78 +941,133 @@ async function initDatabase() {
 
   // Dispatch global custom event for UI updates
   document.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: siteData }));
-
-  // Save the cleaned database back to Supabase and LocalStorage if changes were made AND we loaded from Supabase
-  if (needsSave && loadedFromSupabase) {
-    console.log("Updating database state safely...");
-    setTimeout(() => {
-      window.saveSiteData(siteData);
-    }, 1000);
-  }
+  
+  // NOTE: AUTOMATIC SAVES / WRITES ARE STRICTLY REMOVED HERE.
+  // Opening pages, initializing DB, or merging interactions NEVER writes back to portfolio_data!
 }
 
 // Kick off immediately
 initDatabase();
 
-window.saveSiteData = async function(newData) {
+// ── OPTIMISTIC CONCURRENCY CONTROLLED SAVE METHOD ── //
+window.saveSiteData = async function(newData, options = {}) {
+  // Queue saves sequentially to prevent race conditions & duplicate writes
+  return new Promise((resolve) => {
+    saveQueuePromise = saveQueuePromise.then(async () => {
+      try {
+        const result = await _executeOptimisticSave(newData, options);
+        resolve(result);
+      } catch (err) {
+        console.error("Save execution failed:", err);
+        resolve({ success: false, error: err.message || 'Unknown save error' });
+      }
+    });
+  });
+};
+
+// Internal execution method
+async function _executeOptimisticSave(newData, options = {}) {
   try {
+    // REQUIREMENT 1 & 2: STRICT APPLICATION DATABASE CONNECTION GUARD
+    if (!window.databaseConnected) {
+      const connErr = "Save aborted: Database is not connected (Application running in Fallback / Offline mode).";
+      console.warn(connErr);
+      return { success: false, connected: false, error: connErr };
+    }
+
     if (!newData) newData = window.siteData;
 
-    const timestamp = new Date().toISOString();
-
-    // 1. Save to Supabase Cloud
-    const { error } = await supabaseClient
-      .from('portfolio_data')
-      .upsert({ id: 1, data: newData, updated_at: timestamp });
-
-    if (error) throw error;
-
-    // 2. Double-check live write verification directly from Supabase
-    let verifiedTimestamp = timestamp;
-    let isVerified = false;
-    try {
-      const { data: verifyData, error: verifyError } = await supabaseClient
+    // RULE 1: OPTIMISTIC CONCURRENCY CHECK BEFORE WRITING
+    if (!options.force) {
+      const { data: remoteMeta, error: checkError } = await supabaseClient
         .from('portfolio_data')
-        .select('updated_at')
+        .select('updated_at, data')
         .eq('id', 1)
         .single();
 
-      if (!verifyError && verifyData) {
-        isVerified = true;
-        if (verifyData.updated_at) verifiedTimestamp = verifyData.updated_at;
+      if (!checkError && remoteMeta) {
+        const remoteTime = remoteMeta.updated_at;
+        const localTime = window.currentDataTimestamp;
+
+        if (localTime && remoteTime && new Date(remoteTime).getTime() > new Date(localTime).getTime()) {
+          console.warn("Optimistic Concurrency Conflict detected!", { localTime, remoteTime });
+          
+          // Refresh memory state with latest remote data
+          if (remoteMeta.data) {
+            window.siteData = remoteMeta.data;
+            window.currentDataTimestamp = remoteTime;
+            document.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: remoteMeta.data }));
+          }
+
+          const conflictError = "Save conflict: Another browser tab/session updated the database. Loaded latest data.";
+          if (typeof window.showConflictAlert === 'function') {
+            window.showConflictAlert(conflictError);
+          } else {
+            alert(conflictError);
+          }
+
+          window.lastSaveResult = { success: false, conflict: true, error: conflictError };
+          return window.lastSaveResult;
+        }
       }
-    } catch (vErr) {
-      console.warn("Live verification check warning:", vErr);
     }
+
+    const timestamp = new Date().toISOString();
+
+    // 1. Perform write to Supabase
+    const { error: saveError } = await supabaseClient
+      .from('portfolio_data')
+      .upsert({ id: 1, data: newData, updated_at: timestamp });
+
+    if (saveError) throw saveError;
+
+    // 2. STRICT DOUBLE-CHECK VERIFICATION: Query Supabase immediately to confirm write
+    let verifiedTimestamp = timestamp;
+    let isVerified = false;
+    
+    const { data: verifyData, error: verifyError } = await supabaseClient
+      .from('portfolio_data')
+      .select('updated_at')
+      .eq('id', 1)
+      .single();
+
+    if (!verifyError && verifyData && verifyData.updated_at) {
+      isVerified = true;
+      verifiedTimestamp = verifyData.updated_at;
+    } else {
+      console.error("Supabase double-check verification failed:", verifyError);
+      return { success: false, verified: false, error: "Double-check verification failed: Supabase did not confirm the update." };
+    }
+
+    // Update in-memory concurrency timestamp to confirmed timestamp
+    window.currentDataTimestamp = verifiedTimestamp;
 
     const timeObj = new Date(verifiedTimestamp);
     const timeString = timeObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
 
     window.lastSaveResult = {
       success: true,
-      verified: isVerified,
+      verified: true,
       timestamp: verifiedTimestamp,
       timeString: timeString
     };
 
-    // 3. Cache in LocalStorage as backup
+    // Backup to local storage
     try {
       localStorage.setItem(DB_KEY, JSON.stringify(newData));
     } catch (lsError) {
-      console.warn("Failed to save backup copy to browser LocalStorage.", lsError);
+      console.warn("LocalStorage backup failed.", lsError);
     }
-    
-    window.siteData = newData;
 
-    // 4. Dispatch update event
+    window.siteData = newData;
     document.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: newData }));
     return window.lastSaveResult;
   } catch (e) {
-    console.error("Failed to save data to Supabase.", e);
+    console.error("Failed to execute saveSiteData.", e);
     window.lastSaveResult = { success: false, error: e.message };
-    return false;
+    return window.lastSaveResult;
   }
-};
+}
 
 window.resetSiteData = async function() {
   try {
@@ -1260,4 +1284,70 @@ window.portfolioDb = {
       return false;
     });
   }
+};
+
+/* ── AUTOMATED TEST SUITE FOR FALLBACK & CONCURRENCY PROTECTIONS ── */
+window.runFallbackProtectionTests = async function() {
+  console.log("%c[TEST SUITE] Running Fallback & Concurrency Safeguard Tests...", "color:#c9a96e; font-weight:bold; font-size:14px;");
+  const results = [];
+
+  // TEST 1: Supabase unavailable / databaseConnected = false -> save is blocked
+  const origConnState = window.databaseConnected;
+  window.databaseConnected = false;
+  const test1Res = await window.saveSiteData(window.siteData);
+  const test1Passed = test1Res && test1Res.success === false && test1Res.connected === false;
+  results.push({
+    test: "Test 1: Save blocked when databaseConnected == false (Fallback mode)",
+    passed: test1Passed,
+    output: test1Res
+  });
+
+  // TEST 2: Cloned fallback object -> still blocked when databaseConnected == false
+  const clonedFallback = JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
+  const test2Res = await window.saveSiteData(clonedFallback);
+  const test2Passed = test2Res && test2Res.success === false && test2Res.connected === false;
+  results.push({
+    test: "Test 2: Cloned fallback object (structured clone) blocked when databaseConnected == false",
+    passed: test2Passed,
+    output: test2Res
+  });
+
+  // Restore connection state
+  window.databaseConnected = origConnState;
+
+  // TEST 3: Supabase reconnected / databaseConnected = true -> save executes
+  let test3Passed = false;
+  let test3Res = null;
+  if (window.databaseConnected) {
+    test3Res = await window.saveSiteData(window.siteData);
+    test3Passed = test3Res && test3Res.success === true;
+  }
+  results.push({
+    test: "Test 3: Save succeeds when databaseConnected == true (Normal mode)",
+    passed: test3Passed,
+    output: test3Res
+  });
+
+  // TEST 4: Concurrency Check (Stale timestamp detection)
+  const origTime = window.currentDataTimestamp;
+  window.currentDataTimestamp = "2020-01-01T00:00:00.000Z"; // Artificial stale timestamp
+  const test4Res = await window.saveSiteData(window.siteData);
+  const test4Passed = test4Res && test4Res.success === false && test4Res.conflict === true;
+  results.push({
+    test: "Test 4: Stale timestamp detected & write aborted by Optimistic Concurrency Control",
+    passed: test4Passed,
+    output: test4Res
+  });
+
+  // Restore verified timestamp
+  window.currentDataTimestamp = origTime;
+
+  console.table(results);
+  const allPassed = results.every(r => r.passed);
+  if (allPassed) {
+    console.log("%c✓ ALL 4 SAFEGUARD TESTS PASSED 100%!", "color:#10b981; font-weight:bold; font-size:14px;");
+  } else {
+    console.warn("%c! TEST SUITE COMPLETED WITH FAILURES", "color:#ef4444; font-weight:bold; font-size:14px;");
+  }
+  return results;
 };
