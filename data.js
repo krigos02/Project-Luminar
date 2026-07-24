@@ -808,7 +808,7 @@ window.siteData = siteData;
 
 const DB_KEY = 'luminar_site_data';
 
-// Helper to merge content interactions (likes/views) from separate table
+// Helper to merge content interactions (likes/views/comments) from separate tables
 async function mergeInteractions(dataObj) {
   try {
     const { data: interactions, error } = await supabaseClient
@@ -854,6 +854,63 @@ async function mergeInteractions(dataObj) {
           }
         }
       });
+    }
+
+    // Merge comments from content_comments table
+    const { data: comments, error: cErr } = await supabaseClient
+      .from('content_comments')
+      .select('*');
+
+    if (!cErr && comments) {
+      // Group comments by item_type + item_id
+      const commentsByItem = {};
+      comments.forEach(c => {
+        const key = `${c.item_type}_${c.item_id}`;
+        if (!commentsByItem[key]) commentsByItem[key] = [];
+        commentsByItem[key].push({
+          id: c.id,
+          name: c.name || 'Anonymous',
+          text: c.text || '',
+          date: c.date || '',
+          timestamp: c.timestamp || 0
+        });
+      });
+
+      // Clear existing loaded comments and re-populate from DB
+      const attachComments = (item, type, id) => {
+        if (!item) return;
+        const key = `${type}_${id}`;
+        if (commentsByItem[key]) {
+          item.comments = commentsByItem[key];
+        }
+      };
+
+      if (dataObj.galleryCategories) {
+        Object.keys(dataObj.galleryCategories).forEach(catKey => {
+          const cat = dataObj.galleryCategories[catKey];
+          if (cat && cat.photos) {
+            cat.photos.forEach(p => {
+              attachComments(p, 'gallery_photo', p.id);
+            });
+          }
+        });
+      }
+      if (dataObj.homepagePhotos) {
+        dataObj.homepagePhotos.forEach(p => {
+          attachComments(p, 'gallery_photo', p.id);
+        });
+      }
+      if (dataObj.journalEntries) {
+        dataObj.journalEntries.forEach(j => {
+          attachComments(j, 'journal', j.id);
+          attachComments(j, 'deep_dive', j.id);
+        });
+      }
+      if (dataObj.stories) {
+        dataObj.stories.forEach(s => {
+          attachComments(s, 'story', s.id);
+        });
+      }
     }
   } catch (e) {
     console.warn("Failed to merge content interactions", e);
