@@ -1,7 +1,7 @@
 ﻿{
     "id":  1,
     "data":  {
-                 "views":  107,
+                 "views":  104,
                  "profile":  {
                                  "dob":  "2002-12-22",
                                  "name":  "Krishnendu Goswami",
@@ -9,65 +9,55 @@
                                  "stats":  [
                                                {
                                                    "label":  "Published Works",
-                                                   "value":  "50+"
+                                                   "value":  "120+"
                                                },
                                                {
-                                                   "label":  "National Awards",
-                                                   "value":  "2"
+                                                   "label":  "International Awards",
+                                                   "value":  "38"
                                                },
                                                {
-                                                   "label":  "Followers on socials",
-                                                   "value":  "3500+"
-                                               },
-                                               {
-                                                   "label":  "Views on Google Contributors",
-                                                   "value":  "1.8M+"
+                                                   "label":  "Countries Visited",
+                                                   "value":  "18"
                                                }
                                            ],
-                                 "title":  "KRISHNENDU GOSWAMI ",
+                                 "title":  "Luminar — Photography",
                                  "avatar":  "https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp",
                                  "awards":  [
                                                 {
-                                                    "org":  "Atverts, Kolkata",
-                                                    "name":  "MIP - PHOTOGRAPHY",
-                                                    "year":  "2020",
-                                                    "badge":  "LOR - SKILL \u0026 EXCELLENCE"
+                                                    "org":  "Natural History Museum, London",
+                                                    "name":  "Wildlife Photographer of the Year — Highly Commended",
+                                                    "year":  "2024",
+                                                    "badge":  "Published — NHM Annual Portfolio"
                                                 },
                                                 {
-                                                    "org":  "IIT Kharagpur",
-                                                    "name":  "NATIONAL STUDENTS\u0027 SPACE CHALLENGE- NSSC\u002722",
+                                                    "org":  "Nature TTL, UK",
+                                                    "name":  "Nature TTL Photographer of the Year — Gold Award",
+                                                    "year":  "2023",
+                                                    "badge":  ""
+                                                },
+                                                {
+                                                    "org":  "Condé Nast India",
+                                                    "name":  "Featured — National Geographic Traveller India",
+                                                    "year":  "2023",
+                                                    "badge":  "Cover Feature — Dec 2023"
+                                                },
+                                                {
+                                                    "org":  "Siena Awards, Italy",
+                                                    "name":  "Siena International Photo Awards — Finalist",
                                                     "year":  "2022",
-                                                    "badge":  "3rd Prize Winner - Astrophotgraphy "
+                                                    "badge":  ""
                                                 },
                                                 {
-                                                    "org":  "IIT Kharagpur",
-                                                    "name":  "NATIONAL STUDENTS\u0027 SPACE CHALLENGE- NSSC\u002724",
-                                                    "year":  "2024",
-                                                    "badge":  "Winner - Astrophotography"
+                                                    "org":  "IPA, New York",
+                                                    "name":  "International Photography Awards — Honorable Mention",
+                                                    "year":  "2021",
+                                                    "badge":  "Published — Luerzer\u0027s Archive"
                                                 },
                                                 {
-                                                    "org":  "Chandannagar College",
-                                                    "name":  "Ruellia - Through the Lens",
-                                                    "year":  "2024",
-                                                    "badge":  "Published \u0026 Interviewed"
-                                                },
-                                                {
-                                                    "org":  "Ramkrishna Mission Narendrapur",
-                                                    "name":  "SCI-PHY - Photo PHYesta",
-                                                    "year":  "2025",
-                                                    "badge":  "Winner [Gold medalist]"
-                                                },
-                                                {
-                                                    "org":  "Jadavpur University",
-                                                    "name":  "24 FRAMES - JU Convolution",
-                                                    "year":  "2025",
-                                                    "badge":  "Exhibited "
-                                                },
-                                                {
-                                                    "org":  "Jadavpur University",
-                                                    "name":  "24 FRAMES - JU Convolution",
-                                                    "year":  "2025",
-                                                    "badge":  "Finalist, Jury\u0027s Choice"
+                                                    "org":  "World Photography Organisation",
+                                                    "name":  "Sony World Photography Awards — Shortlisted",
+                                                    "year":  "2020",
+                                                    "badge":  ""
                                                 }
                                             ],
                                  "twitter":  "https://x.com/KRIGOS02?s=09",
@@ -78,8 +68,8 @@
                                  "bioTitleEm":  "a thousand sunrises",
                                  "philosophy":  "I don\u0027t chase photographs. I wait for the world to reveal itself — one breath at a time. The camera is simply an extension of that patience.",
                                  "bioParagraphs":  [
-                                                       "Based in Baidyabati, West Bengal, India, their journey with the camera began with a deep curiosity for light, space, and living forms. What started as a personal quest to document vanishing landscapes became a lifelong dedication to the ethics and art of visual storytelling. Their images have been published and exhibited nationally across galleries and challenges.",
-                                                       "Every expedition is a partnership with time and light. By spending weeks in remote areas—from high-altitude mountain passes to quiet street corridors—they seek to capture not just a scene, but the silent atmosphere and emotional weight of a place."
+                                                       "Based in India, their journey with the camera began over two decades ago. What started as a personal quest to document vanishing landscapes became a lifelong dedication to the ethics and art of visual storytelling. Their images have appeared in natural history magazines, and have been exhibited across galleries internationally.",
+                                                       "Every expedition is a partnership with time and light. By spending weeks in remote areas—from the high altitudes of the Zanskar range to the dense jungles of the Western Ghats—they seek to capture not just a scene, but the silent atmosphere and emotional weight of a place. Their approach is marked by absolute respect for habitats, always prioritizing conservation ethics over capturing a shot."
                                                    ],
                                  "yearsExperience":  23
                              },
@@ -231,7 +221,7 @@
                                             "likes":  1,
                                             "scale":  100,
                                             "title":  "rajanigandha",
-                                            "views":  4,
+                                            "views":  2,
                                             "content":  "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"check if your blog editor supports \\\"Raw HTML\\\" blocks or \\\"Trusted Content\\\" rendering.\"},{\"type\":\"hardBreak\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"1. Text Emphasis \u0026 Markup Test\"}]},{\"type\":\"bulletList\",\"content\":[{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"This is \"},{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"bold text\"},{\"type\":\"text\",\"text\":\" for strong emphasis.\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"This is \"},{\"type\":\"text\",\"marks\":[{\"type\":\"italic\"}],\"text\":\"italicized text\"},{\"type\":\"text\",\"text\":\" for subtle emphasis.\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"This is \"},{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"},{\"type\":\"italic\"}],\"text\":\"bold and italicized\"},{\"type\":\"text\",\"text\":\" for maximum emphasis.\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"This is \"},{\"type\":\"text\",\"marks\":[{\"type\":\"strike\"}],\"text\":\"strikethrough text\"},{\"type\":\"text\",\"text\":\" to indicate obsolete information.\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"This is \"},{\"type\":\"text\",\"marks\":[{\"type\":\"code\"}],\"text\":\"inline code\"},{\"type\":\"text\",\"text\":\" for highlighting specific terminology.\"}]}]}]},{\"type\":\"heading\",\"attrs\":{\"textAlign\":\"left\",\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"2. Mathematical \u0026 Scientific Notation\"}]},{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"When writing about the physics of light or orbital mechanics, your blog must render mathematical symbols correctly:\"}]},{\"type\":\"bulletList\",\"content\":[{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"The Exposure Equation:\"},{\"type\":\"text\",\"text\":\" The light collected ($L$) can be represented as $L = A \\\\cdot t \\\\cdot I$, where $A$ is the aperture area, $t$ is time, and $I$ is intensity.\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Kepler’s Third Law:\"},{\"type\":\"text\",\"text\":\" $P^2 = a^3$, where $P$ is the orbital period and $a$ is the semi-major axis.\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Subscripts \u0026 Superscripts:\"},{\"type\":\"text\",\"text\":\" $H_2O$ and $E=mc^2$.\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Greek Symbols:\"},{\"type\":\"text\",\"text\":\" The wavelength of light is often denoted by $\\\\lambda$, while the pixel scale is $\\\\theta$.\"}]}]}]},{\"type\":\"heading\",\"attrs\":{\"textAlign\":\"left\",\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"3. Special Characters \u0026 Symbols\"}]},{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Ensure your character encoding (UTF-8) supports these common scientific and decorative symbols:\"}]},{\"type\":\"bulletList\",\"content\":[{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Mathematical:\"},{\"type\":\"text\",\"text\":\" $\\\\pm$, $\\\\approx$, $\\\\neq$, $\\\\geq$, $\\\\leq$, $\\\\int$, $\\\\sum$, $\\\\infty$\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Astronomy:\"},{\"type\":\"text\",\"text\":\" ☉ (Sun), ☽ (Moon), ♃ (Jupiter), ♄ (Saturn)\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"General/Typography:\"},{\"type\":\"text\",\"text\":\" ©, ®, ™, §, †, ‡, ¤, ¶, •, ‣\"}]}]}]},{\"type\":\"heading\",\"attrs\":{\"textAlign\":\"left\",\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"4. Hierarchical Elements\"}]},{\"type\":\"blockquote\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Blockquote Note:\"},{\"type\":\"text\",\"text\":\" This section is for highlighting important warnings, such as: \\\"Always ensure your tripod is weighted down to prevent micro-vibrations during long-exposure imaging.\\\"\"}]}]},{\"type\":\"heading\",\"attrs\":{\"textAlign\":\"left\",\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"Procedural List (Ordered)\"}]},{\"type\":\"orderedList\",\"attrs\":{\"start\":1,\"type\":null},\"content\":[{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Alignment:\"},{\"type\":\"text\",\"text\":\" Calibrate the equatorial mount.\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Focusing:\"},{\"type\":\"text\",\"text\":\" Achieve critical focus using a Bahtinov mask.\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Capturing:\"},{\"type\":\"text\",\"text\":\" Execute the sequence of light frames, dark frames, and bias frames.\"}]}]}]},{\"type\":\"heading\",\"attrs\":{\"textAlign\":\"left\",\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"Comparative Data Layout\"}]},{\"type\":\"table\",\"content\":[{\"type\":\"tableRow\",\"content\":[{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Feature\"}]}]},{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Importance\"}]}]},{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Impact on Final Image\"}]}]}]},{\"type\":\"tableRow\",\"content\":[{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Aperture\"}]}]},{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"High\"}]}]},{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Affects diffraction spikes\"}]}]}]},{\"type\":\"tableRow\",\"content\":[{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"italic\"}],\"text\":\"ISO Speed\"}]}]},{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Medium\"}]}]},{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Affects signal-to-noise ratio\"}]}]}]},{\"type\":\"tableRow\",\"content\":[{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"strike\"}],\"text\":\"Shutter\"}]}]},{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"High\"}]}]},{\"type\":\"tableCell\",\"attrs\":{\"colspan\":1,\"rowspan\":1,\"colwidth\":null},\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Determines star trailing\"}]}]}]}]},{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"System check complete.\"},{\"type\":\"text\",\"text\":\" If all elements above (especially the equations and symbols) appear with correct spacing and font rendering, your blog’s infrastructure is successfully configured for technical content.\"}]},{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Do you need help testing any specific CSS overrides for these elements, such as custom font weights or color coding for the equations?\"}]}]}",
                                             "excerpt":  "brief ",
                                             "offsetY":  0,
@@ -283,27 +273,6 @@
                                             "readTime":  "3 min read",
                                             "template":  "photo_essay",
                                             "contentHtml":  "\u003ch2\u003e1. Text Emphasis \u0026amp; Markup Test\u003c/h2\u003e\u003cul\u003e\u003cli\u003e\u003cp\u003eThis is \u003cstrong\u003ebold text\u003c/strong\u003e for strong emphasis.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003eThis is \u003cem\u003eitalicized text\u003c/em\u003e for subtle emphasis.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003eThis is \u003cstrong\u003e\u003cem\u003ebold and italicized\u003c/em\u003e\u003c/strong\u003e for maximum emphasis.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003eThis is \u003cs\u003estrikethrough text\u003c/s\u003e to indicate obsolete information.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003eThis is \u003ccode\u003einline code\u003c/code\u003e for highlighting specific terminology.\u003c/p\u003e\u003c/li\u003e\u003c/ul\u003e\u003ch2\u003e2. Mathematical \u0026amp; Scientific Notation\u003c/h2\u003e\u003cp\u003eWhen writing about the physics of light or orbital mechanics, your blog must render mathematical symbols correctly:\u003c/p\u003e\u003cul\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003eThe Exposure Equation:\u003c/strong\u003e The light collected ($L$) can be represented as $L = A \\cdot t \\cdot I$, where $A$ is the aperture area, $t$ is time, and $I$ is intensity.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003eKepler’s Third Law:\u003c/strong\u003e $P^2 = a^3$, where $P$ is the orbital period and $a$ is the semi-major axis.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003eSubscripts \u0026amp; Superscripts:\u003c/strong\u003e $H_2O$ and $E=mc^2$.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003eGreek Symbols:\u003c/strong\u003e The wavelength of light is often denoted by $\\lambda$, while the pixel scale is $\\theta$.\u003c/p\u003e\u003c/li\u003e\u003c/ul\u003e\u003ch2\u003e3. Special Characters \u0026amp; Symbols\u003c/h2\u003e\u003cp\u003eEnsure your character encoding (UTF-8) supports these common scientific and decorative symbols:\u003c/p\u003e\u003cul\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003eMathematical:\u003c/strong\u003e $\\pm$, $\\approx$, $\\neq$, $\\geq$, $\\leq$, $\\int$, $\\sum$, $\\infty$\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003eAstronomy:\u003c/strong\u003e ☉ (Sun), ☽ (Moon), ♃ (Jupiter), ♄ (Saturn)\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003eGeneral/Typography:\u003c/strong\u003e ©, ®, ™, §, †, ‡, ¤, ¶, •, ‣\u003c/p\u003e\u003c/li\u003e\u003c/ul\u003e\u003ch2\u003e4. Hierarchical Elements\u003c/h2\u003e\u003cblockquote\u003e\u003cp\u003e\u003cstrong\u003eBlockquote Note:\u003c/strong\u003e This section is for highlighting important warnings, such as: \"Always ensure your tripod is weighted down to prevent micro-vibrations during long-exposure imaging.\"\u003c/p\u003e\u003c/blockquote\u003e\u003ch3\u003eProcedural List (Ordered)\u003c/h3\u003e\u003col\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003eAlignment:\u003c/strong\u003e Calibrate the equatorial mount.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003eFocusing:\u003c/strong\u003e Achieve critical focus using a Bahtinov mask.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003eCapturing:\u003c/strong\u003e Execute the sequence of light frames, dark frames, and bias frames.\u003c/p\u003e\u003c/li\u003e\u003c/ol\u003e\u003ch3\u003eComparative Data Layout\u003c/h3\u003e\u003ctable style=\"\"\u003e\u003ccolgroup\u003e\u003ccol\u003e\u003ccol\u003e\u003ccol\u003e\u003c/colgroup\u003e\u003ctbody\u003e\u003ctr\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003e\u003cstrong\u003eFeature\u003c/strong\u003e\u003c/p\u003e\u003c/td\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003e\u003cstrong\u003eImportance\u003c/strong\u003e\u003c/p\u003e\u003c/td\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003e\u003cstrong\u003eImpact on Final Image\u003c/strong\u003e\u003c/p\u003e\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003e\u003cstrong\u003eAperture\u003c/strong\u003e\u003c/p\u003e\u003c/td\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003eHigh\u003c/p\u003e\u003c/td\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003eAffects diffraction spikes\u003c/p\u003e\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003e\u003cem\u003eISO Speed\u003c/em\u003e\u003c/p\u003e\u003c/td\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003eMedium\u003c/p\u003e\u003c/td\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003eAffects signal-to-noise ratio\u003c/p\u003e\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003e\u003cs\u003eShutter\u003c/s\u003e\u003c/p\u003e\u003c/td\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003eHigh\u003c/p\u003e\u003c/td\u003e\u003ctd colspan=\"1\" rowspan=\"1\"\u003e\u003cp\u003eDetermines star trailing\u003c/p\u003e\u003c/td\u003e\u003c/tr\u003e\u003c/tbody\u003e\u003c/table\u003e\u003cp\u003e\u003cstrong\u003eSystem check complete.\u003c/strong\u003e If all elements above (especially the equations and symbols) appear with correct spacing and font rendering, your blog’s infrastructure is successfully configured for technical content.\u003c/p\u003e\u003cp\u003eDo you need help testing any specific CSS overrides for these elements, such as custom font weights or color coding for the equations?\u003c/p\u003e"
-                                        },
-                                        {
-                                            "bg":  "linear-gradient(135deg,#151515,#2a2a2a)",
-                                            "id":  5,
-                                            "cat":  "",
-                                            "src":  "",
-                                            "date":  "",
-                                            "draft":  true,
-                                            "likes":  0,
-                                            "scale":  100,
-                                            "title":  "",
-                                            "views":  0,
-                                            "content":  "",
-                                            "excerpt":  "halleluya\n",
-                                            "offsetY":  0,
-                                            "comments":  [
-
-                                                         ],
-                                            "readTime":  "",
-                                            "template":  "classic",
-                                            "contentHtml":  ""
                                         }
                                     ],
                  "categoriesOrder":  [
@@ -792,5 +761,5 @@
                                              }
                                          ]
              },
-    "updated_at":  "2026-07-23T18:01:26.572+00:00"
+    "updated_at":  "2026-07-24T06:25:10.825+00:00"
 }
