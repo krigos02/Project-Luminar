@@ -1213,14 +1213,22 @@ window.portfolioDb = {
     const key = `${type}_${itemId}_${subId}`;
     
     const memItem = this.findItemOnData(window.siteData, type, itemId, subId);
+    if (memItem) {
+      // Direct memory synchronization
+      if (typeof isLike === 'boolean') {
+        // If isLike is boolean, adjust likes accordingly
+        const currentLikes = memItem.likes || 0;
+        memItem.likes = isLike ? currentLikes + 1 : Math.max(0, currentLikes - 1);
+      }
+    }
 
     if (this._likeDebounceTimers[key]) {
       clearTimeout(this._likeDebounceTimers[key]);
     }
 
     return new Promise((resolve) => {
-      // Immediately resolve with the caller's updated value
-      resolve(memItem ? memItem.likes : 0);
+      const updatedLikes = memItem ? (memItem.likes || 0) : 0;
+      resolve(updatedLikes);
 
       this._likeDebounceTimers[key] = setTimeout(() => {
         delete this._likeDebounceTimers[key];
@@ -1228,8 +1236,9 @@ window.portfolioDb = {
         this._enqueueWrite(async () => {
           if (memItem) {
             const actualType = (type === 'home_photo') ? 'gallery_photo' : type;
+            const targetId = String(memItem.id !== undefined ? memItem.id : (subId !== undefined ? subId : itemId));
             await supabaseClient.from('content_interactions').upsert({
-              item_id: String(memItem.id || itemId),
+              item_id: targetId,
               item_type: actualType,
               likes: memItem.likes || 0,
               views: memItem.views || 0
@@ -1237,7 +1246,7 @@ window.portfolioDb = {
           }
           return memItem ? memItem.likes : 0;
         });
-      }, 1000);
+      }, 500);
     });
   },
 

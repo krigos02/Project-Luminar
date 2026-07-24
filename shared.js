@@ -295,7 +295,87 @@ if (window.matchMedia('(pointer:fine)').matches) {
   }
 }
 
-/* ── SCROLL REVEAL ── */
+/* ── LIGHTBOX DYNAMIC OVERLAY POSITIONING ── */
+window.repositionLbOverlays = function() {
+  const lbImg = document.getElementById('lb-img');
+  const titleGroup = document.querySelector('.lb-overlay-title-group');
+  const actionsCard = document.querySelector('.lb-actions-card');
+  if (!lbImg || !titleGroup) return;
+
+  const rect = lbImg.getBoundingClientRect();
+  const screenW = window.innerWidth;
+  const screenH = window.innerHeight;
+
+  // Full Left negative space: exact distance from screen left edge (0px) to photo left edge
+  const fullLeftSpace = rect.left > 0 ? rect.left : 0;
+  
+  if (fullLeftSpace > 60) {
+    // Max width set to full left space minus 32px safe side margins
+    const maxBoxWidth = Math.max(120, fullLeftSpace - 32);
+    titleGroup.style.width = `${maxBoxWidth}px`;
+    titleGroup.style.maxWidth = `${maxBoxWidth}px`;
+
+    const titleWidth = titleGroup.offsetWidth || maxBoxWidth;
+    const titleHeight = titleGroup.offsetHeight || 60;
+    
+    // Exact mathematical center between screen left edge (0px) and photo left edge (rect.left)
+    const centerLeft = (fullLeftSpace - titleWidth) / 2;
+
+    // Position vertically centered in the UPPER half empty space (top quadrant)
+    const upperSpaceHeight = rect.top > 0 ? (rect.top + (rect.height / 2)) : (screenH / 2);
+    const centerTop = Math.max(24, (upperSpaceHeight - titleHeight) / 2);
+
+    titleGroup.style.position = 'fixed';
+    titleGroup.style.left = `${centerLeft}px`;
+    titleGroup.style.top = `${centerTop}px`;
+  } else {
+    // Mobile / small screen fallback
+    titleGroup.style.position = 'fixed';
+    titleGroup.style.left = '20px';
+    titleGroup.style.top = '20px';
+    titleGroup.style.width = 'auto';
+    titleGroup.style.maxWidth = 'calc(100vw - 40px)';
+  }
+
+  // Right negative space: available width between photo right edge and right nav button
+  if (actionsCard) {
+    const availRightWidth = (screenW - rect.right) > navBtnClearance ? ((screenW - rect.right) - navBtnClearance - 20) : 0;
+    
+    if (availRightWidth > 80) {
+      actionsCard.style.width = 'auto';
+      actionsCard.style.maxWidth = `${availRightWidth}px`;
+
+      const cardWidth = actionsCard.offsetWidth || 180;
+      const cardHeight = actionsCard.offsetHeight || 60;
+
+      // Position horizontally centered in the right empty space
+      const centerRight = navBtnClearance + (availRightWidth - cardWidth) / 2;
+      // Position vertically centered in screen
+      const centerBottom = Math.max(16, (screenH - cardHeight) / 2);
+
+      actionsCard.style.position = 'fixed';
+      actionsCard.style.right = `${centerRight}px`;
+      actionsCard.style.bottom = `${centerBottom}px`;
+      actionsCard.style.left = 'auto';
+      actionsCard.style.top = 'auto';
+    } else {
+      actionsCard.style.position = 'fixed';
+      actionsCard.style.right = '20px';
+      actionsCard.style.bottom = '20px';
+      actionsCard.style.left = 'auto';
+      actionsCard.style.top = 'auto';
+      actionsCard.style.maxWidth = 'calc(100vw - 40px)';
+    }
+  }
+};
+
+window.addEventListener('resize', window.repositionLbOverlays);
+document.addEventListener('DOMContentLoaded', () => {
+  const lbImg = document.getElementById('lb-img');
+  if (lbImg) {
+    lbImg.addEventListener('load', window.repositionLbOverlays);
+  }
+});
 const setupScrollReveal = () => {
   const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
   if (revealEls.length > 0) {

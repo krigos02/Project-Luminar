@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared.css?v=3.5">
+<link rel="stylesheet" href="shared.css?v=3.6">
 <style>
   #masonry {
     column-count: 4;
@@ -244,26 +244,34 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
   <div class="lb-stage">
-    <button class="lb-nav-btn" id="lb-prev" onclick="lbNav(-1)" aria-label="Previous photo">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <div class="lb-ph" id="lb-ph">
-      <div class="lb-ph-inner" id="lb-ph-inner" style="aspect-ratio:3/2;"></div>
-    </div>
-    <div style="position:relative; display:flex; align-items:center; justify-content:center;" id="lb-image-container">
-      <img id="lb-img" src="" alt="" draggable="false" style="pointer-events:auto; cursor:pointer;">
-      <!-- Pop Heart Overlay -->
-      <div class="pop-heart-overlay" id="pop-heart-overlay">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-      </div>
-    </div>
-    <button class="lb-nav-btn" id="lb-next" onclick="lbNav(1)" aria-label="Next photo">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-    </button>
-    <!-- Overlays -->
+    <!-- NEW: .lb-stage-media wraps the image + nav buttons + title overlay.
+         This makes it a flex sibling of .lb-actions-card, so the browser
+         reserves the actions-card's 360px column and gives the image
+         everything that's left — instead of the card floating on top. -->
+    <!-- Title overlay sits in the left empty space of the stage, outside the photo -->
     <div class="lb-overlay-title-group">
       <h3 class="lb-overlay-title" id="lb-title-text"></h3>
       <p class="lb-overlay-subtitle" id="lb-subtitle"></p>
+    </div>
+
+    <!-- .lb-stage-media holds the centered image and nav arrows -->
+    <div class="lb-stage-media" id="lb-stage-media">
+      <button class="lb-nav-btn" id="lb-prev" onclick="lbNav(-1)" aria-label="Previous photo">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="lb-ph" id="lb-ph">
+        <div class="lb-ph-inner" id="lb-ph-inner" style="aspect-ratio:3/2;"></div>
+      </div>
+      <div style="position:relative; display:flex; align-items:center; justify-content:center;" id="lb-image-container">
+        <img id="lb-img" src="" alt="" draggable="false" style="pointer-events:auto; cursor:pointer;">
+        <!-- Pop Heart Overlay -->
+        <div class="pop-heart-overlay" id="pop-heart-overlay">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </div>
+      </div>
+      <button class="lb-nav-btn" id="lb-next" onclick="lbNav(1)" aria-label="Next photo">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
 
     <div class="lb-actions-card">
@@ -276,24 +284,22 @@
       <div class="lb-card-divider"></div>
       
       <div class="lb-card-actions-row">
-        <button class="lb-card-action-btn" id="lb-like-btn" onclick="likePhoto()" title="Like photo">
+        <button class="lb-card-action-btn icon-only" id="lb-like-btn" onclick="likePhoto()" title="Like photo">
           <svg class="lb-heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-          <span id="lb-likes-count">0</span> Likes
+          <span id="lb-likes-count">0</span>
         </button>
         
-        <div class="lb-card-action-btn" style="display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--text2); font-size: 13px; cursor: default; padding: 0;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 18px; height: 18px; color: var(--text3);"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          <span id="lb-views-display-count">0</span> Views
+        <div class="lb-card-action-btn icon-only stat-view" title="Views">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="lb-views-display-count">0</span>
         </div>
         
-        <button class="lb-card-action-btn" onclick="toggleCollapsibleComments()" title="Comments">
+        <button class="lb-card-action-btn icon-only" onclick="toggleCollapsibleComments()" title="Comments">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          <span>Comments</span>
         </button>
         
-        <button class="lb-card-action-btn" onclick="sharePhoto()" title="Share photo">
+        <button class="lb-card-action-btn icon-only" onclick="sharePhoto()" title="Share photo">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          <span>Share</span>
         </button>
       </div>
 
@@ -618,6 +624,10 @@ function updateLb() {
     lbImg.alt = p.title || '';
     lbImg.style.display = 'block';
     document.getElementById('lb-ph').style.display = 'none';
+    if (typeof window.repositionLbOverlays === 'function') {
+      setTimeout(window.repositionLbOverlays, 30);
+      setTimeout(window.repositionLbOverlays, 150);
+    }
   } else {
     lbImg.src = '';
     lbImg.alt = '';
@@ -683,7 +693,7 @@ async function likePhoto(forceLike = false) {
 
   if (forceLike && isLiked) {
     showHeartPop();
-    return; // Already liked, show animation and return
+    return; // Already liked
   }
 
   const nextLiked = forceLike ? true : !isLiked;
@@ -693,16 +703,15 @@ async function likePhoto(forceLike = false) {
     showHeartPop();
   }
 
-  // Optimistic UI update
-  p.likes = Math.max(0, (p.likes || 0) + (nextLiked ? 1 : -1));
-  document.getElementById('lb-likes-count').textContent = p.likes;
+  // Update heart icon state
   document.getElementById('lb-like-btn').classList.toggle('liked', nextLiked);
 
-  // Sync to database
+  // Sync to database and update DOM count
   try {
     const finalLikes = await window.portfolioDb.toggleLike('gallery_photo', p.cat, p.id, nextLiked);
     p.likes = finalLikes;
-    document.getElementById('lb-likes-count').textContent = p.likes;
+    const likesEl = document.getElementById('lb-likes-count');
+    if (likesEl) likesEl.textContent = finalLikes;
   } catch (err) {
     console.error(err);
   }

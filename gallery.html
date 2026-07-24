@@ -1561,6 +1561,10 @@ function updateLb() {
     lbImgEl.alt = p.tag || p.title;
     lbImgEl.style.display = 'block';
     document.getElementById('lb-img-ph').style.display = 'none';
+    if (typeof window.repositionLbOverlays === 'function') {
+      setTimeout(window.repositionLbOverlays, 30);
+      setTimeout(window.repositionLbOverlays, 150);
+    }
   } else {
     lbImgEl.src = '';
     lbImgEl.alt = '';
@@ -1647,7 +1651,7 @@ async function likePhoto(forceLike = false) {
   if (forceLike && isLiked) {
     showHeartPop();
     isLikingLock = false;
-    return; // Already liked, show animation and return
+    return; // Already liked
   }
 
   const nextLiked = forceLike ? true : !isLiked;
@@ -1657,16 +1661,15 @@ async function likePhoto(forceLike = false) {
     showHeartPop();
   }
 
-  // Optimistic UI update
-  p.likes = Math.max(0, (p.likes || 0) + (nextLiked ? 1 : -1));
-  document.getElementById('lb-likes-count').textContent = p.likes;
+  // Update heart icon state
   document.getElementById('lb-like-btn').classList.toggle('liked', nextLiked);
 
-  // Sync to database
+  // Sync to database and update DOM count
   try {
     const finalLikes = await window.portfolioDb.toggleLike('gallery_photo', currentCategory, p.id, nextLiked);
     p.likes = finalLikes;
-    document.getElementById('lb-likes-count').textContent = p.likes;
+    const likesEl = document.getElementById('lb-likes-count');
+    if (likesEl) likesEl.textContent = finalLikes;
   } catch (err) {
     console.error(err);
   } finally {
