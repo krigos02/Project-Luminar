@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png?v=2.5">
@@ -1209,11 +1209,11 @@
           <div class="form-row-2">
             <div class="admin-form-group">
               <label>Bio Tagline</label>
-              <input type="text" id="prof-biotitle" class="admin-form-control" placeholder="Vision shaped by" required>
+              <input type="text" id="prof-biotitle" class="admin-form-control" placeholder="Some stories are written with words" required>
             </div>
             <div class="admin-form-group">
               <label>Bio Tagline Emphasis</label>
-              <input type="text" id="prof-biotitle-em" class="admin-form-control" placeholder="a thousand sunrises" required>
+              <input type="text" id="prof-biotitle-em" class="admin-form-control" placeholder="Others are written with light." required>
             </div>
           </div>
           <div class="admin-form-group">
@@ -1263,6 +1263,17 @@
             <h3 style="font-size:12px; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:1rem">About Page Statistics</h3>
             <div id="stats-container"></div>
             <button type="button" class="btn-add" onclick="addStatRow()">+ Add Statistic</button>
+          </div>
+
+          <div style="border-top:1px solid var(--border); margin:2rem 0; padding-top:1.5rem">
+            <h3 style="font-size:12px; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.5rem; color: var(--gold);">Snapshot Gallery Slider (About Page)</h3>
+            <p style="font-size: 12px; color: var(--text3); margin-bottom: 1.25rem; line-height: 1.6;">
+              Select which photographs from your gallery will dynamically slide on your About page below your profile image.
+            </p>
+            <div id="about-slideshow-selected-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-bottom: 1.25rem;">
+              <!-- Selected photo thumbnails rendered here -->
+            </div>
+            <button type="button" class="btn-outline" onclick="openSnapshotPickerModal()" style="padding: 8px 16px; font-size: 11px;">+ Choose Photos from Gallery</button>
           </div>
 
           <div style="border-top:1px solid var(--border); margin:2rem 0; padding-top:1.5rem">
@@ -1942,6 +1953,21 @@
       </div>
     </form>
   </div>
+<!-- MODAL: SNAPSHOT GALLERY PICKER -->
+<div id="snapshot-picker-modal" class="admin-modal">
+  <div class="modal-content" style="max-width: 800px; max-height: 85vh; display: flex; flex-direction: column;">
+    <h3 class="panel-title" style="margin-bottom: 0.5rem; color: var(--gold);">Snapshot Gallery Slider Picker</h3>
+    <p style="font-size: 12px; color: var(--text3); margin-bottom: 1rem;">Select photographs from your gallery to include in the About page sliding snapshot. Click thumbnails to select/deselect.</p>
+    
+    <div id="snapshot-picker-grid" style="flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; padding: 10px; border: 1px solid var(--border); background: var(--bg2); border-radius: 4px; max-height: 450px;">
+      <!-- Dynamic grid of gallery photos -->
+    </div>
+    
+    <div class="modal-actions" style="margin-top: 1.25rem;">
+      <button type="button" onclick="closeModal('snapshot-picker-modal')" class="btn-outline">Cancel</button>
+      <button type="button" onclick="saveSnapshotPickerSelection()" class="btn-primary">Save Selection</button>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL: STORY EDITOR -->
@@ -2529,7 +2555,115 @@
     if (typeof renderRecognitionsCms === 'function') {
       renderRecognitionsCms();
     }
+    loadSelectedSnapshotGrid();
   }
+
+  // ── SNAPSHOT GALLERY SLIDER PICKER METHODS ──
+  window.currentSelectedSnapshotPhotos = [];
+
+  function loadSelectedSnapshotGrid() {
+    const profile = window.siteData.profile || {};
+    window.currentSelectedSnapshotPhotos = profile.aboutSlideshowPhotos ? [...profile.aboutSlideshowPhotos] : [];
+    renderSelectedSnapshotGrid();
+  }
+
+  function renderSelectedSnapshotGrid() {
+    const container = document.getElementById('about-slideshow-selected-grid');
+    if (!container) return;
+    const selected = window.currentSelectedSnapshotPhotos || [];
+    
+    if (selected.length === 0) {
+      container.innerHTML = `<div style="grid-column: 1/-1; color: var(--text3); font-size: 11px; font-style: italic; padding: 10px; background: var(--bg2); border: 1px dashed var(--border); border-radius: 4px; text-align: center;">No photos selected. (Showing automatic gallery highlights by default).</div>`;
+      return;
+    }
+
+    container.innerHTML = selected.map(item => `
+      <div style="position: relative; border: 1px solid var(--gold); border-radius: 4px; overflow: hidden; background: var(--surface); aspect-ratio: 4/3;">
+        <img src="${item.src}" alt="${item.title}" style="width: 100%; height: 100%; object-fit: cover;">
+        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); padding: 4px 6px; font-size: 9px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${item.title || 'Photo'}
+        </div>
+        <button type="button" onclick="removeSnapshotPhoto('${item.catKey}', ${item.id})" style="position: absolute; top: 4px; right: 4px; background: rgba(220,53,69,0.9); color: #fff; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;">✕</button>
+      </div>
+    `).join('');
+  }
+
+  window.removeSnapshotPhoto = function(catKey, photoId) {
+    window.currentSelectedSnapshotPhotos = window.currentSelectedSnapshotPhotos.filter(p => !(p.catKey === catKey && p.id === photoId));
+    renderSelectedSnapshotGrid();
+  };
+
+  window.openSnapshotPickerModal = function() {
+    const grid = document.getElementById('snapshot-picker-grid');
+    if (!grid) return;
+    
+    const cats = window.siteData.galleryCategories || {};
+    let allGalleryPhotos = [];
+    
+    Object.keys(cats).forEach(catKey => {
+      const cat = cats[catKey];
+      if (cat && cat.photos) {
+        cat.photos.forEach(p => {
+          allGalleryPhotos.push({
+            id: p.id,
+            catKey: catKey,
+            src: p.src,
+            title: p.title || 'Untitled',
+            catName: cat.title || catKey,
+            caption: p.caption || ''
+          });
+        });
+      }
+    });
+
+    const selectedKeys = (window.currentSelectedSnapshotPhotos || []).map(p => `${p.catKey}_${p.id}`);
+
+    grid.innerHTML = allGalleryPhotos.map(p => {
+      const key = `${p.catKey}_${p.id}`;
+      const isSelected = selectedKeys.includes(key);
+      return `
+        <div class="snapshot-pick-item ${isSelected ? 'selected' : ''}" data-key="${key}" onclick="toggleSnapshotPickerItem(this, '${p.catKey}', ${p.id}, '${p.src.replace(/'/g, "\\'")}', '${p.title.replace(/'/g, "\\'")}', '${p.catName.replace(/'/g, "\\'")}')" style="position: relative; border: 2px solid ${isSelected ? 'var(--gold)' : 'var(--border)'}; border-radius: 4px; overflow: hidden; cursor: pointer; aspect-ratio: 4/3; background: var(--surface); transition: all 0.2s;">
+          <img src="${p.src}" alt="${p.title}" style="width: 100%; height: 100%; object-fit: cover;">
+          <div style="position: absolute; inset: 0; background: ${isSelected ? 'rgba(201,169,110,0.25)' : 'transparent'}; transition: all 0.2s;"></div>
+          <div style="position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%; background: ${isSelected ? 'var(--gold)' : 'rgba(0,0,0,0.6)'}; color: ${isSelected ? '#000' : '#fff'}; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">
+            ${isSelected ? '✓' : ''}
+          </div>
+          <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.85); padding: 4px 6px; font-size: 9.5px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            ${p.title}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    window.tempSelectedSnapshotPhotos = [...(window.currentSelectedSnapshotPhotos || [])];
+    const modal = document.getElementById('snapshot-picker-modal');
+    if (modal) modal.classList.add('open');
+  };
+
+  window.toggleSnapshotPickerItem = function(el, catKey, id, src, title, catName) {
+    const key = `${catKey}_${id}`;
+    const idx = window.tempSelectedSnapshotPhotos.findIndex(p => p.catKey === catKey && p.id === id);
+    const badge = el.querySelector('div:nth-child(3)');
+    const overlay = el.querySelector('div:nth-child(2)');
+
+    if (idx !== -1) {
+      window.tempSelectedSnapshotPhotos.splice(idx, 1);
+      el.style.borderColor = 'var(--border)';
+      if (overlay) overlay.style.background = 'transparent';
+      if (badge) { badge.style.background = 'rgba(0,0,0,0.6)'; badge.style.color = '#fff'; badge.textContent = ''; }
+    } else {
+      window.tempSelectedSnapshotPhotos.push({ catKey, id, src, title, catName });
+      el.style.borderColor = 'var(--gold)';
+      if (overlay) overlay.style.background = 'rgba(201,169,110,0.25)';
+      if (badge) { badge.style.background = 'var(--gold)'; badge.style.color = '#000'; badge.textContent = '✓'; }
+    }
+  };
+
+  window.saveSnapshotPickerSelection = function() {
+    window.currentSelectedSnapshotPhotos = [...(window.tempSelectedSnapshotPhotos || [])];
+    renderSelectedSnapshotGrid();
+    closeModal('snapshot-picker-modal');
+  };
 
   window.showConflictAlert = function(msg) {
     const banner = document.getElementById('success-banner');
@@ -3004,7 +3138,8 @@
       instagram: document.getElementById('prof-instagram').value,
       twitter: document.getElementById('prof-twitter').value,
       stats: [],
-      awards: []
+      awards: [],
+      aboutSlideshowPhotos: window.currentSelectedSnapshotPhotos || (window.siteData.profile ? window.siteData.profile.aboutSlideshowPhotos : []) || []
     };
 
     // Parse Stats
@@ -6497,7 +6632,7 @@
   window.closeModal = closeModal;
 
   function exportConfig() {
-    const code = `// Dynamic Content Management System (CMS) Database\n// Consolidates all website data, making it dynamic and editable.\n\nconst DEFAULT_SITE_DATA = ${JSON.stringify(window.siteData, null, 2)};\n\n// Global Store Management\nlet siteData = DEFAULT_SITE_DATA;\n\nconst DB_KEY = 'luminar_site_data';\n\ntry {\n  const rawData = localStorage.getItem(DB_KEY);\n  if (rawData) {\n    siteData = JSON.parse(rawData);\n    if (!siteData.profile) siteData.profile = DEFAULT_SITE_DATA.profile;\n    if (!siteData.homepagePhotos) siteData.homepagePhotos = DEFAULT_SITE_DATA.homepagePhotos;\n    if (!siteData.homepageFilterTabs) siteData.homepageFilterTabs = DEFAULT_SITE_DATA.homepageFilterTabs;\n    if (!siteData.portfolioFilterTabs) siteData.portfolioFilterTabs = DEFAULT_SITE_DATA.portfolioFilterTabs;\n    if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;\n    if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;\n    if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;\n  } else {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n  }\n} catch (e) {\n  console.warn("LocalStorage failed to initialize.", e);\n}\n\nwindow.siteData = siteData;\n\nwindow.saveSiteData = function(newData) {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(newData));\n    window.siteData = newData;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n\nwindow.resetSiteData = function() {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n    window.siteData = DEFAULT_SITE_DATA;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n`;
+    const code = `// Dynamic Content Management System (CMS) Database\n// Consolidates all website data, making it dynamic and editable.\n\nconst DEFAULT_SITE_DATA = ${JSON.stringify(window.siteData, null, 2)};\n\n// Global Store Management\nlet siteData = DEFAULT_SITE_DATA;\n\nconst DB_KEY = 'kg_portfolio_site_data';\n\ntry {\n  const rawData = localStorage.getItem(DB_KEY);\n  if (rawData) {\n    siteData = JSON.parse(rawData);\n    if (!siteData.profile) siteData.profile = DEFAULT_SITE_DATA.profile;\n    if (!siteData.homepagePhotos) siteData.homepagePhotos = DEFAULT_SITE_DATA.homepagePhotos;\n    if (!siteData.homepageFilterTabs) siteData.homepageFilterTabs = DEFAULT_SITE_DATA.homepageFilterTabs;\n    if (!siteData.portfolioFilterTabs) siteData.portfolioFilterTabs = DEFAULT_SITE_DATA.portfolioFilterTabs;\n    if (!siteData.galleryCategories) siteData.galleryCategories = DEFAULT_SITE_DATA.galleryCategories;\n    if (!siteData.stories) siteData.stories = DEFAULT_SITE_DATA.stories;\n    if (!siteData.journalEntries) siteData.journalEntries = DEFAULT_SITE_DATA.journalEntries;\n  } else {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n  }\n} catch (e) {\n  console.warn("LocalStorage failed to initialize.", e);\n}\n\nwindow.siteData = siteData;\n\nwindow.saveSiteData = function(newData) {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(newData));\n    window.siteData = newData;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n\nwindow.resetSiteData = function() {\n  try {\n    localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_SITE_DATA));\n    window.siteData = DEFAULT_SITE_DATA;\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n`;
     
     const blob = new Blob([code], { type: 'text/javascript' });
     const url = URL.createObjectURL(blob);

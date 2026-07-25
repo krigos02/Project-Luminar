@@ -6,7 +6,7 @@ function formatToTitleCase(str) {
 window.formatToTitleCase = formatToTitleCase;
 
 /* ── THEME TOGGLE ── */
-const THEME_STORAGE_KEY = 'luminar-theme';
+const THEME_STORAGE_KEY = 'kg-portfolio-theme';
 
 const getStoredTheme = () => {
   try {

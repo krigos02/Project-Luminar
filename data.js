@@ -84,7 +84,8 @@ const DEFAULT_SITE_DATA = {
                         "Every photograph is a dialogue between light, time, science, and emotion. Through thoughtful composition, meticulous post-processing, and continuous self-reflection, Krishnendu strives to create images that transcend documentation—inviting viewers to slow down, observe more deeply, and discover beauty in both the infinite universe above and the overlooked moments of everyday life.",
                         "For him, photography is not simply about preserving what was seen; it is about revealing what was always there, waiting to be observed."
                     ],
-                    "yearsExperience":  23
+                    "yearsExperience":  23,
+                    "aboutSlideshowPhotos": []
                 },
     "stories":  [
                     {
@@ -806,7 +807,7 @@ window.supabaseClient = supabaseClient;
 let siteData = DEFAULT_SITE_DATA;
 window.siteData = siteData;
 
-const DB_KEY = 'luminar_site_data';
+const DB_KEY = 'kg_portfolio_site_data';
 
 // Helper to merge content interactions (likes/views/comments) from separate tables
 async function mergeInteractions(dataObj) {

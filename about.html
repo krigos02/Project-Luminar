@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png?v=2.5">
@@ -75,6 +75,109 @@
   font-weight: 600;
   margin-top: 4px;
 }
+
+/* ── ABOUT GALLERY SNAPSHOT SLIDER ── */
+.about-gallery-snapshot {
+  position: relative;
+  margin-top: 2.2rem;
+  width: 100%;
+  aspect-ratio: 4/3;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+.about-snapshot-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  z-index: 5;
+  background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.about-snapshot-label {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+}
+.about-snapshot-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.about-snapshot-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: scale(1.04);
+  cursor: pointer;
+}
+.about-snapshot-slide.active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+.about-snapshot-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.about-snapshot-caption-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 16px 12px;
+  background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.about-snapshot-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: #fff;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+.about-snapshot-cat {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+.about-snapshot-dots {
+  display: flex;
+  gap: 5px;
+  z-index: 6;
+}
+.about-snapshot-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.about-snapshot-dot.active {
+  background: var(--gold);
+  width: 16px;
+  border-radius: 3px;
+}
+
 .about-text .section-label {
   margin-bottom: 1rem;
 }
@@ -113,24 +216,6 @@
   border-bottom: 1px solid var(--border);
   padding: 2.5rem 0;
 }
-.about-stat-item {
-  text-align: left;
-  border-left: 1px solid rgba(201, 169, 110, 0.25);
-  padding-left: 1.25rem;
-}
-.about-stat-n {
-  font-family: var(--font-serif);
-  font-size: 2.4rem;
-  font-weight: 300;
-  color: var(--gold);
-  line-height: 1;
-}
-.about-stat-l {
-  font-family: var(--font-sans);
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text3);
   margin-top: 8px;
   font-weight: 600;
   line-height: 1.4;
@@ -375,6 +460,23 @@
           </div>
         </div>
         <div class="about-img-years" aria-label="22 years experience">22<span>Years</span></div>
+        
+        <!-- ABOUT GALLERY SNAPSHOT SLIDER WIDGET -->
+        <div class="about-gallery-snapshot" id="about-snapshot-widget">
+          <div class="about-snapshot-header">
+            <span class="about-snapshot-label">Gallery Snapshot</span>
+            <div class="about-snapshot-dots" id="about-snapshot-dots"></div>
+          </div>
+          <div class="about-snapshot-track" id="about-snapshot-track">
+            <!-- Dynamically populated -->
+          </div>
+          <div class="about-snapshot-caption-bar">
+            <div>
+              <div class="about-snapshot-title" id="about-snapshot-title">Work Gallery</div>
+              <div class="about-snapshot-cat" id="about-snapshot-cat">Selected Highlights</div>
+            </div>
+          </div>
+        </div>
       </div>
       
       <div class="about-text reveal-right">
@@ -554,12 +656,16 @@
 <script src="shared.js?v=2.1"></script>
 <script>
 // Initialize
-document.addEventListener('DOMContentLoaded', initAboutPage);
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.siteDataLoaded) {
+    initAboutPage();
+  }
+});
 document.addEventListener('siteDataLoaded', initAboutPage);
 
 function initAboutPage() {
-  if (window.siteData && window.siteData.profile) {
-    const profile = window.siteData.profile;
+  if (!window.siteData || !window.siteData.profile) return;
+  const profile = window.siteData.profile;
     
     // 0. Profile Picture
     const imgFrame = document.querySelector('.about-img-frame');
@@ -594,19 +700,20 @@ function initAboutPage() {
     
     // 2. Heading
     const titleEl = document.querySelector('.about-text .section-title');
-    if (titleEl) {
+    if (titleEl && profile.bioTitle && profile.bioTitleEm) {
       titleEl.innerHTML = `${profile.bioTitle}<br><em>${profile.bioTitleEm}</em>`;
     }
     
     // 3. Bio Lead
     const bioLeadEl = document.querySelector('.about-bio');
-    if (bioLeadEl) {
+    if (bioLeadEl && profile.bioExcerpt) {
       bioLeadEl.textContent = profile.bioExcerpt;
     }
     
-    // 4. Bio Story & Philosophy
+    // 4. Bio Story & Philosophy (Preserved in static HTML)
+    /*
     const textContainer = document.querySelector('.about-text');
-    if (textContainer && profile.bioParagraphs && profile.bioParagraphs.length > 0) {
+    if (textContainer && profile.bioParagraphs && profile.bioParagraphs.length > 0 && profile.philosophy) {
       const storyEls = textContainer.querySelectorAll('.about-story');
       storyEls.forEach(el => el.remove());
       const philEl = textContainer.querySelector('.about-philosophy');
@@ -637,17 +744,7 @@ function initAboutPage() {
         }
       }
     }
-    
-    // 5. Stats
-    const statsContainer = document.querySelector('.about-stats');
-    if (statsContainer && profile.stats) {
-      statsContainer.innerHTML = profile.stats.map(stat => `
-        <div class="about-stat-item">
-          <div class="about-stat-n">${stat.value}</div>
-          <div class="about-stat-l">${stat.label}</div>
-        </div>
-      `).join('');
-    }
+    */
     
     // 6. Awards
     const awardsList = document.querySelector('.awards-list');
@@ -678,14 +775,131 @@ function initAboutPage() {
         </div>
       `).join('');
     }
+
+    // 8. Snapshot Gallery Slider
+    initAboutSnapshotSlider(profile);
+  }
+}
+
+let snapshotTimer = null;
+let currentSnapshotIndex = 0;
+
+function initAboutSnapshotSlider(profile) {
+  const widget = document.getElementById('about-snapshot-widget');
+  const track = document.getElementById('about-snapshot-track');
+  const dotsContainer = document.getElementById('about-snapshot-dots');
+  const titleEl = document.getElementById('about-snapshot-title');
+  const catEl = document.getElementById('about-snapshot-cat');
+  if (!widget || !track || !dotsContainer) return;
+
+  // Gather photos: from profile.aboutSlideshowPhotos OR fallback to featured photos from gallery
+  let slidesData = [];
+  if (profile && profile.aboutSlideshowPhotos && profile.aboutSlideshowPhotos.length > 0) {
+    slidesData = profile.aboutSlideshowPhotos;
+  } else if (window.siteData && window.siteData.galleryCategories) {
+    // Automatic fallback: collect up to 6 featured photos from all categories
+    Object.keys(window.siteData.galleryCategories).forEach(catKey => {
+      const cat = window.siteData.galleryCategories[catKey];
+      if (cat && cat.photos) {
+        cat.photos.forEach(p => {
+          if (p.featured || slidesData.length < 6) {
+            slidesData.push({
+              id: p.id,
+              catKey: catKey,
+              src: p.src,
+              title: p.title || 'Untitled Photograph',
+              catName: cat.title || catKey,
+              caption: p.caption || ''
+            });
+          }
+        });
+      }
+    });
+    // Deduplicate & limit to 6
+    slidesData = slidesData.filter((v, i, a) => a.findIndex(t => t.src === v.src) === i).slice(0, 6);
+  }
+
+  if (slidesData.length === 0) {
+    widget.style.display = 'none';
+    return;
+  }
+  widget.style.display = 'block';
+
+  // Render Slides & Dots
+  track.innerHTML = slidesData.map((item, idx) => `
+    <div class="about-snapshot-slide ${idx === 0 ? 'active' : ''}" data-index="${idx}" onclick="openSnapshotPhoto('${item.catKey || 'wildlife'}', ${item.id})">
+      <img src="${item.src}" alt="${item.title}" loading="lazy">
+    </div>
+  `).join('');
+
+  dotsContainer.innerHTML = slidesData.map((_, idx) => `
+    <div class="about-snapshot-dot ${idx === 0 ? 'active' : ''}" onclick="goToSnapshotSlide(${idx})"></div>
+  `).join('');
+
+  currentSnapshotIndex = 0;
+  updateSnapshotCaption(slidesData[0]);
+
+  // Autoplay functionality
+  if (snapshotTimer) clearInterval(snapshotTimer);
+  snapshotTimer = setInterval(() => {
+    goToSnapshotSlide((currentSnapshotIndex + 1) % slidesData.length, slidesData);
+  }, 4000);
+
+  // Pause on hover
+  widget.addEventListener('mouseenter', () => { if (snapshotTimer) clearInterval(snapshotTimer); });
+  widget.addEventListener('mouseleave', () => {
+    if (snapshotTimer) clearInterval(snapshotTimer);
+    snapshotTimer = setInterval(() => {
+      goToSnapshotSlide((currentSnapshotIndex + 1) % slidesData.length, slidesData);
+    }, 4000);
+  });
+
+  window.currentSnapshotSlides = slidesData;
+}
+
+function goToSnapshotSlide(index, data) {
+  const slidesData = data || window.currentSnapshotSlides;
+  if (!slidesData || slidesData.length === 0) return;
+
+  const slides = document.querySelectorAll('.about-snapshot-slide');
+  const dots = document.querySelectorAll('.about-snapshot-dot');
+  
+  slides.forEach((s, idx) => {
+    if (idx === index) s.classList.add('active');
+    else s.classList.remove('active');
+  });
+
+  dots.forEach((d, idx) => {
+    if (idx === index) d.classList.add('active');
+    else d.classList.remove('active');
+  });
+
+  currentSnapshotIndex = index;
+  updateSnapshotCaption(slidesData[index]);
+}
+
+function updateSnapshotCaption(item) {
+  const titleEl = document.getElementById('about-snapshot-title');
+  const catEl = document.getElementById('about-snapshot-cat');
+  if (titleEl && item) titleEl.textContent = item.title || 'Photograph';
+  if (catEl && item) catEl.textContent = item.catName || item.catKey || 'Gallery';
+}
+
+function openSnapshotPhoto(catKey, photoId) {
+  if (typeof window.openLightbox === 'function') {
+    const cat = window.siteData.galleryCategories[catKey];
+    if (cat && cat.photos) {
+      const idx = cat.photos.findIndex(p => p.id === photoId);
+      if (idx !== -1) {
+        window.openLightbox(catKey, idx);
+      }
+    }
+  } else {
+    window.location.href = `gallery.html?category=${catKey}`;
   }
 }
 </script>
 </body>
-</html>
-
-
-
 
 
 
