@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
@@ -10,35 +10,92 @@
     </image:image>
   </url>
   <url>
-    <loc>https://krishnendugoswami.com/gallery.html?category=astrophotography</loc>
+    <loc>https://krishnendugoswami.com/photo/title.html</loc>
     <image:image>
-      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp</image:loc>
-      <image:title>Astrophotography &amp; Celestial Nightscapes</image:title>
-      <image:caption>Deep sky astronomical imagery, Milky Way core alignment, and nightscape photography by Krishnendu Goswami.</image:caption>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1782985049/image_d6khfe.webp</image:loc>
+      <image:title>title</image:title>
+      <image:caption>sub</image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://krishnendugoswami.com/gallery.html?category=wildlife</loc>
+    <loc>https://krishnendugoswami.com/photo/genesis.html</loc>
     <image:image>
-      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp</image:loc>
-      <image:title>Wildlife &amp; High Altitude Expeditions</image:title>
-      <image:caption>High altitude wildlife photography and natural habitat conservation series in India.</image:caption>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783787901/image_hwruay.webp</image:loc>
+      <image:title>GENESIS</image:title>
+      <image:caption>The beginning</image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://krishnendugoswami.com/gallery.html?category=landscape</loc>
+    <loc>https://krishnendugoswami.com/photo/রশর-rush.html</loc>
     <image:image>
-      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp</image:loc>
-      <image:title>Landscapes &amp; Mountain Vistas</image:title>
-      <image:caption>Fine art landscape photography capturing light, atmosphere, and terrain.</image:caption>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783842582/image_sfytzh.webp</image:loc>
+      <image:title>রাশের Rush </image:title>
+      <image:caption>fathom of faith</image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://krishnendugoswami.com/gallery.html?category=portrait</loc>
+    <loc>https://krishnendugoswami.com/photo/the-railyard-ghost.html</loc>
     <image:image>
-      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp</image:loc>
-      <image:title>Human Expressions &amp; Environmental Portraits</image:title>
-      <image:caption>Candid and environmental portraits exploring emotion, culture, and identity.</image:caption>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783711319/image_hfmwnm.webp</image:loc>
+      <image:title>The Railyard Ghost</image:title>
+      <image:caption>non-stationary</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://krishnendugoswami.com/photo/3-mask-etters.html</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783847320/image_gs883d.webp</image:loc>
+      <image:title>3 MASK-ETTERS</image:title>
+      <image:caption>The masks within</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://krishnendugoswami.com/photo/mahiruha.html</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783678286/image_p0emjs.webp</image:loc>
+      <image:title>Mahiruha</image:title>
+      <image:caption>my shelter</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://krishnendugoswami.com/photo/common-leopard.html</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783679323/image_elyezv.webp</image:loc>
+      <image:title>COMMON LEOPARD </image:title>
+      <image:caption>Panthera pardus</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://krishnendugoswami.com/photo/red-panda.html</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783707699/image_mvylfk.webp</image:loc>
+      <image:title>RED PANDA </image:title>
+      <image:caption>Ailurus fulgens fulgens</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://krishnendugoswami.com/photo/victoria-memorial.html</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783672948/image_rcm2d0.webp</image:loc>
+      <image:title>Victoria Memorial</image:title>
+      <image:caption>through the maidan</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://krishnendugoswami.com/photo/the-cygnus-arm.html</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783673993/image_cz4qxo.webp</image:loc>
+      <image:title>The Cygnus Arm</image:title>
+      <image:caption>milky way band</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://krishnendugoswami.com/photo/title-0.html</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1782985049/image_d6khfe.webp</image:loc>
+      <image:title>title</image:title>
+      <image:caption>sub</image:caption>
     </image:image>
   </url>
 </urlset>
+

@@ -1788,8 +1788,13 @@ function sharePhoto() {
 
   const shareTitle = `${p.title} | Krishnendu Goswami Photography`;
   const shareText = `Check out this photograph by Krishnendu Goswami: "${p.title}"`;
-  const basePath = window.location.href.split('?')[0];
-  const shareUrl = `${basePath}?category=${currentCategory}&photo=${p.id}`;
+  function getPhotoSlug(title, id) {
+    if (!title) return `photo-${id}`;
+    let s = title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '');
+    return s || `photo-${id}`;
+  }
+  const slug = getPhotoSlug(p.title, p.id);
+  const shareUrl = `https://krishnendugoswami.com/photo/${slug}.html`;
 
   if (navigator.share && window.location.protocol !== 'file:') {
     navigator.share({
