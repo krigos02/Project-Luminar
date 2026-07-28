@@ -3,3 +3,4 @@ Allow: /
 Disallow: /admin.html
 
 Sitemap: https://krishnendugoswami.com/sitemap.xml
+Sitemap: https://krishnendugoswami.com/sitemap-images.xml

@@ -1,16 +1,50 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png?v=2.5">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon.png?v=2.5">
-<link rel="apple-touch-icon" sizes="180x180" href="favicon.png?v=2.5">
 <link rel="shortcut icon" href="favicon.png?v=2.5">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Deep Dive Entry — Krishnendu Goswami</title>
+<title id="page-head-title">Deep Dive Article — Krishnendu Goswami</title>
+<meta name="description" id="page-head-desc" content="Read deep dive articles on astrophotography techniques, field expedition logs, and observational astronomy by Krishnendu Goswami.">
+<link rel="canonical" id="canonical-url" href="https://krishnendugoswami.com/blog-post.html">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:url" id="og-url" content="https://krishnendugoswami.com/blog-post.html">
+<meta property="og:title" id="og-title" content="Deep Dive Article — Krishnendu Goswami">
+<meta property="og:description" id="og-desc" content="Read deep dive articles on astrophotography techniques, field expedition logs, and observational astronomy by Krishnendu Goswami.">
+<meta property="og:image" id="og-image" content="https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp">
+<meta property="og:site_name" content="Krishnendu Goswami Portfolio">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" id="twitter-url" content="https://krishnendugoswami.com/blog-post.html">
+<meta name="twitter:title" id="twitter-title" content="Deep Dive Article — Krishnendu Goswami">
+<meta name="twitter:description" id="twitter-desc" content="Read deep dive articles on astrophotography techniques, field expedition logs, and observational astronomy by Krishnendu Goswami.">
+<meta name="twitter:image" id="twitter-image" content="https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css?v=2.7">
+
+<!-- Structured Data / Schema.org -->
+<script type="application/ld+json" id="blog-post-schema">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Deep Dive Article — Krishnendu Goswami",
+  "url": "https://krishnendugoswami.com/blog-post.html",
+  "author": {
+    "@type": "Person",
+    "name": "Krishnendu Goswami",
+    "url": "https://krishnendugoswami.com/"
+  }
+}
+</script>
 <style>
   /* ── DEDICATED BLOG VIEW LAYOUT ── */
   #blog-like-btn.liked {
@@ -31,7 +65,7 @@
   }
   .blog-post-layout {
     display: flex;
-    gap: 6rem; /* Double the gap to push sidebar further right */
+    gap: 6rem;
     align-items: flex-start;
   }
   .blog-main-content {
@@ -43,7 +77,6 @@
     padding: 0;
     overflow: hidden;
   }
-  
   :root[data-theme="light"] .blog-main-content {
     background: none;
   }
@@ -125,7 +158,6 @@
 </head>
 <body>
 
-<!-- NAVIGATION -->
 <header id="header" class="site-header" role="banner">
   <div class="container" style="position: relative;">
     <a href="index.html" class="header-left-logo" style="position: absolute; left: 0; top: calc(4.5rem + (2.2rem - 64px) / 2); display: flex; align-items: center; z-index: 10;"><img src="logo.png?v=2.2" alt="KG Logo" style="height: 96px; width: auto; object-fit: contain;"></a>
@@ -326,7 +358,58 @@
   });
 
   function renderBlogPost(post) {
+    const articleCanonicalUrl = `https://krishnendugoswami.com/blog-post.html?id=${encodeURIComponent(post.id)}`;
+    
     document.title = `${post.title} — Deep Dive · Krishnendu Goswami`;
+    
+    const descEl = document.getElementById('page-head-desc');
+    if (descEl && post.excerpt) descEl.setAttribute('content', post.excerpt);
+    
+    const canonicalEl = document.getElementById('canonical-url');
+    if (canonicalEl) canonicalEl.setAttribute('href', articleCanonicalUrl);
+    
+    const ogUrlEl = document.getElementById('og-url');
+    if (ogUrlEl) ogUrlEl.setAttribute('content', articleCanonicalUrl);
+    
+    const ogTitleEl = document.getElementById('og-title');
+    if (ogTitleEl) ogTitleEl.setAttribute('content', `${post.title} — Deep Dive · Krishnendu Goswami`);
+    
+    const ogDescEl = document.getElementById('og-desc');
+    if (ogDescEl && post.excerpt) ogDescEl.setAttribute('content', post.excerpt);
+    
+    if (post.src) {
+      const ogImgEl = document.getElementById('og-image');
+      if (ogImgEl) ogImgEl.setAttribute('content', post.src);
+      const twImgEl = document.getElementById('twitter-image');
+      if (twImgEl) twImgEl.setAttribute('content', post.src);
+    }
+    
+    const twitterUrlEl = document.getElementById('twitter-url');
+    if (twitterUrlEl) twitterUrlEl.setAttribute('content', articleCanonicalUrl);
+    
+    const twitterTitleEl = document.getElementById('twitter-title');
+    if (twitterTitleEl) twitterTitleEl.setAttribute('content', `${post.title} — Deep Dive · Krishnendu Goswami`);
+
+    const twitterDescEl = document.getElementById('twitter-desc');
+    if (twitterDescEl && post.excerpt) twitterDescEl.setAttribute('content', post.excerpt);
+
+    const schemaEl = document.getElementById('blog-post-schema');
+    if (schemaEl) {
+      schemaEl.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": post.title,
+        "description": post.excerpt || "",
+        "image": post.src || "https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp",
+        "datePublished": post.date || "",
+        "url": articleCanonicalUrl,
+        "author": {
+          "@type": "Person",
+          "name": "Krishnendu Goswami",
+          "url": "https://krishnendugoswami.com/"
+        }
+      }, null, 2);
+    }
     
     // Render templates
     document.getElementById('blog-content-area').innerHTML = getTemplateHtml(post);

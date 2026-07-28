@@ -1,17 +1,50 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png?v=2.5">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon.png?v=2.5">
-<link rel="apple-touch-icon" sizes="180x180" href="favicon.png?v=2.5">
 <link rel="shortcut icon" href="favicon.png?v=2.5">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Last Snow Leopard Corridors — Krishnendu Goswami</title>
-<meta name="description" content="A four-year journey documenting the fragile survival of snow leopards in Spiti and Ladakh.">
+<title id="page-head-title">Photo Story Project — Krishnendu Goswami</title>
+<meta name="description" id="page-head-desc" content="Long-form photography project and visual documentary by Krishnendu Goswami.">
+<link rel="canonical" id="canonical-url" href="https://krishnendugoswami.com/project.html">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:url" id="og-url" content="https://krishnendugoswami.com/project.html">
+<meta property="og:title" id="og-title" content="Photo Story Project — Krishnendu Goswami">
+<meta property="og:description" id="og-desc" content="Long-form photography project and visual documentary by Krishnendu Goswami.">
+<meta property="og:image" id="og-image" content="https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp">
+<meta property="og:site_name" content="Krishnendu Goswami Portfolio">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" id="twitter-url" content="https://krishnendugoswami.com/project.html">
+<meta name="twitter:title" id="twitter-title" content="Photo Story Project — Krishnendu Goswami">
+<meta name="twitter:description" id="twitter-desc" content="Long-form photography project and visual documentary by Krishnendu Goswami.">
+<meta name="twitter:image" id="twitter-image" content="https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css?v=2.6">
+
+<!-- Structured Data / Schema.org -->
+<script type="application/ld+json" id="project-schema">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Photo Story Project — Krishnendu Goswami",
+  "url": "https://krishnendugoswami.com/project.html",
+  "author": {
+    "@type": "Person",
+    "name": "Krishnendu Goswami",
+    "url": "https://krishnendugoswami.com/"
+  }
+}
+</script>
 <style>
 /* ── PROJECT SPECIFIC STYLE ── */
 :root {
@@ -965,7 +998,57 @@ function loadStoryDetails() {
       const story = window.siteData.stories.find(s => s.slug === storySlug);
       if (story) {
         currentStory = story;
+        const storyCanonicalUrl = `https://krishnendugoswami.com/project.html?story=${encodeURIComponent(story.slug)}`;
+        
         document.title = `${story.title} — Stories · Krishnendu Goswami`;
+        
+        const descEl = document.getElementById('page-head-desc');
+        if (descEl && story.excerpt) descEl.setAttribute('content', story.excerpt);
+        
+        const canonicalEl = document.getElementById('canonical-url');
+        if (canonicalEl) canonicalEl.setAttribute('href', storyCanonicalUrl);
+        
+        const ogUrlEl = document.getElementById('og-url');
+        if (ogUrlEl) ogUrlEl.setAttribute('content', storyCanonicalUrl);
+        
+        const ogTitleEl = document.getElementById('og-title');
+        if (ogTitleEl) ogTitleEl.setAttribute('content', `${story.title} — Visual Essay · Krishnendu Goswami`);
+        
+        const ogDescEl = document.getElementById('og-desc');
+        if (ogDescEl && story.excerpt) ogDescEl.setAttribute('content', story.excerpt);
+        
+        if (story.src) {
+          const ogImgEl = document.getElementById('og-image');
+          if (ogImgEl) ogImgEl.setAttribute('content', story.src);
+          const twImgEl = document.getElementById('twitter-image');
+          if (twImgEl) twImgEl.setAttribute('content', story.src);
+        }
+        
+        const twitterUrlEl = document.getElementById('twitter-url');
+        if (twitterUrlEl) twitterUrlEl.setAttribute('content', storyCanonicalUrl);
+        
+        const twitterTitleEl = document.getElementById('twitter-title');
+        if (twitterTitleEl) twitterTitleEl.setAttribute('content', `${story.title} — Visual Essay · Krishnendu Goswami`);
+
+        const twitterDescEl = document.getElementById('twitter-desc');
+        if (twitterDescEl && story.excerpt) twitterDescEl.setAttribute('content', story.excerpt);
+
+        const schemaEl = document.getElementById('project-schema');
+        if (schemaEl) {
+          schemaEl.textContent = JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": story.title,
+            "description": story.excerpt || "",
+            "image": story.src || "https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp",
+            "url": storyCanonicalUrl,
+            "author": {
+              "@type": "Person",
+              "name": "Krishnendu Goswami",
+              "url": "https://krishnendugoswami.com/"
+            }
+          }, null, 2);
+        }
         
         const tagEl = document.querySelector('.story-tag');
         if (tagEl) tagEl.textContent = story.tag;

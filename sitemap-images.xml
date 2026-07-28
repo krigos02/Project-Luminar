@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://krishnendugoswami.com/about.html</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp</image:loc>
+      <image:title>Krishnendu Goswami - Award Winning Astrophotographer and Visual Storyteller</image:title>
+      <image:caption>Krishnendu Goswami is a nationally exhibited photographer and award-winning astrophotographer based in West Bengal, India.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://krishnendugoswami.com/gallery.html?category=astrophotography</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp</image:loc>
+      <image:title>Astrophotography &amp; Celestial Nightscapes</image:title>
+      <image:caption>Deep sky astronomical imagery, Milky Way core alignment, and nightscape photography by Krishnendu Goswami.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://krishnendugoswami.com/gallery.html?category=wildlife</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp</image:loc>
+      <image:title>Wildlife &amp; High Altitude Expeditions</image:title>
+      <image:caption>High altitude wildlife photography and natural habitat conservation series in India.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://krishnendugoswami.com/gallery.html?category=landscape</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp</image:loc>
+      <image:title>Landscapes &amp; Mountain Vistas</image:title>
+      <image:caption>Fine art landscape photography capturing light, atmosphere, and terrain.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://krishnendugoswami.com/gallery.html?category=portrait</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783681897/image_wh8xie.webp</image:loc>
+      <image:title>Human Expressions &amp; Environmental Portraits</image:title>
+      <image:caption>Candid and environmental portraits exploring emotion, culture, and identity.</image:caption>
+    </image:image>
+  </url>
+</urlset>
