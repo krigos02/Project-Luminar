@@ -1,5 +1,7 @@
 // Dynamic Content Management System (CMS) Database
 // Consolidates all website data, making it dynamic and editable.
+// NOTE: Although the variable name remains DEFAULT_SITE_DATA for backward compatibility,
+// it is now the canonical published portfolio dataset used throughout the site.
 
 const DEFAULT_SITE_DATA = {
     "views":  107,
@@ -981,8 +983,22 @@ async function initDatabase() {
     }
   }
 
-  // Ensure crucial nodes exist
+  // Ensure crucial nodes exist & sanitize legacy placeholders
   if (!siteData.profile) siteData.profile = DEFAULT_SITE_DATA.profile;
+  if (!siteData.profile.title || siteData.profile.title.includes('Luminar') || siteData.profile.bioTitle === 'Vision shaped by') {
+    siteData.profile.title = DEFAULT_SITE_DATA.profile.title;
+    siteData.profile.bioTitle = DEFAULT_SITE_DATA.profile.bioTitle;
+    siteData.profile.bioTitleEm = DEFAULT_SITE_DATA.profile.bioTitleEm;
+    siteData.profile.bioExcerpt = DEFAULT_SITE_DATA.profile.bioExcerpt;
+    siteData.profile.bioParagraphs = DEFAULT_SITE_DATA.profile.bioParagraphs;
+    siteData.profile.philosophy = DEFAULT_SITE_DATA.profile.philosophy;
+  }
+  if (!siteData.profile.awards || siteData.profile.awards.length === 0 || siteData.profile.awards.some(a => a.name && (a.name.includes('Wildlife Photographer') || a.org.includes('Natural History')))) {
+    siteData.profile.awards = DEFAULT_SITE_DATA.profile.awards;
+  }
+  if (!siteData.profile.stats || siteData.profile.stats.length === 0 || siteData.profile.stats.some(s => s.label && (s.label.includes('Years Experience') || s.label.includes('International Awards') || s.label.includes('Countries Visited')) || s.value === '120+')) {
+    siteData.profile.stats = DEFAULT_SITE_DATA.profile.stats;
+  }
   if (!siteData.homepagePhotos) siteData.homepagePhotos = [];
   if (!siteData.homepageFilterTabs) siteData.homepageFilterTabs = DEFAULT_SITE_DATA.homepageFilterTabs;
   if (!siteData.portfolioFilterTabs) siteData.portfolioFilterTabs = DEFAULT_SITE_DATA.portfolioFilterTabs;

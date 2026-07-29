@@ -1273,7 +1273,8 @@
             <div id="about-slideshow-selected-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-bottom: 1.25rem;">
               <!-- Selected photo thumbnails rendered here -->
             </div>
-            <button type="button" class="btn-outline" onclick="openSnapshotPickerModal()" style="padding: 8px 16px; font-size: 11px;">+ Choose Photos from Gallery</button>
+            <input type="file" id="snapshot-local-file-input" style="display: none;" onchange="handleSnapshotFileUpload(this)" accept="image/*" multiple>
+            <button type="button" class="btn-outline" onclick="document.getElementById('snapshot-local-file-input').click()" style="padding: 10px 20px; font-size: 11.5px; border-color: var(--gold); color: var(--gold); font-weight: 600;">+ Upload your photos</button>
           </div>
 
           <div style="border-top:1px solid var(--border); margin:2rem 0; padding-top:1.5rem">
@@ -2527,7 +2528,10 @@
     document.getElementById(`panel-${panelId}`).classList.add('active');
     btn.classList.add('active');
     
-    if (panelId === 'interactions') {
+    if (panelId === 'profile') {
+      loadProfileForm();
+      loadSelectedSnapshotGrid();
+    } else if (panelId === 'interactions') {
       loadInteractionsCms();
     }
   }
@@ -2588,6 +2592,68 @@
     `).join('');
   }
 
+  window.handleSnapshotFileUpload = function(input) {
+    if (!input.files || input.files.length === 0) return;
+    const files = Array.from(input.files);
+    let loadedCount = 0;
+
+    files.forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Convert & compress to ultra-light WebP format (0.75 quality ~40KB)
+          let webpBase64 = canvas.toDataURL('image/webp', 0.75);
+          
+          // Fallback if browser doesn't support canvas toDataURL image/webp
+          if (!webpBase64.startsWith('data:image/webp')) {
+            webpBase64 = canvas.toDataURL('image/jpeg', 0.75);
+          }
+
+          const photoTitle = file.name.replace(/\.[^/.]+$/, "");
+          const uniqueId = Date.now() + index;
+
+          if (!window.currentSelectedSnapshotPhotos) window.currentSelectedSnapshotPhotos = [];
+          window.currentSelectedSnapshotPhotos.push({
+            id: uniqueId,
+            catKey: 'local_upload',
+            src: webpBase64,
+            title: photoTitle,
+            catName: 'Local Upload'
+          });
+
+          loadedCount++;
+          if (loadedCount === files.length) {
+            renderSelectedSnapshotGrid();
+            input.value = '';
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   window.removeSnapshotPhoto = function(catKey, photoId) {
     window.currentSelectedSnapshotPhotos = window.currentSelectedSnapshotPhotos.filter(p => !(p.catKey === catKey && p.id === photoId));
     renderSelectedSnapshotGrid();
@@ -2616,13 +2682,15 @@
       }
     });
 
-    const selectedKeys = (window.currentSelectedSnapshotPhotos || []).map(p => `${p.catKey}_${p.id}`);
+    window.allGalleryPhotosCache = allGalleryPhotos;
+    window.tempSelectedSnapshotPhotos = [...(window.currentSelectedSnapshotPhotos || [])];
+    const selectedKeys = window.tempSelectedSnapshotPhotos.map(p => `${p.catKey}_${p.id}`);
 
-    grid.innerHTML = allGalleryPhotos.map(p => {
+    grid.innerHTML = allGalleryPhotos.map((p, idx) => {
       const key = `${p.catKey}_${p.id}`;
       const isSelected = selectedKeys.includes(key);
       return `
-        <div class="snapshot-pick-item ${isSelected ? 'selected' : ''}" data-key="${key}" onclick="toggleSnapshotPickerItem(this, '${p.catKey}', ${p.id}, '${p.src.replace(/'/g, "\\'")}', '${p.title.replace(/'/g, "\\'")}', '${p.catName.replace(/'/g, "\\'")}')" style="position: relative; border: 2px solid ${isSelected ? 'var(--gold)' : 'var(--border)'}; border-radius: 4px; overflow: hidden; cursor: pointer; aspect-ratio: 4/3; background: var(--surface); transition: all 0.2s;">
+        <div class="snapshot-pick-item ${isSelected ? 'selected' : ''}" data-idx="${idx}" onclick="toggleSnapshotPickerItem(this)" style="position: relative; border: 2px solid ${isSelected ? 'var(--gold)' : 'var(--border)'}; border-radius: 4px; overflow: hidden; cursor: pointer; aspect-ratio: 4/3; background: var(--surface); transition: all 0.2s;">
           <img src="${p.src}" alt="${p.title}" style="width: 100%; height: 100%; object-fit: cover;">
           <div style="position: absolute; inset: 0; background: ${isSelected ? 'rgba(201,169,110,0.25)' : 'transparent'}; transition: all 0.2s;"></div>
           <div style="position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%; background: ${isSelected ? 'var(--gold)' : 'rgba(0,0,0,0.6)'}; color: ${isSelected ? '#000' : '#fff'}; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">
@@ -2635,13 +2703,18 @@
       `;
     }).join('');
 
-    window.tempSelectedSnapshotPhotos = [...(window.currentSelectedSnapshotPhotos || [])];
     const modal = document.getElementById('snapshot-picker-modal');
     if (modal) modal.classList.add('open');
   };
 
-  window.toggleSnapshotPickerItem = function(el, catKey, id, src, title, catName) {
-    const key = `${catKey}_${id}`;
+  window.toggleSnapshotPickerItem = function(el) {
+    const idxAttr = el.getAttribute('data-idx');
+    if (idxAttr === null) return;
+    const photo = window.allGalleryPhotosCache[parseInt(idxAttr)];
+    if (!photo) return;
+
+    const catKey = photo.catKey;
+    const id = photo.id;
     const idx = window.tempSelectedSnapshotPhotos.findIndex(p => p.catKey === catKey && p.id === id);
     const badge = el.querySelector('div:nth-child(3)');
     const overlay = el.querySelector('div:nth-child(2)');
@@ -2652,7 +2725,7 @@
       if (overlay) overlay.style.background = 'transparent';
       if (badge) { badge.style.background = 'rgba(0,0,0,0.6)'; badge.style.color = '#fff'; badge.textContent = ''; }
     } else {
-      window.tempSelectedSnapshotPhotos.push({ catKey, id, src, title, catName });
+      window.tempSelectedSnapshotPhotos.push({ catKey, id, src: photo.src, title: photo.title, catName: photo.catName });
       el.style.borderColor = 'var(--gold)';
       if (overlay) overlay.style.background = 'rgba(201,169,110,0.25)';
       if (badge) { badge.style.background = 'var(--gold)'; badge.style.color = '#000'; badge.textContent = '✓'; }
@@ -3019,14 +3092,27 @@
 
   /* ── PROFILE & ABOUT METHODS ── */
   function loadProfileForm() {
-    const profile = window.siteData.profile;
-    document.getElementById('prof-name').value = profile.name;
-    document.getElementById('prof-title').value = profile.title;
-    document.getElementById('prof-biotitle').value = profile.bioTitle;
-    document.getElementById('prof-biotitle-em').value = profile.bioTitleEm;
-    document.getElementById('prof-excerpt').value = profile.bioExcerpt;
-    document.getElementById('prof-paragraphs').value = profile.bioParagraphs.join('\n\n');
-    document.getElementById('prof-philosophy').value = profile.philosophy;
+    const profile = window.siteData.profile || {};
+    const defaultProf = DEFAULT_SITE_DATA.profile;
+    
+    // If database contains old template values, overwrite memory with authentic defaults
+    if (!profile.title || profile.title.includes('Luminar') || profile.bioTitle === 'Vision shaped by') {
+      profile.title = defaultProf.title;
+      profile.bioTitle = defaultProf.bioTitle;
+      profile.bioTitleEm = defaultProf.bioTitleEm;
+      profile.bioExcerpt = defaultProf.bioExcerpt;
+      profile.bioParagraphs = defaultProf.bioParagraphs;
+      profile.philosophy = defaultProf.philosophy;
+    }
+
+    document.getElementById('prof-name').value = profile.name || defaultProf.name;
+    document.getElementById('prof-title').value = profile.title || defaultProf.title;
+    document.getElementById('prof-biotitle').value = profile.bioTitle || defaultProf.bioTitle;
+    document.getElementById('prof-biotitle-em').value = profile.bioTitleEm || defaultProf.bioTitleEm;
+    document.getElementById('prof-excerpt').value = profile.bioExcerpt || defaultProf.bioExcerpt;
+    const paras = (profile.bioParagraphs && profile.bioParagraphs.length > 0) ? profile.bioParagraphs : defaultProf.bioParagraphs;
+    document.getElementById('prof-paragraphs').value = paras.join('\n\n');
+    document.getElementById('prof-philosophy').value = profile.philosophy || defaultProf.philosophy;
     
     // Dynamically update profile DOB and auto-calculate Age
     const dobVal = profile.dob || '2002-12-22';
@@ -3052,6 +3138,17 @@
     document.getElementById('prof-instagram').value = profile.instagram;
     document.getElementById('prof-twitter').value = profile.twitter;
     
+    // If profile.awards contains old placeholder items (e.g. Wildlife Photographer of the Year), reset to authentic defaults
+    const hasOldAwards = profile.awards && profile.awards.some(a => a.name && (a.name.includes('Wildlife Photographer') || a.org.includes('Natural History')));
+    if (!profile.awards || profile.awards.length === 0 || hasOldAwards) {
+      profile.awards = defaultProf.awards;
+    }
+
+    const hasOldStats = profile.stats && profile.stats.some(s => (s.label && (s.label.includes('Years Experience') || s.label.includes('International Awards') || s.label.includes('Countries Visited'))) || s.value === '120+');
+    if (!profile.stats || profile.stats.length === 0 || hasOldStats) {
+      profile.stats = defaultProf.stats;
+    }
+
     // Stats Rows
     const statsContainer = document.getElementById('stats-container');
     statsContainer.innerHTML = '';
@@ -3061,6 +3158,11 @@
     const awardsContainer = document.getElementById('awards-container');
     awardsContainer.innerHTML = '';
     profile.awards.forEach(award => addAwardRow(award.year, award.name, award.org, award.badge));
+
+    // Recognition Logos
+    if (!window.siteData.recognitionLogos || window.siteData.recognitionLogos.length === 0) {
+      window.siteData.recognitionLogos = DEFAULT_SITE_DATA.recognitionLogos ? [...DEFAULT_SITE_DATA.recognitionLogos] : [];
+    }
 
     // Load Profile Picture settings
     currentUploadedProfileBase64 = "";
@@ -3178,10 +3280,32 @@
       avatarUrl = document.getElementById('prof-avatar-url').value.trim();
     }
     newProfile.avatar = avatarUrl;
+    
+    // Process Cloudinary uploads for local slideshow photos if needed
+    if (newProfile.aboutSlideshowPhotos && newProfile.aboutSlideshowPhotos.length > 0) {
+      for (let i = 0; i < newProfile.aboutSlideshowPhotos.length; i++) {
+        const item = newProfile.aboutSlideshowPhotos[i];
+        if (item.src && item.src.startsWith('data:image')) {
+          try {
+            if (window.uploadToCloudinary) {
+              const uploadedUrl = await uploadToCloudinary(item.src);
+              if (uploadedUrl) {
+                item.src = uploadedUrl;
+              }
+            }
+          } catch (cErr) {
+            console.warn("Cloudinary upload failed for snapshot item " + i, cErr);
+          }
+        }
+      }
+    }
 
     const data = { ...window.siteData, profile: newProfile };
-    if (await window.saveSiteData(data)) {
+    const res = await window.saveSiteData(data);
+    if (res && res.success) {
       showSuccess();
+    } else {
+      alert("Failed to save profile: " + (res.error || "Database operation failed."));
     }
   }
 

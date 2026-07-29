@@ -1347,6 +1347,12 @@ function renderGallery() {
     return;
   }
   
+  function getSlug(title, id) {
+    if (!title) return `photo-${id}`;
+    let s = title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '');
+    return s || `photo-${id}`;
+  }
+  
   const slice = filteredPhotos.slice(0, currentLimit);
   
   galleryEl.innerHTML = slice.map((p, idx) => {
@@ -1354,15 +1360,16 @@ function renderGallery() {
       <div class="img-ph" style="height: ${getImageHeight(idx)}px; background: ${p.bg}">
         <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="20" r="12"/><path d="M8 44c0-8.84 7.16-16 16-16s16 7.16 16 16"/></svg>
       </div>`;
+    const photoSlug = p.slug || getSlug(p.title, p.id);
     return `
-      <div class="gallery-item" data-id="${idx}" onclick="openLb(${idx})" role="listitem">
+      <a href="photo/${photoSlug}.html" class="gallery-item" data-id="${idx}" onclick="if(!event.ctrlKey && !event.metaKey){ event.preventDefault(); openLb(${idx}); }" role="listitem" style="text-decoration:none; color:inherit; display:block;">
         ${mediaTag}
         <div class="gallery-item-overlay">
           <div class="gallery-item-title">${p.title}</div>
           <div class="gallery-item-meta">${p.caption}</div>
         </div>
         ${p.featured ? '<div class="gallery-item-featured">Featured</div>' : ''}
-      </div>
+      </a>
     `;
   }).join('');
   

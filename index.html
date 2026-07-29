@@ -469,15 +469,22 @@ function renderMasonry(filtered) {
       }
     }
 
+    function getSlug(title, id) {
+      if (!title) return `photo-${id}`;
+      let s = title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '');
+      return s || `photo-${id}`;
+    }
+    const photoSlug = p.slug || getSlug(p.title, p.id);
+
     return `
-      <div class="masonry-item" onclick="openLb(${idx})" role="button" aria-label="View ${p.title}">
+      <a href="photo/${photoSlug}.html" class="masonry-item" onclick="if(!event.ctrlKey && !event.metaKey){ event.preventDefault(); openLb(${idx}); }" role="button" aria-label="View ${p.title}" style="text-decoration:none; color:inherit; display:block;">
         <img src="${p.src}" alt="${p.title || ''}" loading="lazy" ${cachedVal !== undefined ? '' : 'onload="analyzeImageBrightness(this)"'}>
         ${locText ? `
           <div class="masonry-item-overlay">
             <span class="masonry-item-loc" ${cachedStyle}>${locText}</span>
           </div>
         ` : ''}
-      </div>
+      </a>
     `;
   }).join('');
 }

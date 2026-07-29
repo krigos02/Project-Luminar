@@ -68,6 +68,7 @@ if ($siteData.galleryCategories) {
                         $pObj = [PSCustomObject]@{
                             id = if ($null -ne $p.id) { [int]$p.id } else { 0 }
                             title = if ($p.title) { [string]$p.title } else { "Photograph" }
+                            slug = if ($p.slug) { [string]$p.slug } else { "" }
                             cat = $catKey
                             src = [string]$p.src
                             caption = if ($p.caption) { [string]$p.caption } else { "" }
@@ -102,6 +103,7 @@ if ($siteData.homepagePhotos) {
                 $pObj = [PSCustomObject]@{
                     id = if ($null -ne $p.id) { [int]$p.id } else { 0 }
                     title = if ($p.title) { [string]$p.title } else { "Photograph" }
+                    slug = if ($p.slug) { [string]$p.slug } else { "" }
                     cat = $catKey
                     src = [string]$p.src
                     caption = if ($p.meta) { [string]$p.meta } else { "" }
@@ -124,16 +126,33 @@ if ($siteData.homepagePhotos) {
     }
 }
 
-# Assign unique slugs
+# ── PRE-GENERATION DATA INTEGRITY VALIDATION ──
+Write-Host "Running pre-generation data validation..."
+foreach ($p in $allPhotos) {
+    if ([string]::IsNullOrWhiteSpace($p.src)) {
+        Write-Error "Validation Failed: Photo ID $($p.id) is missing image source (src)."
+        exit 1
+    }
+    if ([string]::IsNullOrWhiteSpace($p.title)) {
+        Write-Error "Validation Failed: Photo ID $($p.id) ($($p.src)) is missing title."
+        exit 1
+    }
+}
+
+# Assign / preserve stable slugs (read-only in memory)
 $usedSlugs = @{}
 foreach ($p in $allPhotos) {
-    $baseSlug = Get-Slug $p.title $p.id
-    $finalSlug = $baseSlug
-    if ($usedSlugs.ContainsKey($finalSlug)) {
-        $finalSlug = "$baseSlug-$($p.id)"
+    if (-not [string]::IsNullOrWhiteSpace($p.slug)) {
+        $finalSlug = $p.slug
+    } else {
+        $baseSlug = Get-Slug $p.title $p.id
+        $finalSlug = $baseSlug
+        if ($usedSlugs.ContainsKey($finalSlug)) {
+            $finalSlug = "$baseSlug-$($p.id)"
+        }
     }
     $usedSlugs[$finalSlug] = $true
-    $p | Add-Member -MemberType NoteProperty -Name "slug" -Value $finalSlug
+    $p.slug = $finalSlug
 }
 
 Write-Host "Total unique photos collected:" $allPhotos.Count

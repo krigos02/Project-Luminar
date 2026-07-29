@@ -157,7 +157,8 @@
   font-weight: 600;
 }
 .about-snapshot-track {
-  position: relative;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
 }
@@ -166,6 +167,7 @@
   inset: 0;
   opacity: 0;
   visibility: hidden;
+  z-index: 1;
   transition: opacity 0.8s ease, transform 0.8s ease;
   transform: scale(1.04);
   cursor: pointer;
@@ -175,14 +177,15 @@
   background: var(--bg2);
 }
 .about-snapshot-slide.active {
-  opacity: 1;
-  visibility: visible;
-  transform: scale(1);
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 2 !important;
+  transform: scale(1) !important;
 }
 .about-snapshot-slide img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover !important;
   display: block;
 }
 .about-snapshot-caption-bar {
@@ -773,8 +776,7 @@ function initAboutPage() {
       bioLeadEl.textContent = profile.bioExcerpt;
     }
     
-    // 4. Bio Story & Philosophy (Preserved in static HTML)
-    /*
+    // 4. Bio Story & Philosophy
     const textContainer = document.querySelector('.about-text');
     if (textContainer && profile.bioParagraphs && profile.bioParagraphs.length > 0 && profile.philosophy) {
       const storyEls = textContainer.querySelectorAll('.about-story');
@@ -807,7 +809,6 @@ function initAboutPage() {
         }
       }
     }
-    */
     
     // 6. Awards
     const awardsList = document.querySelector('.awards-list');
@@ -841,7 +842,6 @@ function initAboutPage() {
 
     // 8. Snapshot Gallery Slider
     initAboutSnapshotSlider(profile);
-  }
 }
 
 let snapshotTimer = null;
@@ -856,29 +856,42 @@ function initAboutSnapshotSlider(profile) {
   if (!widget || !track || !dotsContainer) return;
 
   // Gather photos: from profile.aboutSlideshowPhotos OR fallback to featured photos from gallery
-  let slidesData = [];
-  if (profile && profile.aboutSlideshowPhotos && profile.aboutSlideshowPhotos.length > 0) {
-    slidesData = profile.aboutSlideshowPhotos;
-  } else if (window.siteData && window.siteData.galleryCategories) {
-    // Automatic fallback: collect up to 6 featured photos from all categories
-    Object.keys(window.siteData.galleryCategories).forEach(catKey => {
-      const cat = window.siteData.galleryCategories[catKey];
-      if (cat && cat.photos) {
-        cat.photos.forEach(p => {
-          if (p.featured || slidesData.length < 6) {
-            slidesData.push({
-              id: p.id,
-              catKey: catKey,
-              src: p.src,
-              title: p.title || 'Untitled Photograph',
-              catName: cat.title || catKey,
-              caption: p.caption || ''
-            });
-          }
-        });
-      }
-    });
-    // Deduplicate & limit to 6
+  let slidesData = (profile && profile.aboutSlideshowPhotos && profile.aboutSlideshowPhotos.length > 0) ? [...profile.aboutSlideshowPhotos] : [];
+  
+  if (slidesData.length === 0 && window.siteData) {
+    if (window.siteData.galleryCategories) {
+      Object.keys(window.siteData.galleryCategories).forEach(catKey => {
+        const cat = window.siteData.galleryCategories[catKey];
+        if (cat && cat.photos) {
+          cat.photos.forEach(p => {
+            if (p.src && slidesData.length < 6) {
+              slidesData.push({
+                id: p.id || Math.random(),
+                catKey: catKey,
+                src: p.src,
+                title: p.title || 'Untitled Photograph',
+                catName: cat.title || catKey,
+                caption: p.caption || ''
+              });
+            }
+          });
+        }
+      });
+    }
+    if (slidesData.length === 0 && window.siteData.homepagePhotos) {
+      window.siteData.homepagePhotos.forEach(p => {
+        if (p.src && slidesData.length < 6) {
+          slidesData.push({
+            id: p.id || Math.random(),
+            catKey: p.cat || 'featured',
+            src: p.src,
+            title: p.title || 'Portfolio Highlight',
+            catName: p.cat || 'Gallery',
+            caption: ''
+          });
+        }
+      });
+    }
     slidesData = slidesData.filter((v, i, a) => a.findIndex(t => t.src === v.src) === i).slice(0, 6);
   }
 
@@ -890,8 +903,8 @@ function initAboutSnapshotSlider(profile) {
 
   // Render Slides & Dots
   track.innerHTML = slidesData.map((item, idx) => `
-    <div class="about-snapshot-slide ${idx === 0 ? 'active' : ''}" data-index="${idx}" onclick="openSnapshotPhoto('${item.catKey || 'wildlife'}', ${item.id})">
-      <img src="${item.src}" alt="${item.title}" loading="lazy">
+    <div class="about-snapshot-slide ${idx === 0 ? 'active' : ''}" data-index="${idx}" onclick="openSnapshotPhoto('${item.catKey || 'wildlife'}', ${item.id})" style="width: 100%; height: 100%; position: absolute; inset: 0; opacity: ${idx === 0 ? '1' : '0'}; visibility: ${idx === 0 ? 'visible' : 'hidden'}; z-index: ${idx === 0 ? '2' : '1'};">
+      <img src="${item.src}" alt="${item.title || 'Photograph'}" loading="eager" fetchpriority="high" style="width: 100%; height: 100%; object-fit: cover; display: block;">
     </div>
   `).join('');
 
@@ -928,8 +941,17 @@ function goToSnapshotSlide(index, data) {
   const dots = document.querySelectorAll('.about-snapshot-dot');
   
   slides.forEach((s, idx) => {
-    if (idx === index) s.classList.add('active');
-    else s.classList.remove('active');
+    if (idx === index) {
+      s.classList.add('active');
+      s.style.opacity = '1';
+      s.style.visibility = 'visible';
+      s.style.zIndex = '2';
+    } else {
+      s.classList.remove('active');
+      s.style.opacity = '0';
+      s.style.visibility = 'hidden';
+      s.style.zIndex = '1';
+    }
   });
 
   dots.forEach((d, idx) => {
