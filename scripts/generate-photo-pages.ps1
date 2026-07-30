@@ -13,31 +13,69 @@ if (-not (Test-Path $photoDir)) {
     New-Item -ItemType Directory -Path $photoDir | Out-Null
 }
 
-# Extract DEFAULT_SITE_DATA from data.js between "const DEFAULT_SITE_DATA = {" and "} };"
+# ── LOAD PUBLISHED PORTFOLIO DATASET ──
+# Primary: Query Supabase REST API (portfolio_data row id=1) using public client configuration
+# Fallback: Extract DEFAULT_SITE_DATA from local data.js if fetch/parse fails for any reason
+
 $rawContent = Get-Content $dataJsPath -Raw
-$startIdx = $rawContent.IndexOf("const DEFAULT_SITE_DATA = {")
-if ($startIdx -lt 0) { Write-Error "Cannot find start of DEFAULT_SITE_DATA"; exit 1 }
 
-$jsonStart = $startIdx + "const DEFAULT_SITE_DATA = ".Length
-$endIdx = $rawContent.IndexOf("};`n`n// Supabase Configuration", $jsonStart)
-if ($endIdx -lt 0) {
-    $endIdx = $rawContent.IndexOf("};`r`n`r`n// Supabase Configuration", $jsonStart)
+# Extract public Supabase URL & key from data.js
+$supabaseUrl = if ($rawContent -match "const supabaseUrl\s*=\s*'([^']+)'") { $Matches[1] } else { "https://wxqwjxmcllfcmtwrspmz.supabase.co" }
+$supabaseKey = if ($rawContent -match "const supabaseKey\s*=\s*'([^']+)'") { $Matches[1] } else { "" }
+
+$siteData = $null
+$dataSourceUsed = ""
+
+if ($supabaseUrl -and $supabaseKey) {
+    try {
+        $headers = @{
+            "apikey" = $supabaseKey
+            "Authorization" = "Bearer $supabaseKey"
+            "Accept" = "application/json"
+        }
+        $endpoint = "$supabaseUrl/rest/v1/portfolio_data?id=eq.1&select=data"
+        $response = Invoke-RestMethod -Uri $endpoint -Headers $headers -Method Get -TimeoutSec 10 -ErrorAction Stop
+        
+        if ($response -and $response.Count -gt 0 -and $response[0].data) {
+            $fetchedData = $response[0].data
+            # Validate basic structure
+            if ($fetchedData.profile -or $fetchedData.galleryCategories -or $fetchedData.homepagePhotos) {
+                $siteData = $fetchedData
+                $dataSourceUsed = "SUPABASE LIVE CLOUD (row id=1)"
+            }
+        }
+    } catch {
+        # Log network/API error and proceed to local fallback
+        Write-Host "Notice: Supabase fetch unvailable ($($_.Exception.Message)). Using local data.js fallback." -ForegroundColor Yellow
+    }
 }
-if ($endIdx -lt 0) {
-    $endIdx = $rawContent.IndexOf("};`n// Supabase Configuration", $jsonStart)
+
+if (-not $siteData) {
+    # Extract DEFAULT_SITE_DATA from data.js between "const DEFAULT_SITE_DATA = {" and "} };"
+    $startIdx = $rawContent.IndexOf("const DEFAULT_SITE_DATA = {")
+    if ($startIdx -lt 0) { Write-Error "Cannot find start of DEFAULT_SITE_DATA in data.js"; exit 1 }
+
+    $jsonStart = $startIdx + "const DEFAULT_SITE_DATA = ".Length
+    $endIdx = $rawContent.IndexOf("};`n`n// Supabase Configuration", $jsonStart)
+    if ($endIdx -lt 0) {
+        $endIdx = $rawContent.IndexOf("};`r`n`r`n// Supabase Configuration", $jsonStart)
+    }
+    if ($endIdx -lt 0) {
+        $endIdx = $rawContent.IndexOf("};`n// Supabase Configuration", $jsonStart)
+    }
+    if ($endIdx -lt 0) {
+        $supIdx = $rawContent.IndexOf("// Supabase Configuration")
+        $endIdx = $rawContent.LastIndexOf("};", $supIdx)
+    }
+
+    if ($endIdx -lt 0) { Write-Error "Cannot find end of DEFAULT_SITE_DATA"; exit 1 }
+
+    $jsonStr = $rawContent.Substring($jsonStart, ($endIdx - $jsonStart) + 1).Trim()
+    $siteData = $jsonStr | ConvertFrom-Json
+    $dataSourceUsed = "LOCAL DATA.JS FILE"
 }
 
-if ($endIdx -lt 0) {
-    # Fallback to last occurrence before // Supabase Configuration
-    $supIdx = $rawContent.IndexOf("// Supabase Configuration")
-    $endIdx = $rawContent.LastIndexOf("};", $supIdx)
-}
-
-if ($endIdx -lt 0) { Write-Error "Cannot find end of DEFAULT_SITE_DATA"; exit 1 }
-
-$jsonStr = $rawContent.Substring($jsonStart, ($endIdx - $jsonStart) + 1).Trim()
-
-$siteData = $jsonStr | ConvertFrom-Json
+Write-Host "Published Dataset Source Used: $dataSourceUsed" -ForegroundColor Green
 
 # Helper to create URL slug from title/ID
 function Get-Slug([string]$title, [int]$id) {
@@ -177,6 +215,18 @@ for ($i = 0; $i -lt $allPhotos.Count; $i++) {
     $canonicalUrl = "https://krishnendugoswami.com/photo/$($photo.slug).html"
     $galleryDeepLink = "../gallery.html?category=$([System.Web.HttpUtility]::UrlEncode($photo.cat))&photo=$($photo.id)"
 
+    # Dynamic Cloudinary JPEG URL Transformation for WhatsApp / Meta Social Link Previews
+    $socialImgUrl = $photo.src
+    if ($socialImgUrl -match "res\.cloudinary\.com") {
+        if ($socialImgUrl -match "\.webp($|\?)") {
+            $socialImgUrl = $socialImgUrl -replace "\.webp($|\?)", ".jpg`$1"
+        } elseif ($socialImgUrl -match "/upload/") {
+            $socialImgUrl = $socialImgUrl -replace "/upload/", "/upload/f_jpg,q_auto/"
+        }
+    }
+    $socialImgSecureUrl = if ($socialImgUrl.StartsWith("http://")) { $socialImgUrl -replace "^http://", "https://" } else { $socialImgUrl }
+    $cleanTitleAlt = $photo.title -replace '"', '&quot;'
+
     # HTML Template
     $htmlContent = @"
 <!DOCTYPE html>
@@ -192,14 +242,15 @@ for ($i = 0; $i -lt $allPhotos.Count; $i++) {
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon.png?v=2.5">
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon.png?v=2.5">
 
-<!-- Open Graph / Social Media -->
+<!-- Open Graph / Social Media (WhatsApp & Meta Compatibility) -->
 <meta property="og:type" content="article">
 <meta property="og:url" content="$canonicalUrl">
 <meta property="og:title" content="$pageTitle">
 <meta property="og:description" content="$cleanDesc">
-<meta property="og:image" content="$($photo.src)">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="800">
+<meta property="og:image" content="$socialImgUrl">
+<meta property="og:image:secure_url" content="$socialImgSecureUrl">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:alt" content="$cleanTitleAlt">
 <meta property="og:site_name" content="Krishnendu Goswami Portfolio">
 
 <!-- Twitter Cards -->
@@ -207,7 +258,7 @@ for ($i = 0; $i -lt $allPhotos.Count; $i++) {
 <meta name="twitter:url" content="$canonicalUrl">
 <meta name="twitter:title" content="$pageTitle">
 <meta name="twitter:description" content="$cleanDesc">
-<meta name="twitter:image" content="$($photo.src)">
+<meta name="twitter:image" content="$socialImgUrl">
 
 <!-- Resource Preconnects & Styles -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
