@@ -3,11 +3,22 @@
 
 $ErrorActionPreference = "Stop"
 
-$projectRoot = "d:\Downloads\portfolio"
+# ── DYNAMIC CROSS-PLATFORM PATH RESOLUTION ──
+$scriptRoot = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Definition }
+$projectRoot = Split-Path $scriptRoot -Parent
+
+if (-not (Test-Path $projectRoot)) {
+    throw "Project root not found: $projectRoot"
+}
+
 $photoDir = Join-Path $projectRoot "photo"
 $dataJsPath = Join-Path $projectRoot "data.js"
 $sitemapXmlPath = Join-Path $projectRoot "sitemap.xml"
 $sitemapImagesPath = Join-Path $projectRoot "sitemap-images.xml"
+
+if (-not (Test-Path $dataJsPath)) {
+    throw "data.js file not found at path: $dataJsPath"
+}
 
 if (-not (Test-Path $photoDir)) {
     New-Item -ItemType Directory -Path $photoDir | Out-Null
