@@ -1137,6 +1137,40 @@ async function _executeOptimisticSave(newData, options = {}) {
 
     window.siteData = newData;
     document.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: newData }));
+
+    // ── ASYNCHRONOUS DEBOUNCED AUTOMATED PUBLISH TRIGGER ──
+    // Fire-and-forget Edge Function invocation (20-second debounce) post-save
+    (function triggerBuildPipelineAsync() {
+      const now = Date.now();
+      const DEBOUNCE_MS = 20000; // 20-second threshold
+      if (window._lastEdgePublishTriggerTime && (now - window._lastEdgePublishTriggerTime < DEBOUNCE_MS)) {
+        console.log("Publish trigger debounced (save occurred within 20s window).");
+        return;
+      }
+      window._lastEdgePublishTriggerTime = now;
+
+      setTimeout(async () => {
+        try {
+          const session = window.supabaseClient?.auth?.session ? window.supabaseClient.auth.session() : null;
+          const authHeader = session ? `Bearer ${session.access_token}` : (window.supabaseClient?.auth?.headers?.Authorization || '');
+          
+          fetch('https://wxqwjxmcllfcmtwrspmz.supabase.co/functions/v1/trigger-publish', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': authHeader
+            }
+          }).then(res => res.json()).then(data => {
+            console.log("Edge Function publish status:", data);
+          }).catch(err => {
+            console.warn("Async publish trigger notice:", err);
+          });
+        } catch (fErr) {
+          console.warn("Edge Function trigger error:", fErr);
+        }
+      }, 500);
+    })();
+
     return window.lastSaveResult;
   } catch (e) {
     console.error("Failed to execute saveSiteData.", e);
