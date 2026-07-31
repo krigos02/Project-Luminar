@@ -1151,8 +1151,14 @@ async function _executeOptimisticSave(newData, options = {}) {
 
       setTimeout(async () => {
         try {
-          const session = window.supabaseClient?.auth?.session ? window.supabaseClient.auth.session() : null;
-          const authHeader = session ? `Bearer ${session.access_token}` : (window.supabaseClient?.auth?.headers?.Authorization || '');
+          let accessToken = '';
+          if (window.supabaseClient?.auth?.getSession) {
+            const { data } = await window.supabaseClient.auth.getSession();
+            if (data?.session?.access_token) {
+              accessToken = data.session.access_token;
+            }
+          }
+          const authHeader = accessToken ? `Bearer ${accessToken}` : (window.supabaseClient?.auth?.headers?.Authorization || '');
           
           fetch('https://wxqwjxmcllfcmtwrspmz.supabase.co/functions/v1/trigger-publish', {
             method: 'POST',
