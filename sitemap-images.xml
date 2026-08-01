@@ -50,6 +50,14 @@
     </image:image>
   </url>
   <url>
+    <loc>https://krishnendugoswami.com/photo/xyz.html</loc>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1785600043/image_btkkvk.webp</image:loc>
+      <image:title>xyz</image:title>
+      <image:caption>ddsss</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://krishnendugoswami.com/photo/mahiruha.html</loc>
     <image:image>
       <image:loc>https://res.cloudinary.com/yrwqu5an/image/upload/v1783678286/image_p0emjs.webp</image:loc>
